@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Home - Landslide Monitoring</title>
+  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
+  <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+</head>
+<body>
+  <header>
+    <nav>
+      <ul>
+        <li><a href="landing.html">Home</a></li>
+        <li><a href="stations.html">Stations</a></li>
+        <li><a href="about.html">About</a></li>
+        <li><a href="contact.html">Contact</a></li>
+      </ul>
+    </nav>
+  </header>
+  <main>
+    <h1>Welcome to the Landslide Monitoring Project</h1>
+    <div id="map" style="height: 600px;"></div>
+    <select id="layerSelect">
+      <option value="image1">Image 1</option>
+      <option value="image2">Image 2</option>
+      <option value="image3">Image 3</option>
+    </select>
+  </main>
+  <footer>
+    <p>Copyright © Your Organization. All rights reserved.</p>
+</footer>
+  <script src="mapInit.js"></script>
+</body>
+</html>
