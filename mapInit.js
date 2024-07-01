@@ -11,13 +11,13 @@ document.addEventListener('DOMContentLoaded', function() {
     attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
   }).addTo(map);
 
-  // Image overlays
-  var imageBounds = [[17.9, -66.3], [18.6, -65.8]];
-  var images = {
-    image1: L.imageOverlay('url_to_your_image1.jpg', imageBounds),
-    image2: L.imageOverlay('url_to_your_image2.jpg', imageBounds),
-    image3: L.imageOverlay('url_to_your_image3.jpg', imageBounds)
-  };
+// Image overlays
+var imageBounds = [[18.0, -67.0], [18.5, -65.5]]; 
+var images = {
+  image1: L.imageOverlay('susceptibility_map_draft.jpg', imageBounds),
+  image2: L.imageOverlay('url_to_your_image2.jpg', imageBounds),
+  image3: L.imageOverlay('url_to_your_image3.jpg', imageBounds)
+};
 
   // Handle dropdown change to switch image overlays
   document.getElementById('layerSelect').addEventListener('change', function(e) {
@@ -28,6 +28,7 @@ document.addEventListener('DOMContentLoaded', function() {
     });
     // Add the selected image
     images[selectedImage].addTo(map);
+    console.log(selectedImage);
   });
 
   // Updated stations with new names and coordinates
