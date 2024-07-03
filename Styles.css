@@ -1,3 +1,38 @@
+/* styles.css */
+
+/* Custom marker styles */
+/* styles.css */
+
+.custom-div-icon {
+  background-color: rgba(10, 41, 95, 0.9);
+  color: white;
+  padding: 5px;
+  border-radius: 5px;
+  text-align: center;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+}
+
+/* Marker text styles */
+.custom-div-icon span {
+  font-size: 24px;
+  color: white; /* Set text color to white */
+}
+
+/* Popup styles */
+.leaflet-popup-content {
+  font-size: 14px;
+  line-height: 1.4;
+}
+
+.leaflet-popup-content-wrapper {
+  background: rgba(255, 255, 255, 0.8); /* Semi-transparent white background */
+  border-radius: 5px;
+  padding: 8px;
+}
+
 body {
   font-family: Arial, sans-serif;
   margin: 0;
