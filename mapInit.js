@@ -91,6 +91,10 @@ document.addEventListener("DOMContentLoaded", function () {
       }<br>Date Installed: ${stationData[station.name].dateInstalled}<br>`;
       marker.bindPopup(popupContent);
 
+      if (!station.marker) {
+        station.marker = marker; // Assign marker to station object
+      }
+
       if (isTouchDevice()) {
         // For touch devices, use click to toggle popups
         marker.on("click", function (e) {
