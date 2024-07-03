@@ -20,10 +20,25 @@ document.addEventListener("DOMContentLoaded", function () {
         'Map data &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
     }).addTo(map);
 
-    L.esri.basemapLayer("Topographic").addTo(map);
+// Image overlays
+var imageBounds = [[18.0, -67.0], [18.5, -65.5]]; 
+var images = {
+  image1: L.imageOverlay('susceptibility_map_draft.jpg', imageBounds),
+  image2: L.imageOverlay('url_to_your_image2.jpg', imageBounds),
+  image3: L.imageOverlay('url_to_your_image3.jpg', imageBounds)
+};
 
-    return map;
-  }
+  // Handle dropdown change to switch image overlays
+  document.getElementById('layerSelect').addEventListener('change', function(e) {
+    var selectedImage = e.target.value;
+    // Remove all images
+    Object.values(images).forEach(function(image) {
+      map.removeLayer(image);
+    });
+    // Add the selected image
+    images[selectedImage].addTo(map);
+    console.log(selectedImage);
+  });
 
   // Updated stations with new names and coordinates
   var stations = [
