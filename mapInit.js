@@ -38,18 +38,17 @@ document.addEventListener("DOMContentLoaded", function () {
       console.error("Tile error:", error);
     });
 
-    var municipalityLayer = L.esri
-      .tiledMapLayer({
-        url: "https://tiles.arcgis.com/tiles/TQ9qkk0dURXSP7LQ/arcgis/rest/services/Susceptibilidad_Derrumbe_PR/MapServer",
-        opacity: 0.5,
-      })
-      .addTo(map);
-
-    // Error handling for tiled layer
-    municipalityLayer.on("tileerror", function (error) {
-      console.error("Tile error:", error);
+    var municipalityLayer = L.esri.featureLayer({
+      url: "https://services5.arcgis.com/TQ9qkk0dURXSP7LQ/arcgis/rest/services/LIMITES_LEGALES_MUNICIPIOS/FeatureServer/0",
+      opacity: 0.2,
+      color: "black",
+    }).addTo(map);
+    
+    // Error handling for feature layer
+    municipalityLayer.on("error", function (error) {
+      console.error("Feature layer error:", error);
     });
-
+    
     return map;
   }
 
