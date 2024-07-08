@@ -1,7 +1,8 @@
-import stationData from './stationData.js';
+// mapInit.js
+
+import stationData from "./stationData.js";
 
 document.addEventListener("DOMContentLoaded", function () {
-  
   // Function to initialize the Leaflet map
   function initializeMap() {
     var map = L.map("map", {
@@ -15,12 +16,27 @@ document.addEventListener("DOMContentLoaded", function () {
       maxZoom: 18,
     });
 
-    L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
-      attribution:
-        'Map data &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
-    }).addTo(map);
+    // Add World Imagery basemap layer
+    L.tileLayer(
+      "https://services.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",
+      {
+        attribution:
+          "Tiles © Esri — Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community",
+        maxZoom: 18,
+      }
+    ).addTo(map);
 
-    L.esri.basemapLayer("Topographic").addTo(map);
+    var tiledLayer = L.esri
+      .tiledMapLayer({
+        url: "https://tiles.arcgis.com/tiles/TQ9qkk0dURXSP7LQ/arcgis/rest/services/Susceptibilidad_Derrumbe_PR/MapServer",
+        opacity: 0.5,
+      })
+      .addTo(map);
+
+    // Error handling for tiled layer
+    tiledLayer.on("tileerror", function (error) {
+      console.error("Tile error:", error);
+    });
 
     return map;
   }
@@ -50,7 +66,7 @@ document.addEventListener("DOMContentLoaded", function () {
   // Check if the device is a touch device
   function isTouchDevice() {
     return (
-      'ontouchstart' in window ||
+      "ontouchstart" in window ||
       navigator.maxTouchPoints > 0 ||
       navigator.msMaxTouchPoints > 0
     );
@@ -61,10 +77,8 @@ document.addEventListener("DOMContentLoaded", function () {
     stations.forEach(function (station) {
       var customIcon = L.divIcon({
         className: "custom-div-icon",
-        html: `<div style='background-color: rgba(117, 92, 12, 0.6); padding: 5px; border-radius: 5px; text-align: center; display: flex; justify-content: center; align-items: center; height: 100%;'>
-          <span style='font-size: 24px;'>
-            ${stationData[station.name][dataType]}
-          </span>
+        html: `<div>
+          <span>${stationData[station.name][dataType]}</span>
           ${dataType === "rainfall" ? " mm" : ""}
         </div>`,
         iconSize: [50, 50],
@@ -72,16 +86,18 @@ document.addEventListener("DOMContentLoaded", function () {
       });
 
       var marker = L.marker(station.coords, { icon: customIcon }).addTo(map);
-      var popupContent = `<b>${station.name}</b><br>${dataType}: ${stationData[station.name][dataType]}<br>Date Installed: ${stationData[station.name].dateInstalled}<br>`;
+      var popupContent = `<b>${station.name}</b><br>${dataType}: ${
+        stationData[station.name][dataType]
+      }<br>Date Installed: ${stationData[station.name].dateInstalled}<br>`;
       marker.bindPopup(popupContent);
 
-      marker.on("click", function () {
-        this.openPopup();
-      });
+      if (!station.marker) {
+        station.marker = marker; // Assign marker to station object
+      }
 
       if (isTouchDevice()) {
         // For touch devices, use click to toggle popups
-        marker.on("click", function(e) {
+        marker.on("click", function (e) {
           if (this.getPopup().isOpen()) {
             this.closePopup();
           } else {
@@ -90,15 +106,13 @@ document.addEventListener("DOMContentLoaded", function () {
         });
       } else {
         // For non-touch devices, use mouseover to open and mouseout to close popups
-        marker.on("mouseover", function(e) {
+        marker.on("mouseover", function (e) {
           this.openPopup();
         });
-        marker.on("mouseout", function(e) {
+        marker.on("mouseout", function (e) {
           this.closePopup();
         });
       }
-
-      station.marker = marker;
     });
 
     return stations;
@@ -108,19 +122,24 @@ document.addEventListener("DOMContentLoaded", function () {
   function changeData(stations, dataType) {
     stations.forEach(function (station) {
       var marker = station.marker;
-      var popupContent = `<b>${station.name}</b><br>${dataType}: ${stationData[station.name][dataType]}<br>Date Installed: ${stationData[station.name].dateInstalled}<br>`;
+      var popupContent = `<b>${station.name}</b><br>${dataType}: ${
+        stationData[station.name][dataType]
+      }<br>Date Installed: ${stationData[station.name].dateInstalled}<br>`;
       marker.setPopupContent(popupContent);
 
-      var newIconHTML = `<div style='background-color: rgba(117, 92, 12, 0.6); padding: 5px; border-radius: 5px; text-align: center; display: flex; justify-content: center; align-items: center; height: 100%;'>
-        <span style='font-size: 24px;'>${stationData[station.name][dataType]}</span>${dataType === "rainfall" ? " mm" : ""}
+      var newIconHTML = `<div>
+        <span>${stationData[station.name][dataType]}</span>
+        ${dataType === "rainfall" ? " mm" : ""}
       </div>`;
 
-      marker.setIcon(L.divIcon({
-        className: "custom-div-icon",
-        html: newIconHTML,
-        iconSize: [50, 50],
-        iconAnchor: [25, 25],
-      }));
+      marker.setIcon(
+        L.divIcon({
+          className: "custom-div-icon",
+          html: newIconHTML,
+          iconSize: [50, 50],
+          iconAnchor: [25, 25],
+        })
+      );
     });
   }
 
@@ -130,17 +149,23 @@ document.addEventListener("DOMContentLoaded", function () {
     var stations = initializeMarkers(map, "rainfall");
 
     // Event listeners for data switching buttons
-    document.getElementById("rainfall-button").addEventListener("click", function () {
-      changeData(stations, "rainfall");
-    });
+    document
+      .getElementById("rainfall-button")
+      .addEventListener("click", function () {
+        changeData(stations, "rainfall");
+      });
 
-    document.getElementById("soilSaturation-button").addEventListener("click", function () {
-      changeData(stations, "soilSaturation");
-    });
+    document
+      .getElementById("soilSaturation-button")
+      .addEventListener("click", function () {
+        changeData(stations, "soilSaturation");
+      });
 
-    document.getElementById("landslide-button").addEventListener("click", function () {
-      changeData(stations, "landslideSusceptibility");
-    });
+    document
+      .getElementById("landslide-button")
+      .addEventListener("click", function () {
+        changeData(stations, "landslideSusceptibility");
+      });
   }
 
   // Initialize the map and markers
