@@ -1,6 +1,6 @@
 // mapInit.js
 
-import stationData from "./stationData.js";
+import stationInfo from "./stationInfo.js";
 
 document.addEventListener("DOMContentLoaded", function () {
   // Function to initialize the Leaflet map
@@ -78,7 +78,7 @@ document.addEventListener("DOMContentLoaded", function () {
       var customIcon = L.divIcon({
         className: "custom-div-icon",
         html: `<div>
-          <span>${stationData[station.name][dataType]}</span>
+          <span>${stationInfo[station.name][dataType]}</span>
           ${dataType === "rainfall" ? " mm" : ""}
         </div>`,
         iconSize: [50, 50],
@@ -87,8 +87,8 @@ document.addEventListener("DOMContentLoaded", function () {
 
       var marker = L.marker(station.coords, { icon: customIcon }).addTo(map);
       var popupContent = `<b>${station.name}</b><br>${dataType}: ${
-        stationData[station.name][dataType]
-      }<br>Date Installed: ${stationData[station.name].dateInstalled}<br>`;
+        stationInfo[station.name][dataType]
+      }<br>Date Installed: ${stationInfo[station.name].dateInstalled}<br>`;
       marker.bindPopup(popupContent);
 
       if (!station.marker) {
@@ -123,12 +123,12 @@ document.addEventListener("DOMContentLoaded", function () {
     stations.forEach(function (station) {
       var marker = station.marker;
       var popupContent = `<b>${station.name}</b><br>${dataType}: ${
-        stationData[station.name][dataType]
-      }<br>Date Installed: ${stationData[station.name].dateInstalled}<br>`;
+        stationInfo[station.name][dataType]
+      }<br>Date Installed: ${stationInfo[station.name].dateInstalled}<br>`;
       marker.setPopupContent(popupContent);
 
       var newIconHTML = `<div>
-        <span>${stationData[station.name][dataType]}</span>
+        <span>${stationInfo[station.name][dataType]}</span>
         ${dataType === "rainfall" ? " mm" : ""}
       </div>`;
 
@@ -142,6 +142,7 @@ document.addEventListener("DOMContentLoaded", function () {
       );
     });
   }
+
 
   // Main initialization function
   function initialize() {

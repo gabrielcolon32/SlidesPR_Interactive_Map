@@ -1,4 +1,4 @@
-const stationData = {
+const stationInfo = {
     Adjuntas: {
       rainfall: 15,
       soilSaturation: "High",
@@ -181,4 +181,4 @@ const stationData = {
     }
   }
 
-export default stationData;
+export default stationInfo;
