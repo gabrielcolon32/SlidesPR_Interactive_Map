@@ -26,7 +26,7 @@ document.addEventListener("DOMContentLoaded", function () {
       }
     ).addTo(map);
 
-    var tiledLayer = L.esri
+    var susceptibilityLayer = L.esri
       .tiledMapLayer({
         url: "https://tiles.arcgis.com/tiles/TQ9qkk0dURXSP7LQ/arcgis/rest/services/Susceptibilidad_Derrumbe_PR/MapServer",
         opacity: 0.5,
@@ -34,7 +34,19 @@ document.addEventListener("DOMContentLoaded", function () {
       .addTo(map);
 
     // Error handling for tiled layer
-    tiledLayer.on("tileerror", function (error) {
+    susceptibilityLayer.on("tileerror", function (error) {
+      console.error("Tile error:", error);
+    });
+
+    var municipalityLayer = L.esri
+      .tiledMapLayer({
+        url: "https://tiles.arcgis.com/tiles/TQ9qkk0dURXSP7LQ/arcgis/rest/services/Susceptibilidad_Derrumbe_PR/MapServer",
+        opacity: 0.5,
+      })
+      .addTo(map);
+
+    // Error handling for tiled layer
+    municipalityLayer.on("tileerror", function (error) {
       console.error("Tile error:", error);
     });
 
