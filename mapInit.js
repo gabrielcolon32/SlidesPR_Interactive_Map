@@ -1,5 +1,3 @@
-// mapInit.js
-
 import stationData from "./stationData.js";
 
 document.addEventListener("DOMContentLoaded", function () {
@@ -38,17 +36,19 @@ document.addEventListener("DOMContentLoaded", function () {
       console.error("Tile error:", error);
     });
 
-    var municipalityLayer = L.esri.featureLayer({
-      url: "https://services5.arcgis.com/TQ9qkk0dURXSP7LQ/arcgis/rest/services/LIMITES_LEGALES_MUNICIPIOS/FeatureServer/0",
-      opacity: 0.2,
-      color: "black",
-    }).addTo(map);
-    
+    var municipalityLayer = L.esri
+      .featureLayer({
+        url: "https://services5.arcgis.com/TQ9qkk0dURXSP7LQ/arcgis/rest/services/LIMITES_LEGALES_MUNICIPIOS/FeatureServer/0",
+        opacity: 0.2,
+        color: "black",
+      })
+      .addTo(map);
+
     // Error handling for feature layer
     municipalityLayer.on("error", function (error) {
       console.error("Feature layer error:", error);
     });
-    
+
     return map;
   }
 
@@ -106,24 +106,12 @@ document.addEventListener("DOMContentLoaded", function () {
         station.marker = marker; // Assign marker to station object
       }
 
-      if (isTouchDevice()) {
-        // For touch devices, use click to toggle popups
-        marker.on("click", function (e) {
-          if (this.getPopup().isOpen()) {
-            this.closePopup();
-          } else {
-            this.openPopup();
-          }
-        });
-      } else {
-        // For non-touch devices, use mouseover to open and mouseout to close popups
-        marker.on("mouseover", function (e) {
-          this.openPopup();
-        });
-        marker.on("mouseout", function (e) {
-          this.closePopup();
-        });
-      }
+      marker.on("mouseover", function () {
+        this.openPopup();
+      });
+      marker.on("mouseout", function () {
+        this.closePopup();
+      });
     });
 
     return stations;
