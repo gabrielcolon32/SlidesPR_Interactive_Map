@@ -1,184 +1,121 @@
-const stationData = {
-    Adjuntas: {
-      rainfall: 15,
-      soilSaturation: "High",
-      geologicUnit: "Granite",
-      soilUnit: "Loam",
-      elevation: 300,
-      slope: "Moderate",
-      landslideSusceptibility: "Low",
-      dateInstalled: "2023-06-01",
-    },
-    Añasco: {
-      rainfall: 10,
-      soilSaturation: "Medium",
-      geologicUnit: "Limestone",
-      soilUnit: "Clay",
-      elevation: 150,
-      slope: "Low",
-      landslideSusceptibility: "High",
-      dateInstalled: "2022-09-15",
-    },
-    Barranquitas: {
-      rainfall: 18,
-      soilSaturation: "High",
-      geologicUnit: "Slate",
-      soilUnit: "Sandy loam",
-      elevation: 400,
-      slope: "High",
-      landslideSusceptibility: "Medium",
-      dateInstalled: "2023-01-20",
-    },
-    Cayey: {
-      rainfall: 12,
-      soilSaturation: "Low",
-      geologicUnit: "Marble",
-      soilUnit: "Silty clay",
-      elevation: 250,
-      slope: "Moderate",
-      landslideSusceptibility: "Low",
-      dateInstalled: "2023-03-10",
-    },
-    Ciales: {
-      rainfall: 20,
-      soilSaturation: "High",
-      geologicUnit: "Quartzite",
-      soilUnit: "Clay loam",
-      elevation: 350,
-      slope: "High",
-      landslideSusceptibility: "High",
-      dateInstalled: "2022-11-05",
-    },
-    Lares: {
-      rainfall: 14,
-      soilSaturation: "Medium",
-      geologicUnit: "Shale",
-      soilUnit: "Loamy sand",
-      elevation: 280,
-      slope: "Low",
-      landslideSusceptibility: "Medium",
-      dateInstalled: "2023-04-18",
-    },
-    Maricao: {
-      rainfall: 16,
-      soilSaturation: "Medium",
-      geologicUnit: "Basalt",
-      soilUnit: "Sandy clay",
-      elevation: 320,
-      slope: "Moderate",
-      landslideSusceptibility: "Low",
-      dateInstalled: "2022-12-30",
-    },
-    Maunabo: {
-      rainfall: 8,
-      soilSaturation: "Low",
-      geologicUnit: "Gneiss",
-      soilUnit: "Silica sand",
-      elevation: 100,
-      slope: "Low",
-      landslideSusceptibility: "High",
-      dateInstalled: "2023-02-14",
-    },
-    Mayagüez: {
-      rainfall: 22,
-      soilSaturation: "High",
-      geologicUnit: "Sandstone",
-      soilUnit: "Peat",
-      elevation: 200,
-      slope: "Moderate",
-      landslideSusceptibility: "Medium",
-      dateInstalled: "2022-10-10",
-    },
-    Naguabo: {
-      rainfall: 9,
-      soilSaturation: "Low",
-      geologicUnit: "Limestone",
-      soilUnit: "Clay loam",
-      elevation: 50,
-      slope: "Low",
-      landslideSusceptibility: "Low",
-      dateInstalled: "2023-05-25",
-    },
-    Naranjito: {
-      rainfall: 11,
-      soilSaturation: "Medium",
-      geologicUnit: "Schist",
-      soilUnit: "Silty clay loam",
-      elevation: 380,
-      slope: "High",
-      landslideSusceptibility: "High",
-      dateInstalled: "2022-08-20",
-    },
-    Orocovis: {
-      rainfall: 13,
-      soilSaturation: "Medium",
-      geologicUnit: "Dolomite",
-      soilUnit: "Sandy clay loam",
-      elevation: 270,
-      slope: "Moderate",
-      landslideSusceptibility: "Medium",
-      dateInstalled: "2023-07-05",
-    },
-    Ponce: {
-      rainfall: 17,
-      soilSaturation: "High",
-      geologicUnit: "Conglomerate",
-      soilUnit: "Peaty clay",
-      elevation: 180,
-      slope: "Low",
-      landslideSusceptibility: "Low",
-      dateInstalled: "2022-07-15",
-    },
-    "San Lorenzo": {
-      rainfall: 19,
-      soilSaturation: "High",
-      geologicUnit: "Gabbro",
-      soilUnit: "Silt loam",
-      elevation: 320,
-      slope: "Moderate",
-      landslideSusceptibility: "Medium",
-      dateInstalled: "2023-09-10",
-    },
-    "Toro Negro": {
-      rainfall: 14,
-      soilSaturation: "Medium",
-      geologicUnit: "Andesite",
-      soilUnit: "Loamy clay",
-      elevation: 280,
-      slope: "Moderate",
-      landslideSusceptibility: "Low",
-      dateInstalled: "2023-08-12",
-    },
-    Utuado: {
-      rainfall: 16,
-      soilSaturation: "High",
-      geologicUnit: "Granodiorite",
-      soilUnit: "Silty clay loam",
-      elevation: 350,
-      slope: "High",
-      landslideSusceptibility: "High",
-      dateInstalled: "2022-11-30",
-    },
-    Yabucoa: {
-      rainfall: 7,
-      soilSaturation: "Low",
-      geologicUnit: "Quartz",
-      soilUnit: "Peaty sand",
-      elevation: 70,
-      slope: "Low",
-      landslideSusceptibility: "Low",
-      dateInstalled: "2023-01-02",
-    },
-    Yauco: {
-      rainfall: 12,
-      soilSaturation: "Medium",
-      geologicUnit: "Rhyolite",
-      soilUnit: "Sandy silt",
-      elevation: 220,
-      slope: "Moderate",
-      landslideSusceptibility: "Medium",
-      dateInstalled: "2022-12-18"
-    }
+const dataURL = "./public_html/files/network/data/"; // Base URL for CSV files
+
+// Initial station info without predefined properties
+const stationInfo = {
+  adjuntas: {},
+  anasco: {},
+  barranquitas: {},
+  cayey: {},
+  ciales: {},
+  lares: {},
+  maricao: {},
+  maunabo: {},
+  mayaguez: {},
+  naguabo: {},
+  naranjito: {},
+  orocovis: {},
+  ponce: {},
+  sanlorenzo: {},
+  toronegro: {},
+  utuado: {},
+  yabucoa: {},
+  yauco: {}
+};
+
+// Fetch CSV data from a file
+async function fetchFileData(fileName) {
+  try {
+    const response = await fetch(`${dataURL}${fileName}`);
+    if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+    const csvText = await response.text();
+    console.log(`Contents of ${fileName}:`, csvText);
+    parseCSV(csvText, fileName);
+  } catch (error) {
+    console.error(`Error fetching file ${fileName}:`, error);
+  }
+}
+
+// Parse CSV data and update station info
+function parseCSV(csvText, fileName) {
+  const rows = csvText.trim().split("\n");
+
+  if (rows.length < 5) {
+    console.error("CSV file does not contain enough rows.");
+    return;
   }
 
-export default stationData;
+  // Extract headers from the second row
+  const headers = rows[1].split(",").map(header => header.trim());
+
+  // Extract values from the last row
+  const values = rows[rows.length - 1].split(",").map(value => value.trim());
+
+  // Get station name from the file name
+  const stationName = fileName.split("_")[0].toLowerCase();
+
+  if (!stationInfo[stationName]) {
+    console.warn(`Station ${stationName} not found in stationInfo.`);
+    return;
+  }
+
+  console.log(`Parsing CSV data for station ${stationName}`);
+
+  // Update the station info with the latest values
+  headers.forEach((header, index) => {
+    if (index === 0) return; // Skip TIMESTAMP column
+
+    const propertyName = header.trim();
+    const value = values[index]?.trim();
+
+    // Add new properties to the station if they don't exist
+    if (!(propertyName in stationInfo[stationName])) {
+      stationInfo[stationName][propertyName] = "";
+    }
+
+    // Update property value
+    stationInfo[stationName][propertyName] = value || "";
+  });
+
+  // Ensure TIMESTAMP is updated
+  stationInfo[stationName].TIMESTAMP = values[0]?.trim();
+
+  console.log(`Updated stationInfo for ${stationName}:`, stationInfo[stationName]);
+}
+
+// Hardcoded list of files to fetch
+const fileNames = [
+  "adjuntas_t5minute.dat",
+  "anasco_t5minute.dat",
+  "barranquitas_t5minute.dat",
+  "cayey_t5minute.dat",
+  "ciales_t5minute.dat",
+  "lares_t5minute.dat",
+  "maricao_t5minute.dat",
+  "maunabo_t5minute.dat",
+  "mayaguez_t5minute.dat",
+  "naguabo_t5minute.dat",
+  "naranjito_t5minute.dat",
+  "orocovis_t5minute.dat",
+  "ponce_t5minute.dat",
+  "sanlorenzo_t5minute.dat",
+  "toronegro_t5minute.dat",
+  "utuado_t5minute.dat",
+  "Yabucoa_t5minute.dat",
+  "yauco_t5minute.dat"
+];
+
+// Process all files in the list
+async function processFiles() {
+  try {
+    console.log(`Processing files:`, fileNames);
+    const fileDataPromises = fileNames.map(fileName => fetchFileData(fileName));
+    await Promise.all(fileDataPromises);
+    console.log("Final Station Data:", stationInfo);
+    return stationInfo;
+  } catch (error) {
+    console.error("Error processing files:", error);
+  }
+}
+
+// Call the function to test
+processFiles();
