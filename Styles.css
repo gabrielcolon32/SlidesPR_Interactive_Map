@@ -34,9 +34,27 @@
 }
 
 body {
-  font-family: Arial, sans-serif;
-  margin: 0;
-  padding: 0;
+  background-color: #121212; /* Matte black background */
+}
+
+/* Additional styles for new buttons */
+.button-bar {
+  display: flex;
+  justify-content: center;
+  padding: 1rem 0;
+}
+
+.button-bar button {
+  background-color: #333;
+  color: white;
+  border: none;
+  padding: 0.5rem 1rem;
+  margin: 0 0.5rem;
+  cursor: pointer;
+}
+
+.button-bar button:hover {
+  background-color: #555;
 }
 
 header {
