@@ -1,6 +1,6 @@
-import stationInfo from "./stationData.js";
+import { stationInfo, processFiles } from "./stationData.js";
 
-document.addEventListener("DOMContentLoaded", function () {
+document.addEventListener("DOMContentLoaded", async function () {
   // Function to initialize the Leaflet map
   function initializeMap() {
     var map = L.map("map", {
@@ -23,7 +23,8 @@ document.addEventListener("DOMContentLoaded", function () {
         maxZoom: 18,
       }
     ).addTo(map);
-
+ 
+    // Add susceptibility layer with error handling
     var susceptibilityLayer = L.esri
       .tiledMapLayer({
         url: "https://tiles.arcgis.com/tiles/TQ9qkk0dURXSP7LQ/arcgis/rest/services/Susceptibilidad_Derrumbe_PR/MapServer",
@@ -35,7 +36,8 @@ document.addEventListener("DOMContentLoaded", function () {
     susceptibilityLayer.on("tileerror", function (error) {
       console.error("Tile error:", error);
     });
-
+ 
+    // Add municipality layer with error handling
     var municipalityLayer = L.esri
       .featureLayer({
         url: "https://services5.arcgis.com/TQ9qkk0dURXSP7LQ/arcgis/rest/services/LIMITES_LEGALES_MUNICIPIOS/FeatureServer/0",
@@ -52,101 +54,133 @@ document.addEventListener("DOMContentLoaded", function () {
     return map;
   }
 
-  // Updated stations with new names and coordinates
+  // Updated stations with new names and coordinates. vwc_max is the record max volumetric water content for each station.
   var stations = [
-    { name: "Adjuntas", coords: [18.1629, -66.7231] },
-    { name: "Añasco", coords: [18.2844, -67.1424] },
-    { name: "Barranquitas", coords: [18.1886, -66.3071] },
-    { name: "Cayey", coords: [18.111, -66.166] },
-    { name: "Ciales", coords: [18.3367, -66.4682] },
-    { name: "Lares", coords: [18.2958, -66.8782] },
-    { name: "Maricao", coords: [18.1823, -66.9818] },
-    { name: "Maunabo", coords: [18.0086, -65.9011] },
-    { name: "Mayagüez", coords: [18.2013, -67.1397] },
-    { name: "Naguabo", coords: [18.2113, -65.7358] },
-    { name: "Naranjito", coords: [18.3, -66.25] },
-    { name: "Orocovis", coords: [18.23, -66.3883] },
-    { name: "Ponce", coords: [18.0111, -66.6141] },
-    { name: "San Lorenzo", coords: [18.1897, -65.9721] },
-    { name: "Toro Negro", coords: [18.1723, -66.495] },
-    { name: "Utuado", coords: [18.2681, -66.7005] },
-    { name: "Yabucoa", coords: [18.0919, -65.8802] },
-    { name: "Yauco", coords: [18.034, -66.8497] },
+    { name: "adjuntas", display_name: "Adjuntas", coords: [18.1629, -66.7231], vwc_max: 0.521 },
+    { name: "anasco", display_name: "Añasco", coords: [18.2844, -67.1424], vwc_max: 0.500 },
+    { name: "barranquitas", display_name: "Barranquitas", coords: [18.1886, -66.3071], vwc_max: 0.263 },
+    { name: "cayey", display_name: "Cayey", coords: [18.111, -66.166], vwc_max: 0.492},
+    { name: "ciales", display_name: "Ciales", coords: [18.3367, -66.4682], vwc_max: 0.475},
+    { name: "lares", display_name: "Lares", coords: [18.2958, -66.8782], vwc_max: 0.495},
+    { name: "maricao", display_name: "Maricao", coords: [18.1823, -66.9818], vwc_max: 0.447},
+    { name: "maunabo", display_name: "Maunabo", coords: [18.0086, -65.9011], vwc_max: 0.372},
+    { name: "mayaguez", display_name: "Mayagüez", coords: [18.2013, -67.1397], vwc_max: 0.450 },
+    { name: "naguabo", display_name: "Naguabo", coords: [18.2113, -65.7358], vwc_max: 0.439 },
+    { name: "naranjito", display_name: "Naranjito", coords: [18.3, -66.25], vwc_max: 0.424 },
+    { name: "orocovis", display_name: "Orocovis", coords: [18.23, -66.3883], vwc_max: 0.479},
+    { name: "ponce", display_name: "Ponce", coords: [18.0111, -66.6141], vwc_max: 0.434},
+    { name: "sanlorenzo", display_name: "San Lorenzo", coords: [18.1897, -65.9721], vwc_max: 0.485},
+    { name: "toronegro", display_name: "Toro Negro", coords: [18.1723, -66.495], vwc_max: 0.483},
+    { name: "utuado", display_name: "Utuado", coords: [18.2681, -66.7005], vwc_max: 0.450},
+    { name: "yabucoa", display_name: "Yabucoa", coords: [18.0919, -65.8802], vwc_max: 0.372},
+    { name: "yauco", display_name: "Yauco", coords: [18.034, -66.8497], vwc_max: 0.492},
   ];
 
-  // Check if the device is a touch device
-  function isTouchDevice() {
-    return (
-      "ontouchstart" in window ||
-      navigator.maxTouchPoints > 0 ||
-      navigator.msMaxTouchPoints > 0
-    );
-  }
-
-  // Function to initialize markers and handle interactions
   function initializeMarkers(map, dataType) {
     stations.forEach(function (station) {
-      var customIcon = L.divIcon({
-        className: "custom-div-icon",
-        html: `<div>
-          <span>${stationInfo[station.name][dataType]}</span>
-          ${dataType === "rainfall" ? " mm" : ""}
-        </div>`,
-        iconSize: [50, 50],
-        iconAnchor: [25, 25],
-      });
+        const stationData = JSON.parse(JSON.stringify(stationInfo[station.name]));
+        var value;
+        if (!stationData) {
+            console.warn(`No data found for station: ${station.name}`);
+            return; // Skip this station if no data is found
+        }
 
-      var marker = L.marker(station.coords, { icon: customIcon }).addTo(map);
-      var popupContent = `<b>${station.name}</b><br>${dataType}: ${
-        stationInfo[station.name][dataType]
-      }<br>Date Installed: ${stationInfo[station.name].dateInstalled}<br>`;
-      marker.bindPopup(popupContent);
+        if (dataType === "rainfall") {
+            value = stationData['"Rain_mm_Tot"'];
+        } else if (dataType === "soilSaturation") {
+            const wc4Key = Object.keys(stationData).find(key => key.toString().startsWith('"wc4'));
+            if (wc4Key) {
+                value = (stationData[wc4Key] / station.vwc_max) * 100;
+                value = value.toFixed(0) + "%"; // Format as percentage
+            } else {
+                value = "N/A"; // Handle missing data
+            }
+        } else {
+            value = stationData[dataType];
+        }
 
-      if (!station.marker) {
-        station.marker = marker; // Assign marker to station object
-      }
+        var customIcon = L.divIcon({
+            className: "custom-div-icon",
+            html: `<div>
+              <span>${value}</span>
+              ${dataType === "rainfall" ? "<br>mm" : ""}
+            </div>`,
+            iconSize: [50, 50],
+            iconAnchor: [25, 25],
+        });
 
-      marker.on("mouseover", function () {
-        this.openPopup();
-      });
-      marker.on("mouseout", function () {
-        this.closePopup();
-      });
+        // Add marker to the map
+        var marker = L.marker(station.coords, { icon: customIcon }).addTo(map);
+        var popupContent = `<b>${station.display_name}</b><br>${dataType}: ${value}<br>Date Installed: ${stationData["dateInstalled"]}<br>`;
+        marker.bindPopup(popupContent);
+
+        if (!station.marker) {
+            station.marker = marker; // Assign marker to station object
+        }
+
+        // Add event listeners for marker popups
+        marker.on("mouseover", function () {
+            this.openPopup();
+        });
+        marker.on("mouseout", function () {
+            this.closePopup();
+        });
     });
 
     return stations;
-  }
+}
 
-  // Function to handle data switching
-  function changeData(stations, dataType) {
+function changeData(stations, dataType) {
     stations.forEach(function (station) {
-      var marker = station.marker;
-      var popupContent = `<b>${station.name}</b><br>${dataType}: ${
-        stationInfo[station.name][dataType]
-      }<br>Date Installed: ${stationInfo[station.name].dateInstalled}<br>`;
-      marker.setPopupContent(popupContent);
+        const stationData = stationInfo[station.name];
+        if (!stationData) {
+            console.warn(`No data found for station: ${station.name}`);
+            return; // Skip this station if no data is found
+        }
 
-      var newIconHTML = `<div>
-        <span>${stationInfo[station.name][dataType]}</span>
-        ${dataType === "rainfall" ? " mm" : ""}
-      </div>`;
+        var marker = station.marker;
+        var value;
 
-      marker.setIcon(
-        L.divIcon({
-          className: "custom-div-icon",
-          html: newIconHTML,
-          iconSize: [50, 50],
-          iconAnchor: [25, 25],
-        })
-      );
+        // Check data type and assign value accordingly
+        if (dataType === "rainfall") {
+            value = stationData['"Rain_mm_Tot"'];
+        } else if (dataType === "soilSaturation") {
+            const wc4Key = Object.keys(stationData).find(key => key.toString().startsWith('"wc4')); //"wc4" is the deepest water content sensor
+            if (wc4Key) {
+                value = (stationData[wc4Key] / station.vwc_max) * 100;
+                value = value.toFixed(0) + "%"; // Format as percentage
+            } else {
+                value = "N/A"; // Handle missing data
+            }
+        } else {
+            value = "N/A"; // Handle invalid data type
+        }
+
+        value = value !== undefined ? value : "N/A"; // Handle missing data
+        var popupContent = `<b>${station.display_name}</b><br>${dataType}: ${value}<br>Date Installed: ${stationData.dateInstalled}<br>`;
+        marker.setPopupContent(popupContent);
+
+        var newIconHTML = 
+        `<div>
+          <span>${value}</span>
+          ${dataType === "rainfall" ? "<br>mm" : ""}
+        </div>`;
+
+        marker.setIcon(
+            L.divIcon({
+                className: "custom-div-icon",
+                html: newIconHTML,
+                iconSize: [50, 50],
+                iconAnchor: [25, 25],
+            })
+        );
     });
-  }
-
-
+}
   // Main initialization function
-  function initialize() {
+  async function initialize() {
+    await processFiles(); // Fetch and process station data
     var map = initializeMap();
-    var stations = initializeMarkers(map, "rainfall");
+    var stations = initializeMarkers(map, "soilSaturation");
 
     // Event listeners for data switching buttons
     document
@@ -159,12 +193,6 @@ document.addEventListener("DOMContentLoaded", function () {
       .getElementById("soilSaturation-button")
       .addEventListener("click", function () {
         changeData(stations, "soilSaturation");
-      });
-
-    document
-      .getElementById("landslide-button")
-      .addEventListener("click", function () {
-        changeData(stations, "landslideSusceptibility");
       });
   }
 
