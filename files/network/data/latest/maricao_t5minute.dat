@@ -1,0 +1,5 @@
+"TOA5","maricao","CR6","16534","CR6.Std.11.00","CPU:maricao_7_18_24.CR6","54765","t5minute"
+"TIMESTAMP","RECORD","BattV_Min","PanelTemp_C","Enc_RH_Max","Rain_mm_Tot","Freq","piezTemp","waterLevel","suction1_33cm","suction2_66cm","suction3_99cm","wc1_33cm","wc2_66cm","wc3_99cm","wc4_130cm"
+"TS","RN","Volts","Deg C","%","mm","Hz","degC","m","kPa","kPa","kPa","vol water/total vol","vol water/total vol","vol water/total vol","vol water/total vol"
+"","","Min","Smp","Max","Tot","Smp","Smp","Smp","Smp","Smp","Smp","Smp","Smp","Smp","Smp"
+"2024-08-07 20:00:00",5574,13.13,24.28,6.48,0,3083,25.15,-0.05155142,-0.5,-0.4,0,0.3607589,0.4036063,0.3843564,0.3283656

@@ -1,0 +1,5 @@
+"TOA5","barranquitas","CR1000X","34548","CR1000X.Std.05.02","CPU:barranquitas_CR1000x_5-11-24.CR1X","47840","t5minute"
+"TIMESTAMP","RECORD","BattV_Min","PanelTemp_C","Enc_RH_Max","Rain_mm_Tot","rain_cum","Freq2","air_temp","atmos_pressure","AVWRC","Freq","Amp","SNRat","NFreq","DRat","ThermRes","ThermTemp","Lvl","suction1_25cm","suction2_50cm","suction3_78cm","wc1_25cm","wc2_53cm","wc3_82cm","wc4_100cm"
+"TS","RN","Volts","","%","mm","cm","Hz","degC","kPa","","Hz","mV RMS","","Hz","","ohms","deg C","mH2O","kPa","kPa","kPa","vol water/total vol","vol water/total vol","vol water/total vol","vol water/total vol"
+"","","Min","Smp","Max","Tot","Smp","Smp","Smp","Smp","Smp","Smp","Smp","Smp","Smp","Smp","Smp","Smp","Smp","Smp","Smp","Smp","Smp","Smp","Smp","Smp"
+"2024-08-07 20:00:00",6118,12.99,25.64,9.74,0,0.14,"NAN",-145.1532,"NAN",0,2899,1.188,452.1,2003,0.531,3132,24.02,0.012,-278.6,-76.8,-1613.8,0.1180432,0.07496959,0.08222455,0.07999742

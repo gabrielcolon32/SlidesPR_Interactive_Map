@@ -1,0 +1,5 @@
+"TOA5","Yabucoa","CR1000X","45829","CR1000X.Std.06.02","CPU:yabucoa_06B-dec-2023.CR1X","56485","t5minute"
+"TIMESTAMP","RECORD","BattV_Min","PanelTemp_C","Rain_mm_Tot","rain_cum","Freq2","air_temp","atmos_pressure","Freq","piezTemp","Lvl","suction1_25cm","suction2_50cm","suction3_75cm","wc1_25cm","wc2_50cm","wc3_75cm","wc4_100cm"
+"TS","RN","Volts","","mm","cm","Hz","degC","kPa","Hz","degC","mh20","kPa","kPa","kPa","vol water/total vol","vol water/total vol","vol water/total vol","vol water/total vol"
+"","","Min","Smp","Tot","Smp","Smp","Smp","Smp","Smp","Smp","Smp","Smp","Smp","Smp","Smp","Smp","Smp","Smp"
+"2024-08-07 20:00:00",38639,13.05,26.34,0,104.4,2992,24.89188,101.4355,3009,25.37,-0.02337395,"NAN",-1,0,0.1560981,0.2487452,0.2738819,0.3242204

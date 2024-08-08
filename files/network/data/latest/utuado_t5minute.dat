@@ -1,0 +1,5 @@
+"TOA5","utuado","CR1000X","57475","CR1000X.Std.07.01","CPU:utuado_26-jul-2024.CR1X","15815","t5minute"
+"TIMESTAMP","RECORD","BattV_Min","PanelTemp_C","Enc_RH_Max","Rain_mm_Tot","rain_cum","Freq","Freq2","piezTemp","piezTemp2","Lvl","Lvl2","lvltempcorr","lvl2tempcorr","suction72cm","suction57cm","suction42cm","wc1_27cm","wc2_42cm","wc3_57cm","wc4_72cm"
+"TS","RN","Volts","","%","mm","cm","Hz","","degC","","mh20","","mH2O","mH2O","kPa","kPa","kPa","mV","mV","mV","mV"
+"","","Min","Smp","Max","Tot","Smp","Smp","Smp","Smp","Smp","Smp","Smp","Smp","Smp","Smp","Smp","Smp","Smp","Smp","Smp","Smp"
+"2024-08-07 20:00:00",3535,13.05,22.65,8.34,0,13.08,2874,2718,23.75,23.67,0.05968193,0.01255545,0.1822717,0.1061116,-7.2,-60.8,-181.1,0.2238104,0.1832905,0.1906535,0.3064534

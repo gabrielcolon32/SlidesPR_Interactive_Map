@@ -1,0 +1,5 @@
+"TOA5","naguabo","CR1000X","30764","CR1000X.Std.05.01","CPU:naguabo_7_12_22.CR1X","23010","t5minute"
+"TIMESTAMP","RECORD","BattV_Min","PanelTemp_C","Rain_mm_Tot","rain_cum","Freq2","air_temp","atmos_pressure","Freq","piezTemp","Lvl","suction1_25cm","suction2_50cm","suction3_75cm","wc1_25cm","wc2_50cm","wc3_75cm","wc4_100cm"
+"TS","RN","Volts","","mm","cm","Hz","degC","kPa","Hz","degC","mh20","kPa","kPa","kPa","vol water/total vol","vol water/total vol","vol water/total vol","vol water/total vol"
+"","","Min","Smp","Tot","Smp","Smp","Smp","Smp","Smp","Smp","Smp","Smp","Smp","Smp","Smp","Smp","Smp","Smp"
+"2024-08-07 20:00:00",38300,12.61,25.48,0,124.1,3076,23.88208,101.1102,3030,24.89,-0.1815458,-0.8,-0.4,"NAN",0.2939098,0.2558435,0.3998047,0.376103

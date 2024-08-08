@@ -1,0 +1,5 @@
+"TOA5","ponce","CR1000X","45832","CR1000X.Std.07.02","CPU:ANASCO_18-JUL-2024 - Copy_1.CR1X","23853","t5minute"
+"TIMESTAMP","RECORD","BattV_Min","PanelTemp_C","Enc_RH_Max","Rain_mm_Tot","rain_cum","Freq2","air_temp","atmos_pressure","Freq","piezTemp","Lvl","suction1_25cm","suction2_50cm","suction3_75cm","wc1_25cm","wc2_50cm","wc3_75cm","wc4_100cm"
+"TS","RN","Volts","","%","mm","cm","Hz","degC","kPa","Hz","degC","mh20","kPa","kPa","kPa","vol water/total vol","vol water/total vol","vol water/total vol","vol water/total vol"
+"","","Min","Smp","Max","Tot","Smp","Smp","Smp","Smp","Smp","Smp","Smp","Smp","Smp","Smp","Smp","Smp","Smp","Smp"
+"2024-08-07 20:00:00",1524,13.12,25.88,6.691,0,3.02,3170,25.17603,99.71322,3040,24.82,0.06590715,0,-0.1,-0.1,0.3336056,0.3269252,0.3760327,0.3595242

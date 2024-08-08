@@ -1,0 +1,5 @@
+"TOA5","yauco","CR1000X","42589","CR1000X.Std.06.00","CPU:yauco_jul17-2024.CR1X","11383","t5minute"
+"TIMESTAMP","RECORD","BattV_Min","PanelTemp_C","Enc_RH_Max","Rain_mm_Tot","rain_cum","Freq2","air_temp","atmos_pressure","Freq","piezTemp","Lvl","suction1_25cm","suction2_50cm","suction3_75cm","wc1_25cm","wc2_50cm","wc3_75cm","wc4_100cm"
+"TS","RN","Volts","","%","mm","cm","Hz","degC","kPa","Hz","degC","mh20","kPa","kPa","kPa","vol water/total vol","vol water/total vol","vol water/total vol","vol water/total vol"
+"","","Min","Smp","Max","Tot","Smp","Smp","Smp","Smp","Smp","Smp","Smp","Smp","Smp","Smp","Smp","Smp","Smp","Smp"
+"2024-08-07 20:00:00",6118,12.91,21.95,17.68,0,8.62,3104,20.9646,96.58442,3134,22.57,-0.02483326,0,0,0,0.3656011,0.2327111,0.2191209,0.4263638

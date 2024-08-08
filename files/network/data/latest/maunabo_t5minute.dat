@@ -1,0 +1,5 @@
+"TOA5","maunabo","CR1000X","42590","CR1000X.Std.07.01","CPU:maunabo_CR1000x_2_2_24.CR1X","16857","t5minute"
+"TIMESTAMP","RECORD","BattV_Min","PanelTemp_C","Rain_mm_Tot","rain_cum","Freq","piezTemp","Lvl","Freq2","air_temp","atmos_pressure","suction1_27.5cm","suction2_55cm","suction3_77.5cm","wc1_27.5cm","wc2_55cm","wc3_77.5cm","wc4_110cm"
+"TS","RN","Volts","","mm","cm","Hz","degC","mh20","Hz","degC","kPa","kPa","kPa","kPa","vol water/total vol","vol water/total vol","vol water/total vol","vol water/total vol"
+"","","Min","Smp","Tot","Smp","Smp","Smp","Smp","Smp","Smp","Smp","Smp","Smp","Smp","Smp","Smp","Smp","Smp"
+"2024-08-07 20:00:00",53954,12.97,25.7,0,40.72,3100,25.17,-0.1159765,3154,24.06735,99.74711,-2.4,-3.7,-2.3,0.1803349,0.1821184,0.2393801,0.2657447

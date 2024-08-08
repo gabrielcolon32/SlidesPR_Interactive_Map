@@ -1,0 +1,5 @@
+"TOA5","ciales","CR1000X","57474","CR1000X.Std.07.02","CPU:ciales_05b-apr-2024.CR1X","41333","t5minute"
+"TIMESTAMP","RECORD","BattV_Min","PanelTemp_C","Enc_RH_Max","Rain_mm_Tot","rain_cum","Freq2","air_temp","atmos_pressure","Freq","piezTemp","Lvl","suction1_22.5cm","suction2_45cm","suction3_67.5cm","wc1_22.5cm","wc2_45cm","wc3_67.5cm","wc4_90cm"
+"TS","RN","Volts","","%","mm","cm","Hz","degC","kPa","Hz","degC","mh20","kPa","kPa","kPa","vol water/total vol","vol water/total vol","vol water/total vol","vol water/total vol"
+"","","Min","Smp","Max","Tot","Smp","Smp","Smp","Smp","Smp","Smp","Smp","Smp","Smp","Smp","Smp","Smp","Smp","Smp"
+"2024-08-07 20:00:00",27005,13.1,26.35,22.97,0,80.9,"NAN",-142.5503,"NAN",3068,24.75,-0.05265622,-307.5,"NAN","NAN",0.2751939,0.314628,0.2508073,0.3788068

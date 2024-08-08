@@ -1,0 +1,5 @@
+"TOA5","mayaguez","CR1000X","45828","CR1000X.Std.06.01","CPU:mayaguez_2_15_24.CR1X","6562","t5minute"
+"TIMESTAMP","RECORD","BattV_Min","PanelTemp_C","Enc_RH_Max","Rain_mm_Tot","rain_cum","Freq2","air_temp","atmos_pressure","Freq","piezTemp","Lvl","suction1_20cm","suction2_40cm","suction3_60cm","wc1_20cm","wc2_40cm","wc3_60cm","wc4_80cm"
+"TS","RN","Volts","","%","mm","cm","Hz","degC","kPa","Hz","degC","mh20","kPa","kPa","kPa","vol water/total vol","vol water/total vol","vol water/total vol","vol water/total vol"
+"","","Min","Smp","Max","Tot","Smp","Smp","Smp","Smp","Smp","Smp","Smp","Smp","Smp","Smp","Smp","Smp","Smp","Smp"
+"2024-08-07 20:00:00",49907,13.23,27.5,6.227,0,57.04,3118,26.03018,103.2946,3117,25.77,0.5187201,-26.3,-82.8,-96.2,0.3439298,0.2958989,0.2022886,0.3113234
