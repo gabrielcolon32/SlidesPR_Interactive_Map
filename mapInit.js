@@ -1,7 +1,10 @@
 import { stationInfo, processFiles } from "./stationData.js";
 
 document.addEventListener("DOMContentLoaded", async function () {
-  // Function to initialize the Leaflet map
+  /**
+   * Initializes the Leaflet map with predefined settings.
+   * @returns {Object} The initialized map object.
+   */
   function initializeMap() {
     var map = L.map("map", {
       center: [18.220833, -66.420149],
@@ -12,8 +15,9 @@ document.addEventListener("DOMContentLoaded", async function () {
       ],
       minZoom: 10,
       maxZoom: 18,
+      scrollWheelZoom: false, // Disable scroll wheel zoom initially
     });
-
+  
     // Add World Imagery basemap layer
     L.tileLayer(
       "https://services.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",
@@ -23,7 +27,7 @@ document.addEventListener("DOMContentLoaded", async function () {
         maxZoom: 18,
       }
     ).addTo(map);
- 
+  
     // Add susceptibility layer with error handling
     var susceptibilityLayer = L.esri
       .tiledMapLayer({
@@ -31,12 +35,11 @@ document.addEventListener("DOMContentLoaded", async function () {
         opacity: 0.5,
       })
       .addTo(map);
-
-    // Error handling for tiled layer
+  
     susceptibilityLayer.on("tileerror", function (error) {
       console.error("Tile error:", error);
     });
- 
+  
     // Add municipality layer with error handling
     var municipalityLayer = L.esri
       .featureLayer({
@@ -45,12 +48,24 @@ document.addEventListener("DOMContentLoaded", async function () {
         color: "black",
       })
       .addTo(map);
-
-    // Error handling for feature layer
+  
     municipalityLayer.on("error", function (error) {
       console.error("Feature layer error:", error);
     });
-
+  
+    // Handle Ctrl key press and release events
+    document.addEventListener("keydown", function (event) {
+      if (event.ctrlKey) {
+        map.scrollWheelZoom.enable();
+      }
+    });
+  
+    document.addEventListener("keyup", function (event) {
+      if (!event.ctrlKey) {
+        map.scrollWheelZoom.disable();
+      }
+    });
+  
     return map;
   }
 
@@ -76,122 +91,145 @@ document.addEventListener("DOMContentLoaded", async function () {
     { name: "yauco", display_name: "Yauco", coords: [18.034, -66.8497], vwc_max: 0.492},
   ];
 
+  /**
+   * Initializes markers on the map based on station data.
+   * @param {Object} map - The Leaflet map object.
+   * @param {string} dataType - The type of data to display (e.g., "rainfall", "soilSaturation").
+   * @returns {Array} The array of station objects with markers.
+   */
   function initializeMarkers(map, dataType) {
     stations.forEach(function (station) {
-        const stationData = JSON.parse(JSON.stringify(stationInfo[station.name]));
-        var value;
-        if (!stationData) {
-            console.warn(`No data found for station: ${station.name}`);
-            return; // Skip this station if no data is found
-        }
+      const stationData = JSON.parse(JSON.stringify(stationInfo[station.name]));
+      var value;
+      if (!stationData) {
+        console.warn(`No data found for station: ${station.name}`);
+        return; // Skip this station if no data is found
+      }
 
-        if (dataType === "rainfall") {
-            value = stationData['"Rain_mm_Tot"'];
-        } else if (dataType === "soilSaturation") {
-            const wc4Key = Object.keys(stationData).find(key => key.toString().startsWith('"wc4'));
-            if (wc4Key) {
-                value = (stationData[wc4Key] / station.vwc_max) * 100;
-                value = value.toFixed(0) + "%"; // Format as percentage
-            } else {
-                value = "N/A"; // Handle missing data
-            }
+      if (dataType === "rainfall") {
+        value = stationData["12hr_rain_mm_total"];
+        value = parseFloat(value).toFixed(0); // Round to nearest int
+      } else if (dataType === "soilSaturation") {
+        const wcKey = station.name === "toronegro" ? 
+          Object.keys(stationData).find(key => key.toString().startsWith('"wc5')) :
+          Object.keys(stationData).find(key => key.toString().startsWith('"wc4'));
+        if (wcKey) {
+          value = (stationData[wcKey] / station.vwc_max) * 100;
+          value = value.toFixed(0) + "%"; // Format as percentage
         } else {
-            value = stationData[dataType];
+          value = "N/A"; // Handle missing data
         }
+      } else {
+        value = stationData[dataType];
+      }
 
-        var customIcon = L.divIcon({
-            className: "custom-div-icon",
-            html: `<div>
-              <span>${value}</span>
-              ${dataType === "rainfall" ? "<br>mm" : ""}
-            </div>`,
-            iconSize: [50, 50],
-            iconAnchor: [25, 25],
-        });
+      var customIcon = L.divIcon({
+        className: "custom-div-icon",
+        html: `<div>
+          <span>${value}</span>
+          ${dataType === "rainfall" ? "<br>mm" : ""}
+        </div>`,
+        iconSize: [50, 50],
+        iconAnchor: [25, 25],
+      });
 
-        // Add marker to the map
-        var marker = L.marker(station.coords, { icon: customIcon }).addTo(map);
-        var popupContent = `<b>${station.display_name}</b><br>${dataType}: ${value}<br>Date Installed: ${stationData["dateInstalled"]}<br>`;
-        marker.bindPopup(popupContent);
+      // Add marker to the map
+      var marker = L.marker(station.coords, { icon: customIcon }).addTo(map);
+      var popupContent = `<b>${station.display_name}</b><br>${dataType}: ${value}<br>Date Installed: ${stationData["dateInstalled"]}<br>`;
+      marker.bindPopup(popupContent);
 
-        if (!station.marker) {
-            station.marker = marker; // Assign marker to station object
-        }
+      if (!station.marker) {
+        station.marker = marker; // Assign marker to station object
+      }
 
-        // Add event listeners for marker popups
-        marker.on("mouseover", function () {
-            this.openPopup();
-        });
-        marker.on("mouseout", function () {
-            this.closePopup();
-        });
+      // Add event listeners for marker popups
+      marker.on("mouseover", function () {
+        this.openPopup();
+      });
+      marker.on("mouseout", function () {
+        this.closePopup();
+      });
     });
 
     return stations;
-}
+  }
 
-function changeData(stations, dataType) {
+  /**
+   * Updates the data displayed on the map markers.
+   * @param {Array} stations - The array of station objects with markers.
+   * @param {string} dataType - The type of data to display (e.g., "rainfall", "soilSaturation").
+   */
+  function changeData(stations, dataType) {
     stations.forEach(function (station) {
-        const stationData = stationInfo[station.name];
-        if (!stationData) {
-            console.warn(`No data found for station: ${station.name}`);
-            return; // Skip this station if no data is found
-        }
+      const stationData = stationInfo[station.name];
+      if (!stationData) {
+        console.warn(`No data found for station: ${station.name}`);
+        return; // Skip this station if no data is found
+      }
 
-        var marker = station.marker;
-        var value;
+      var marker = station.marker;
+      var value;
 
-        // Check data type and assign value accordingly
-        if (dataType === "rainfall") {
-            value = stationData['"Rain_mm_Tot"'];
-        } else if (dataType === "soilSaturation") {
-            const wc4Key = Object.keys(stationData).find(key => key.toString().startsWith('"wc4')); //"wc4" is the deepest water content sensor
-            if (wc4Key) {
-                value = (stationData[wc4Key] / station.vwc_max) * 100;
-                value = value.toFixed(0) + "%"; // Format as percentage
-            } else {
-                value = "N/A"; // Handle missing data
-            }
+      // Check data type and assign value accordingly
+      if (dataType === "rainfall") {
+        value = stationData["12hr_rain_mm_total"];
+        value = parseFloat(value).toFixed(0); // Round to nearest int
+      } else if (dataType === "soilSaturation") {
+        const wcKey = station.name === "toronegro" ? 
+          Object.keys(stationData).find(key => key.toString().startsWith('"wc5')) :
+          Object.keys(stationData).find(key => key.toString().startsWith('"wc4'));
+        if (wcKey) {
+          value = (stationData[wcKey] / station.vwc_max) * 100;
+          value = value.toFixed(0) + "%"; // Format as percentage
         } else {
-            value = "N/A"; // Handle invalid data type
+          value = "N/A"; // Handle missing data
         }
+      } else {
+        value = "N/A"; // Handle invalid data type
+      }
 
-        value = value !== undefined ? value : "N/A"; // Handle missing data
-        var popupContent = `<b>${station.display_name}</b><br>${dataType}: ${value}<br>Date Installed: ${stationData.dateInstalled}<br>`;
-        marker.setPopupContent(popupContent);
+      value = value !== undefined ? value : "N/A"; // Handle missing data
+      var popupContent = `<b>${station.display_name}</b><br>${dataType}: ${value}<br>Date Installed: ${stationData.dateInstalled}<br>`;
+      marker.setPopupContent(popupContent);
 
-        var newIconHTML = 
-        `<div>
-          <span>${value}</span>
-          ${dataType === "rainfall" ? "<br>mm" : ""}
-        </div>`;
+      var newIconHTML = 
+      `<div>
+        <span>${value}</span>
+        ${dataType === "rainfall" ? "<br>mm" : ""}
+      </div>`;
 
-        marker.setIcon(
-            L.divIcon({
-                className: "custom-div-icon",
-                html: newIconHTML,
-                iconSize: [50, 50],
-                iconAnchor: [25, 25],
-            })
-        );
+      marker.setIcon(
+        L.divIcon({
+          className: "custom-div-icon",
+          html: newIconHTML,
+          iconSize: [50, 50],
+          iconAnchor: [25, 25],
+        })
+      );
     });
-}
-  // Main initialization function
+  }
+
+  /**
+   * Main initialization function.
+   * Fetches and processes station data, initializes the map and markers, and sets up event listeners.
+   */
   async function initialize() {
-    await processFiles(); // Fetch and process station data
+    await processFiles("soilSaturation"); // Fetch and process station data
     var map = initializeMap();
     var stations = initializeMarkers(map, "soilSaturation");
 
     // Event listeners for data switching buttons
     document
       .getElementById("rainfall-button")
-      .addEventListener("click", function () {
+      .addEventListener("click", async function () {
+        await processFiles("rainfall");
         changeData(stations, "rainfall");
       });
 
     document
       .getElementById("soilSaturation-button")
-      .addEventListener("click", function () {
+      .addEventListener("click", async function () {
+        await processFiles("soilSaturation");
         changeData(stations, "soilSaturation");
       });
   }
