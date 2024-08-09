@@ -1,6 +1,13 @@
-import { stationInfo, processFiles } from "./stationData.js";
+import { fetchedStationData, processFiles } from "./fetchStationData.js";
+import { stations } from "./stationInfo.js";
 
 document.addEventListener("DOMContentLoaded", async function () {
+  // Create the overlay element
+  const overlay = document.createElement("div");
+  overlay.id = "map-overlay";
+  overlay.innerText = "Press ctrl + scroll to zoom";
+  document.getElementById("map").appendChild(overlay); // Append to the map container
+
   /**
    * Initializes the Leaflet map with predefined settings.
    * @returns {Object} The initialized map object.
@@ -10,14 +17,14 @@ document.addEventListener("DOMContentLoaded", async function () {
       center: [18.220833, -66.420149],
       zoom: 10,
       maxBounds: [
-        [17.9, -68.0],
-        [18.6, -65.0],
+        [19.0, -68.0],
+        [17.0, -65.0],
       ],
-      minZoom: 10,
+      minZoom: 9,
       maxZoom: 18,
       scrollWheelZoom: false, // Disable scroll wheel zoom initially
     });
-  
+
     // Add World Imagery basemap layer
     L.tileLayer(
       "https://services.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",
@@ -27,7 +34,7 @@ document.addEventListener("DOMContentLoaded", async function () {
         maxZoom: 18,
       }
     ).addTo(map);
-  
+
     // Add susceptibility layer with error handling
     var susceptibilityLayer = L.esri
       .tiledMapLayer({
@@ -35,11 +42,11 @@ document.addEventListener("DOMContentLoaded", async function () {
         opacity: 0.5,
       })
       .addTo(map);
-  
+
     susceptibilityLayer.on("tileerror", function (error) {
       console.error("Tile error:", error);
     });
-  
+
     // Add municipality layer with error handling
     var municipalityLayer = L.esri
       .featureLayer({
@@ -48,48 +55,37 @@ document.addEventListener("DOMContentLoaded", async function () {
         color: "black",
       })
       .addTo(map);
-  
+
     municipalityLayer.on("error", function (error) {
       console.error("Feature layer error:", error);
     });
-  
+
     // Handle Ctrl key press and release events
     document.addEventListener("keydown", function (event) {
       if (event.ctrlKey) {
         map.scrollWheelZoom.enable();
+        overlay.style.display = "none";
       }
     });
-  
+
     document.addEventListener("keyup", function (event) {
       if (!event.ctrlKey) {
         map.scrollWheelZoom.disable();
       }
     });
-  
+
+    // Show overlay on scroll without Ctrl key
+    map.getContainer().addEventListener("wheel", function (event) {
+      if (!event.ctrlKey) {
+        overlay.style.display = "flex";
+        setTimeout(() => {
+          overlay.style.display = "none";
+        }, 1000); // Hide after 1 second
+      }
+    });
+
     return map;
   }
-
-  // Updated stations with new names and coordinates. vwc_max is the record max volumetric water content for each station.
-  var stations = [
-    { name: "adjuntas", display_name: "Adjuntas", coords: [18.1629, -66.7231], vwc_max: 0.521 },
-    { name: "anasco", display_name: "Añasco", coords: [18.2844, -67.1424], vwc_max: 0.500 },
-    { name: "barranquitas", display_name: "Barranquitas", coords: [18.1886, -66.3071], vwc_max: 0.263 },
-    { name: "cayey", display_name: "Cayey", coords: [18.111, -66.166], vwc_max: 0.492},
-    { name: "ciales", display_name: "Ciales", coords: [18.3367, -66.4682], vwc_max: 0.475},
-    { name: "lares", display_name: "Lares", coords: [18.2958, -66.8782], vwc_max: 0.495},
-    { name: "maricao", display_name: "Maricao", coords: [18.1823, -66.9818], vwc_max: 0.447},
-    { name: "maunabo", display_name: "Maunabo", coords: [18.0086, -65.9011], vwc_max: 0.372},
-    { name: "mayaguez", display_name: "Mayagüez", coords: [18.2013, -67.1397], vwc_max: 0.450 },
-    { name: "naguabo", display_name: "Naguabo", coords: [18.2113, -65.7358], vwc_max: 0.439 },
-    { name: "naranjito", display_name: "Naranjito", coords: [18.3, -66.25], vwc_max: 0.424 },
-    { name: "orocovis", display_name: "Orocovis", coords: [18.23, -66.3883], vwc_max: 0.479},
-    { name: "ponce", display_name: "Ponce", coords: [18.0111, -66.6141], vwc_max: 0.434},
-    { name: "sanlorenzo", display_name: "San Lorenzo", coords: [18.1897, -65.9721], vwc_max: 0.485},
-    { name: "toronegro", display_name: "Toro Negro", coords: [18.1723, -66.495], vwc_max: 0.483},
-    { name: "utuado", display_name: "Utuado", coords: [18.2681, -66.7005], vwc_max: 0.450},
-    { name: "yabucoa", display_name: "Yabucoa", coords: [18.0919, -65.8802], vwc_max: 0.372},
-    { name: "yauco", display_name: "Yauco", coords: [18.034, -66.8497], vwc_max: 0.492},
-  ];
 
   /**
    * Initializes markers on the map based on station data.
@@ -99,69 +95,105 @@ document.addEventListener("DOMContentLoaded", async function () {
    */
   function initializeMarkers(map, dataType) {
     stations.forEach(function (station) {
-      const stationData = JSON.parse(JSON.stringify(stationInfo[station.name]));
-      var value;
+      const stationData = JSON.parse(
+        JSON.stringify(fetchedStationData[station.name])
+      );
       if (!stationData) {
-        console.warn(`No data found for station: ${station.name}`);
-        return; // Skip this station if no data is found
+        return;
       }
 
-      if (dataType === "rainfall") {
-        value = stationData["12hr_rain_mm_total"];
-        value = parseFloat(value).toFixed(0); // Round to nearest int
-      } else if (dataType === "soilSaturation") {
-        const wcKey = station.name === "toronegro" ? 
-          Object.keys(stationData).find(key => key.toString().startsWith('"wc5')) :
-          Object.keys(stationData).find(key => key.toString().startsWith('"wc4'));
-        if (wcKey) {
-          value = (stationData[wcKey] / station.vwc_max) * 100;
-          value = value.toFixed(0) + "%"; // Format as percentage
-        } else {
-          value = "N/A"; // Handle missing data
-        }
-      } else {
-        value = stationData[dataType];
+      // Calculate the saturation percentage
+      const wcKey =
+        station.name === "toronegro"
+          ? Object.keys(stationData).find((key) =>
+              key.toString().startsWith('"wc5')
+            )
+          : Object.keys(stationData).find((key) =>
+              key.toString().startsWith('"wc4')
+            );
+      const saturationPercentage = wcKey
+        ? ((stationData[wcKey] / station.vwc_max) * 100).toFixed(0) + "%"
+        : "N/A";
+
+      // Get the 12-hour rain total
+      const rainTotal =
+        parseFloat(stationData["12hr_rain_mm_total"]).toFixed(0) || "N/A";
+
+      // Get the timestamp and format it
+      const timestamp = stationData["TIMESTAMP"] || "N/A";
+      let formattedTimestamp = "N/A";
+      if (timestamp !== "N/A") {
+        // Format the timestamp here
       }
 
+      // Construct the popup content with station information
+      const popupContent = `
+        <div class="leaflet-popup-content">
+          <figure>
+            <img src="/path/to/images/${station.name}.jpg" alt="${station.display_name}">
+            <figcaption>${station.display_name} Station</figcaption>
+          </figure>
+          <div class="info">
+            <p><strong>Saturation:</strong> ${saturationPercentage}</p>
+            <p><strong>12hr Rain Total:</strong> ${rainTotal} mm</p>
+            <p><strong>Timestamp:</strong> ${formattedTimestamp}</p>
+            <p><strong>Elevation:</strong> ${station.elevation}</p>
+            <p><strong>Slope:</strong> ${station.slope}</p>
+            <p><strong>Landslide Susceptibility:</strong> ${station.landslideSusceptibility}</p>
+          </div>
+        </div>
+      `;
+
+      // Determine the icon background color based on saturation level
+      const backgroundColor =
+        dataType === "soilSaturation" && parseFloat(saturationPercentage) >= 90
+          ? "rgba(175, 9, 9, 0.9)"
+          : dataType === "soilSaturation"
+          ? "rgba(10, 41, 95, 0.9)"
+          : "rgba(10, 41, 95, 0.9)";
+
+      // Create a custom icon
       var customIcon = L.divIcon({
         className: "custom-div-icon",
-        html: `<div>
-          <span>${value}</span>
-          ${dataType === "rainfall" ? "<br>mm" : ""}
-        </div>`,
+        html: `<div style="background-color: ${backgroundColor}; color: white; padding: 5px; border-radius: 5px; display: flex; flex-direction: column; text-align: center; justify-content: center; align-items: center; height: 100%;">
+          <span style="font-size: 24px; color: white;">
+            ${dataType === "rainfall" ? rainTotal : saturationPercentage}
+          </span>
+          ${dataType === "rainfall" ? "mm" : ""}
+          </div>`,
         iconSize: [50, 50],
         iconAnchor: [25, 25],
       });
 
-      // Add marker to the map
+      // Add marker to the map with popup
       var marker = L.marker(station.coords, { icon: customIcon }).addTo(map);
-      var popupContent = `<b>${station.display_name}</b><br>${dataType}: ${value}<br>Date Installed: ${stationData["dateInstalled"]}<br>`;
       marker.bindPopup(popupContent);
 
-      if (!station.marker) {
-        station.marker = marker; // Assign marker to station object
-      }
+      // Center the map on the center of the popup when it is opened
+      marker.on("popupopen", function () {
+        const popupElement = marker.getPopup().getElement();
+        if (popupElement) {
+          const popupHeight = popupElement.offsetHeight;
+          const popupWidth = popupElement.offsetWidth;
+          const offset = map.latLngToContainerPoint(marker.getLatLng());
+          const newOffset = L.point(offset.x, offset.y - popupHeight / 2);
+          const newLatLng = map.containerPointToLatLng(newOffset);
+          map.setView(newLatLng, map.getZoom(), { animate: true });
+        }
+      });
 
-      // Add event listeners for marker popups
-      marker.on("mouseover", function () {
-        this.openPopup();
-      });
-      marker.on("mouseout", function () {
-        this.closePopup();
-      });
+      // Set the marker property on the station object
+      station.marker = marker;
     });
 
     return stations;
   }
 
-  /**
-   * Updates the data displayed on the map markers.
-   * @param {Array} stations - The array of station objects with markers.
-   * @param {string} dataType - The type of data to display (e.g., "rainfall", "soilSaturation").
-   */
   function changeData(stations, dataType) {
     stations.forEach(function (station) {
-      const stationData = stationInfo[station.name];
+      const stationData = JSON.parse(
+        JSON.stringify(fetchedStationData[station.name])
+      );
       if (!stationData) {
         console.warn(`No data found for station: ${station.name}`);
         return; // Skip this station if no data is found
@@ -170,33 +202,91 @@ document.addEventListener("DOMContentLoaded", async function () {
       var marker = station.marker;
       var value;
 
-      // Check data type and assign value accordingly
-      if (dataType === "rainfall") {
-        value = stationData["12hr_rain_mm_total"];
-        value = parseFloat(value).toFixed(0); // Round to nearest int
-      } else if (dataType === "soilSaturation") {
-        const wcKey = station.name === "toronegro" ? 
-          Object.keys(stationData).find(key => key.toString().startsWith('"wc5')) :
-          Object.keys(stationData).find(key => key.toString().startsWith('"wc4'));
-        if (wcKey) {
-          value = (stationData[wcKey] / station.vwc_max) * 100;
-          value = value.toFixed(0) + "%"; // Format as percentage
-        } else {
-          value = "N/A"; // Handle missing data
+      // Calculate the saturation percentage
+      const wcKey =
+        station.name === "toronegro"
+          ? Object.keys(stationData).find((key) =>
+              key.toString().startsWith('"wc5')
+            )
+          : Object.keys(stationData).find((key) =>
+              key.toString().startsWith('"wc4')
+            );
+      const saturationPercentage = wcKey
+        ? ((stationData[wcKey] / station.vwc_max) * 100).toFixed(0) + "%"
+        : "N/A";
+
+      // Get the 12-hour rain total
+      const rainTotal =
+        parseFloat(stationData["12hr_rain_mm_total"]).toFixed(0) || "N/A";
+
+      // Get the timestamp and format it
+      const timestamp = stationData["TIMESTAMP"] || "N/A";
+      let formattedTimestamp = "N/A";
+      if (timestamp !== "N/A") {
+        const cleanedTimestamp = timestamp.replace(/['"]/g, ""); // Remove quotes from timestamp
+        const parsedDate = Date.parse(cleanedTimestamp);
+        if (!isNaN(parsedDate)) {
+          formattedTimestamp = new Date(parsedDate).toLocaleString();
         }
-      } else {
-        value = "N/A"; // Handle invalid data type
       }
 
-      value = value !== undefined ? value : "N/A"; // Handle missing data
-      var popupContent = `<b>${station.display_name}</b><br>${dataType}: ${value}<br>Date Installed: ${stationData.dateInstalled}<br>`;
-      marker.setPopupContent(popupContent);
+      // Check data type and assign value accordingly
+      if (dataType === "rainfall") {
+        value = rainTotal;
+      } else if (dataType === "soilSaturation") {
+        value = saturationPercentage;
+      } else {
+        value = "N/A";
+      }
 
-      var newIconHTML = 
-      `<div>
-        <span>${value}</span>
-        ${dataType === "rainfall" ? "<br>mm" : ""}
-      </div>`;
+      // Construct the popup content with station information
+      const popupContent = `
+        <div class="leaflet-popup-content">
+          <figure>
+            <img src="/path/to/images/${station.name}.jpg" alt="${station.display_name}">
+            <figcaption>${station.display_name} Station</figcaption>
+          </figure>
+          <div class="info">
+            <p><strong>Saturation:</strong> ${saturationPercentage}</p>
+            <p><strong>12hr Rain Total:</strong> ${rainTotal} mm</p>
+            <p><strong>Timestamp:</strong> ${formattedTimestamp}</p>
+            <p><strong>Elevation:</strong> ${station.elevation}</p>
+            <p><strong>Slope:</strong> ${station.slope}</p>
+            <p><strong>Landslide Susceptibility:</strong> ${station.landslideSusceptibility}</p>
+          </div>
+        </div>
+      `;
+
+      marker.setPopupContent(popupContent);
+      var popup = marker.getPopup();
+
+      // Center the map on the center of the popup when it is opened
+      marker.on("popupopen", function () {
+        const popupElement = popup.getElement();
+        if (popupElement) {
+          const popupHeight = popupElement.offsetHeight;
+          const popupWidth = popupElement.offsetWidth;
+          const offset = map.latLngToContainerPoint(marker.getLatLng());
+          const newOffset = L.point(offset.x, offset.y - popupHeight / 2);
+          const newLatLng = map.containerPointToLatLng(newOffset);
+          map.setView(newLatLng, map.getZoom(), { animate: true });
+        }
+      });
+
+      // Determine the icon background color based on saturation level
+      const backgroundColor =
+        dataType === "soilSaturation" && parseFloat(saturationPercentage) >= 90
+          ? "rgba(175, 9, 9, 0.9)"
+          : dataType === "soilSaturation"
+          ? "rgba(10, 41, 95, 0.9)"
+          : "rgba(10, 41, 95, 0.9)";
+
+      var newIconHTML = `<div style="background-color: ${backgroundColor}; color: white; padding: 5px; border-radius: 5px; display: flex; flex-direction: column; text-align: center; justify-content: center; align-items: center; height: 100%;">
+          <span style="font-size: 24px; color: white;">
+            ${value}
+          </span>
+          ${dataType === "rainfall" ? "<span>mm</span>" : ""}
+        </div>`;
 
       marker.setIcon(
         L.divIcon({
@@ -214,7 +304,7 @@ document.addEventListener("DOMContentLoaded", async function () {
    * Fetches and processes station data, initializes the map and markers, and sets up event listeners.
    */
   async function initialize() {
-    await processFiles("soilSaturation"); // Fetch and process station data
+    await processFiles(); // Fetch and process station data
     var map = initializeMap();
     var stations = initializeMarkers(map, "soilSaturation");
 
@@ -222,14 +312,14 @@ document.addEventListener("DOMContentLoaded", async function () {
     document
       .getElementById("rainfall-button")
       .addEventListener("click", async function () {
-        await processFiles("rainfall");
+        await processFiles();
         changeData(stations, "rainfall");
       });
 
     document
       .getElementById("soilSaturation-button")
       .addEventListener("click", async function () {
-        await processFiles("soilSaturation");
+        await processFiles();
         changeData(stations, "soilSaturation");
       });
   }

@@ -3,34 +3,73 @@
 /* Custom marker styles */
 /* styles.css */
 
-.custom-div-icon {
-  background-color: rgba(10, 41, 95, 0.9);
-  color: white;
-  padding: 5px;
-  border-radius: 5px;
-  text-align: center;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 100%;
-}
-
-/* Marker text styles */
-.custom-div-icon span {
-  font-size: 24px;
-  color: white; /* Set text color to white */
-}
-
 /* Popup styles */
 .leaflet-popup-content {
-  font-size: 14px;
-  line-height: 1.4;
+  font-size: 12px; /* Reduced font size */
+  line-height: 1.2; /* Reduced line height */
+  display: flex;
+  align-items: center;
+  justify-content: end;
+  background-color: #161616;
 }
 
 .leaflet-popup-content-wrapper {
-  background: rgba(255, 255, 255, 0.8); /* Semi-transparent white background */
+  background: rgb(
+    20,
+    20,
+    20
+  ) !important; /* Ensure the background color is applied */
   border-radius: 5px;
   padding: 8px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+
+.leaflet-popup-content figure {
+  margin: 0; /* Remove default margin */
+  padding: 0; /* Remove default padding */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.leaflet-popup-content img {
+  max-width: 80px; /* Reduced max width */
+  margin-bottom: 8px; /* Add margin-bottom for spacing */
+}
+
+.leaflet-popup-content figcaption {
+  color: white; /* Set text color to white */
+  font-size: 12px; /* Match font size */
+  text-align: center; /* Center align text */
+}
+
+.leaflet-popup-content .info {
+  color: white;
+  display: flex;
+  flex-direction: column;
+  font-size: 12px; /* Reduced font size */
+  line-height: 1.2; /* Reduced line height */
+  margin: 0; /* Removed margin */
+  padding: 0; /* Removed padding */
+}
+
+#map-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  color: white;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 3.0em;
+  z-index: 1000;
+  display: none; /* Initially hidden */
+  pointer-events: none; /* Allow interactions to pass through */
 }
 
 body {

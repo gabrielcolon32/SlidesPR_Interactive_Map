@@ -1,6 +1,6 @@
 const dataURL = "/files/network/data/latest/"; // URL to fetch data from hostinger server
 
-const stationInfo = {
+const fetchedStationData = {
   adjuntas: {},
   anasco: {},
   barranquitas: {},
@@ -67,9 +67,9 @@ const BATCH_SIZE = 5;
 
 const cache = {};
 
-async function fetchFileData(fileName, dataType) {
+async function fetchFileData(fileName) {
   if (cache[fileName]) {
-    parseCSV(cache[fileName], fileName, dataType);
+    parseCSV(cache[fileName], fileName);
     return;
   }
 
@@ -78,13 +78,13 @@ async function fetchFileData(fileName, dataType) {
     if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
     const csvText = await response.text();
     cache[fileName] = csvText;
-    parseCSV(csvText, fileName, dataType);
+    parseCSV(csvText, fileName);
   } catch (error) {
     console.error(`Error fetching file ${fileName}:`, error);
   }
 }
 
-function parseCSV(csvText, fileName, dataType) {
+function parseCSV(csvText, fileName) {
   const rows = csvText.trim().split("\n");
 
   if (rows.length < 2) {
@@ -96,7 +96,7 @@ function parseCSV(csvText, fileName, dataType) {
   const values = rows[rows.length - 1].split(",").map((value) => value.trim());
   const stationName = fileName.split("_")[0].toLowerCase();
 
-  if (!stationInfo[stationName]) {
+  if (!fetchedStationData[stationName]) {
     console.warn(`Station ${stationName} not found in stationInfo.`);
     return;
   }
@@ -107,47 +107,53 @@ function parseCSV(csvText, fileName, dataType) {
     const propertyName = header.trim();
     const value = values[index]?.trim();
 
-    if (!(propertyName in stationInfo[stationName])) {
-      stationInfo[stationName][propertyName] = "";
+    if (!(propertyName in fetchedStationData[stationName])) {
+      fetchedStationData[stationName][propertyName] = "";
     }
 
-    stationInfo[stationName][propertyName] = value || "";
+    fetchedStationData[stationName][propertyName] = value || "";
   });
 
-  stationInfo[stationName].TIMESTAMP = values[0]?.trim();
+  fetchedStationData[stationName].TIMESTAMP = values[0]?.trim();
 
-  if (dataType === "rainfall") {
-    const rainValues = rows.slice(-12).map(row => {
+  // Calculate 12hr rain mm total
+  const rainValues = rows.slice(-12).map(row => {
+    const columns = row.split(",");
+    const rainIndex = headers.indexOf('"Rain_mm_Tot"');
+    return parseFloat(columns[rainIndex]) || 0;
+  });
+
+  const totalRain = rainValues.reduce((acc, val) => acc + val, 0);
+  fetchedStationData[stationName]["12hr_rain_mm_total"] = totalRain.toFixed(2);
+
+  // Calculate soil saturation (assuming it's a column in the CSV)
+  const soilSaturationIndex = headers.indexOf('"Soil_Saturation"');
+  if (soilSaturationIndex !== -1) {
+    const soilSaturationValues = rows.map(row => {
       const columns = row.split(",");
-      const rainIndex = headers.indexOf('"Rain_mm_Tot"');
-      return parseFloat(columns[rainIndex]) || 0;
+      return parseFloat(columns[soilSaturationIndex]) || 0;
     });
 
-    const totalRain = rainValues.reduce((acc, val) => acc + val, 0);
-    stationInfo[stationName]["12hr_rain_mm_total"] = totalRain.toFixed(2);
+    const avgSoilSaturation = soilSaturationValues.reduce((acc, val) => acc + val, 0) / soilSaturationValues.length;
+    fetchedStationData[stationName]["avg_soil_saturation"] = avgSoilSaturation.toFixed(2);
   }
 }
 
-async function processFiles(dataType) {
+async function processFiles() {
   try {
-    let fileNames;
-    if (dataType === "soilSaturation") {
-      fileNames = fileNames5min;
-    } else {
-      fileNames = fileNames60min;
-    }
+    const allFileNames = [...fileNames5min, ...fileNames60min];
 
-    for (let i = 0; i < fileNames.length; i += BATCH_SIZE) {
-      const batch = fileNames.slice(i, i + BATCH_SIZE);
-      const fileDataPromises = batch.map((fileName) => fetchFileData(fileName, dataType));
+    for (let i = 0; i < allFileNames.length; i += BATCH_SIZE) {
+      const batch = allFileNames.slice(i, i + BATCH_SIZE);
+      const fileDataPromises = batch.map((fileName) => fetchFileData(fileName));
       await Promise.all(fileDataPromises);
     }
-
-    return stationInfo;
+    console.log("Station Info:", fetchedStationData);
+    return fetchedStationData;
   } catch (error) {
     console.error("Error processing files:", error);
   }
 }
 
 // Exporting stationInfo and processFiles function
-export { stationInfo, processFiles };
+export { fetchedStationData, processFiles };
