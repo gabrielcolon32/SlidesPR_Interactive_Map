@@ -3,56 +3,86 @@
 /* Custom marker styles */
 /* styles.css */
 
-/* Popup styles */
+/* styles.css */
+
+/* Custom marker styles */
 .leaflet-popup-content {
-  font-size: 12px; /* Reduced font size */
-  line-height: 1.2; /* Reduced line height */
   display: flex;
   align-items: center;
-  justify-content: end;
   background-color: #161616;
+  padding: 0;
 }
 
 .leaflet-popup-content-wrapper {
-  background: rgb(
-    20,
-    20,
-    20
-  ) !important; /* Ensure the background color is applied */
+  background: rgb(20, 20, 20) !important;
   border-radius: 5px;
-  padding: 8px;
+  padding: 0;
   display: flex;
   flex-direction: row;
   align-items: center;
+  overflow: hidden; /* Ensure content doesn't overflow */
+  position: relative; /* Allow absolute positioning of the image */
+  width: 500px;
 }
 
 .leaflet-popup-content figure {
-  margin: 0; /* Remove default margin */
-  padding: 0; /* Remove default padding */
+  margin: 0;
+  padding: 0;
+  width: 50%; /* Cover 50% of the popup width */
   display: flex;
   flex-direction: column;
   align-items: center;
+  position: absolute; /* Position the figure absolutely */
+  left: 0; /* Align to the left */
+  top: 0; /* Align to the top */
+  height: 100%; /* Cover the full height of the popup */
+  z-index: 1; /* Ensure it is above other content */
 }
 
 .leaflet-popup-content img {
-  max-width: 80px; /* Reduced max width */
-  margin-bottom: 8px; /* Add margin-bottom for spacing */
+  width: 100%; /* Make the image cover the full width of the figure */
+  height: 100%; /* Make the image cover the full height of the figure */
+  object-fit: cover; /* Ensure the image covers the area without distortion */
+  border-radius: 5px 0 0 5px; /* Rounded corners on the left side */
 }
 
 .leaflet-popup-content figcaption {
-  color: white; /* Set text color to white */
-  font-size: 12px; /* Match font size */
-  text-align: center; /* Center align text */
+  color: white;
+  font-size: 12px;
+  background-color: rgba(0, 0, 0, 0.85); /* Semi-transparent background for readability */
+  width: 100%; /* Cover the full width of the figure */
+  text-align: center; /* Center the text */
+  padding: 5px 0; /* Add some padding */
+  position: absolute; /* Position the caption absolutely */
+  bottom: 0; /* Align to the bottom */
+  z-index: 2; /* Ensure it is above the image */
 }
 
 .leaflet-popup-content .info {
+  margin-left: 100%; /* Start the info section after the image */
+  padding: 10px;
   color: white;
+  width: 100%; /* Cover the remaining 50% of the popup width */
   display: flex;
   flex-direction: column;
-  font-size: 12px; /* Reduced font size */
-  line-height: 1.2; /* Reduced line height */
-  margin: 0; /* Removed margin */
-  padding: 0; /* Removed padding */
+  justify-content: center;
+  align-items: flex-start;
+}
+
+.leaflet-popup-content .info p {
+  margin: 5px 0;
+  font-size: 16px; /* Ensure the text is large enough */
+}
+
+.leaflet-popup-content .info ul {
+  list-style-type: disc; /* Display bullet points */
+  padding-left: 20px; /* Indent bullet points */
+  font-size: 16px; /* Ensure the text is large enough */
+}
+
+.leaflet-popup-content .info li {
+  margin-bottom: 8px; /* Space between list items */
+  font-size: 16px; /* Ensure the text is large enough */
 }
 
 #map-overlay {

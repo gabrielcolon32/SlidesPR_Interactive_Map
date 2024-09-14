@@ -128,26 +128,28 @@ document.addEventListener("DOMContentLoaded", async function () {
 
       // Construct the popup content with station information
       const popupContent = `
-        <div class="leaflet-popup-content">
-          <figure>
-            <img src="/path/to/images/${station.name}.jpg" alt="${station.display_name}">
-            <figcaption>${station.display_name} Station</figcaption>
-          </figure>
-          <div class="info">
-            <p><strong>Saturation:</strong> ${saturationPercentage}</p>
-            <p><strong>12hr Rain Total:</strong> ${rainTotal} mm</p>
-            <p><strong>Timestamp:</strong> ${formattedTimestamp}</p>
-            <p><strong>Elevation:</strong> ${station.elevation}</p>
-            <p><strong>Slope:</strong> ${station.slope}</p>
-            <p><strong>Landslide Susceptibility:</strong> ${station.landslideSusceptibility}</p>
-          </div>
+      <div class="leaflet-popup-content">
+        <figure>
+          <img src="/files/images/${station.name}.jpg" alt="${station.display_name}">
+          <figcaption>${station.display_name} Station</figcaption>
+        </figure>
+        <div class="info">
+          <h2>Details and Data</h2>
+          <ul>
+            <li><strong>Landslide Susceptibility:</strong> ${station.landslideSusceptibility}</li>
+            <li><strong>Elevation:</strong>${station.elevation}</li>
+            <li><strong>Saturation Level:</strong> ${saturationPercentage}</li>
+            <li><strong>Precipitation (Last-12hr):</strong> ${rainTotal}mm</li>
+            <li><strong>Soil Unit:</strong> ${station.soilUnit}</li>
+          </ul>
         </div>
+      </div>
       `;
 
       // Determine the icon background color based on saturation level
       const backgroundColor =
         dataType === "soilSaturation" && parseFloat(saturationPercentage) >= 90
-          ? "rgba(175, 9, 9, 0.9)"
+          ? "rgba(4, 28, 63, 0.9)"
           : dataType === "soilSaturation"
           ? "rgba(10, 41, 95, 0.9)"
           : "rgba(10, 41, 95, 0.9)";
@@ -241,20 +243,22 @@ document.addEventListener("DOMContentLoaded", async function () {
 
       // Construct the popup content with station information
       const popupContent = `
-        <div class="leaflet-popup-content">
-          <figure>
-            <img src="/path/to/images/${station.name}.jpg" alt="${station.display_name}">
-            <figcaption>${station.display_name} Station</figcaption>
-          </figure>
-          <div class="info">
-            <p><strong>Saturation:</strong> ${saturationPercentage}</p>
-            <p><strong>12hr Rain Total:</strong> ${rainTotal} mm</p>
-            <p><strong>Timestamp:</strong> ${formattedTimestamp}</p>
-            <p><strong>Elevation:</strong> ${station.elevation}</p>
-            <p><strong>Slope:</strong> ${station.slope}</p>
-            <p><strong>Landslide Susceptibility:</strong> ${station.landslideSusceptibility}</p>
-          </div>
+      <div class="leaflet-popup-content">
+        <figure>
+          <img src="/files/images/${station.name}.jpg" alt="${station.display_name}">
+          <figcaption>${station.display_name} Station</figcaption>
+        </figure>
+        <div class="info">
+          <h2>Details and Data</h2>
+          <ul>
+            <li><strong>Landslide Susceptibility:</strong> ${station.landslideSusceptibility}</li>
+            <li><strong>Elevation:</strong> ${station.elevation}</li>
+            <li><strong>Saturation Level:</strong> ${saturationPercentage}</li>
+            <li><strong>Precipitation (Last-12hr):</strong> ${rainTotal}mm</li>
+            <li><strong>Soil Unit:</strong> ${station.soilUnit}</li>
+          </ul>
         </div>
+      </div>
       `;
 
       marker.setPopupContent(popupContent);
@@ -276,7 +280,7 @@ document.addEventListener("DOMContentLoaded", async function () {
       // Determine the icon background color based on saturation level
       const backgroundColor =
         dataType === "soilSaturation" && parseFloat(saturationPercentage) >= 90
-          ? "rgba(175, 9, 9, 0.9)"
+          ? "rgba(4, 28, 63, 0.9)"
           : dataType === "soilSaturation"
           ? "rgba(10, 41, 95, 0.9)"
           : "rgba(10, 41, 95, 0.9)";
