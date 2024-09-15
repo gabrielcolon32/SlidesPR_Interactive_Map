@@ -49,7 +49,12 @@
 .leaflet-popup-content figcaption {
   color: white;
   font-size: 12px;
-  background-color: rgba(0, 0, 0, 0.85); /* Semi-transparent background for readability */
+  background-color: rgba(
+    0,
+    0,
+    0,
+    0.85
+  ); /* Semi-transparent background for readability */
   width: 100%; /* Cover the full width of the figure */
   text-align: center; /* Center the text */
   padding: 5px 0; /* Add some padding */
@@ -85,6 +90,15 @@
   font-size: 16px; /* Ensure the text is large enough */
 }
 
+.leaflet-popup-link {
+  text-decoration: none; /* Remove underline from link */
+  color: inherit; /* Inherit text color */
+}
+
+.leaflet-popup-link:hover {
+  text-decoration: none; /* Remove underline on hover */
+}
+
 #map-overlay {
   position: absolute;
   top: 0;
@@ -96,10 +110,66 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  font-size: 3.0em;
+  font-size: 3em;
   z-index: 1000;
   display: none; /* Initially hidden */
   pointer-events: none; /* Allow interactions to pass through */
+}
+
+.legend-control {
+  background: rgb(39, 38, 38);
+  padding: 5px;
+  border-radius: 5px;
+  box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
+}
+
+.dropdown {
+  position: relative;
+  display: inline-block;
+}
+
+.dropdown-toggle {
+  background-color: #333;
+  color: white;
+  padding: 5px 10px;
+  border: none;
+  cursor: pointer;
+  font-size: 12px;
+}
+
+.dropdown-content {
+  display: none;
+  position: absolute;
+  background-color: #f9f9f9;
+  min-width: 200px; /* Increased width */
+  box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
+  z-index: 1;
+  max-height: 200px;
+  overflow-y: auto;
+  right: 0; /* Align to the right */
+}
+
+.dropdown-content .dropdown-item {
+  padding: 5px 10px;
+  cursor: pointer;
+  font-size: 12px;
+  display: flex;
+  align-items: center;
+}
+
+.dropdown-content .dropdown-item img {
+  margin-right: 5px;
+  width: 15px;
+  height: 15px;
+}
+
+.dropdown-content .dropdown-item:hover {
+  background-color: #ddd;
+}
+
+/* Show the dropdown menu on hover */
+.dropdown:hover .dropdown-content {
+  display: block;
 }
 
 body {
@@ -119,11 +189,6 @@ body {
   border: none;
   padding: 0.5rem 1rem;
   margin: 0 0.5rem;
-  cursor: pointer;
-}
-
-.button-bar button:hover {
-  background-color: #555;
 }
 
 header {

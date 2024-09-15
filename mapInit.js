@@ -30,7 +30,7 @@ document.addEventListener("DOMContentLoaded", async function () {
       "https://services.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",
       {
         attribution:
-          "Tiles © Esri — Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community",
+          "Tiles © Esri — Source: Esri, PRLHMO, UPRM, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community",
         maxZoom: 18,
       }
     ).addTo(map);
@@ -40,6 +40,7 @@ document.addEventListener("DOMContentLoaded", async function () {
       .tiledMapLayer({
         url: "https://tiles.arcgis.com/tiles/TQ9qkk0dURXSP7LQ/arcgis/rest/services/Susceptibilidad_Derrumbe_PR/MapServer",
         opacity: 0.5,
+        attribution: "Susceptibility data © Esri",
       })
       .addTo(map);
 
@@ -53,11 +54,25 @@ document.addEventListener("DOMContentLoaded", async function () {
         url: "https://services5.arcgis.com/TQ9qkk0dURXSP7LQ/arcgis/rest/services/LIMITES_LEGALES_MUNICIPIOS/FeatureServer/0",
         opacity: 0.2,
         color: "black",
+        attribution: "Municipality boundaries © Esri",
       })
       .addTo(map);
 
     municipalityLayer.on("error", function (error) {
       console.error("Feature layer error:", error);
+    });
+
+    // Add precipitation forecast layer with error handling
+    var precipitationLayer = L.esri
+      .imageMapLayer({
+        url: "https://mapservices.weather.noaa.gov/raster/rest/services/obs/mrms_qpe/ImageServer",
+        opacity: 0.7, // You can adjust the transparency
+        attribution: "Precipitation data © NOAA",
+      })
+      .addTo(map);
+
+    precipitationLayer.on("tileerror", function (error) {
+      console.error("Tile error:", error);
     });
 
     // Handle Ctrl key press and release events
@@ -83,6 +98,36 @@ document.addEventListener("DOMContentLoaded", async function () {
         }, 1000); // Hide after 1 second
       }
     });
+
+    // Add custom control for the legend dropdown
+    var legendControl = L.control({ position: "topright" });
+
+    legendControl.onAdd = function (map) {
+      var div = L.DomUtil.create("div", "legend-control");
+      div.innerHTML = `
+        <div id="legend-dropdown" class="dropdown">
+          <button id="legend-toggle" class="dropdown-toggle">Legend</button>
+          <div id="legend-content" class="dropdown-content"></div>
+        </div>
+      `;
+      return div;
+    };
+
+    legendControl.addTo(map);
+
+    // Add custom control for the buttons
+    var buttonControl = L.control({ position: "bottomleft" });
+
+    buttonControl.onAdd = function (map) {
+      var div = L.DomUtil.create("div", "button-bar");
+      div.innerHTML = `
+        <button id="soilSaturation-button">Soil Saturation</button>
+        <button id="rainfall-button">Precipitation</button>
+      `;
+      return div;
+    };
+
+    buttonControl.addTo(map);
 
     return map;
   }
@@ -128,22 +173,30 @@ document.addEventListener("DOMContentLoaded", async function () {
 
       // Construct the popup content with station information
       const popupContent = `
-      <div class="leaflet-popup-content">
-        <figure>
-          <img src="/files/images/${station.name}.jpg" alt="${station.display_name}">
-          <figcaption>${station.display_name} Station</figcaption>
-        </figure>
-        <div class="info">
-          <h2>Details and Data</h2>
-          <ul>
-            <li><strong>Landslide Susceptibility:</strong> ${station.landslideSusceptibility}</li>
-            <li><strong>Elevation:</strong>${station.elevation}</li>
-            <li><strong>Saturation Level:</strong> ${saturationPercentage}</li>
-            <li><strong>Precipitation (Last-12hr):</strong> ${rainTotal}mm</li>
-            <li><strong>Soil Unit:</strong> ${station.soilUnit}</li>
-          </ul>
+      <a href="https://derrumbe.net/${
+        station.name
+      }" target="_blank" class="leaflet-popup-link">
+        <div class="leaflet-popup-content">
+          <figure>
+            <img src="/files/images/${station.name}.jpg" alt="${
+        station.display_name
+      }">
+            <figcaption>${station.display_name} Station</figcaption>
+          </figure>
+          <div class="info">
+            <h2>${station.name.toUpperCase()}</h2>
+            <ul>
+              <li><strong>Landslide Susceptibility:</strong> ${
+                station.landslideSusceptibility
+              }</li>
+              <li><strong>Elevation:</strong> ${station.elevation}</li>
+              <li><strong>Saturation Level:</strong> ${saturationPercentage}</li>
+              <li><strong>Precipitation (Last-12hr):</strong> ${rainTotal}mm</li>
+              <li><strong>Soil Unit:</strong> ${station.soilUnit}</li>
+            </ul>
+          </div>
         </div>
-      </div>
+      </a>
       `;
 
       // Determine the icon background color based on saturation level
@@ -243,22 +296,30 @@ document.addEventListener("DOMContentLoaded", async function () {
 
       // Construct the popup content with station information
       const popupContent = `
-      <div class="leaflet-popup-content">
-        <figure>
-          <img src="/files/images/${station.name}.jpg" alt="${station.display_name}">
-          <figcaption>${station.display_name} Station</figcaption>
-        </figure>
-        <div class="info">
-          <h2>Details and Data</h2>
-          <ul>
-            <li><strong>Landslide Susceptibility:</strong> ${station.landslideSusceptibility}</li>
-            <li><strong>Elevation:</strong> ${station.elevation}</li>
-            <li><strong>Saturation Level:</strong> ${saturationPercentage}</li>
-            <li><strong>Precipitation (Last-12hr):</strong> ${rainTotal}mm</li>
-            <li><strong>Soil Unit:</strong> ${station.soilUnit}</li>
-          </ul>
+      <a href="https://derrumbe.net/${
+        station.name
+      }" target="_blank" class="leaflet-popup-link">
+        <div class="leaflet-popup-content">
+          <figure>
+            <img src="/files/images/${station.name}.jpg" alt="${
+        station.display_name
+      }">
+            <figcaption>${station.display_name} Station</figcaption>
+          </figure>
+          <div class="info">
+            <h2>${station.name.toUpperCase()}</h2>
+            <ul>
+              <li><strong>Landslide Susceptibility:</strong> ${
+                station.landslideSusceptibility
+              }</li>
+              <li><strong>Elevation:</strong> ${station.elevation}</li>
+              <li><strong>Saturation Level:</strong> ${saturationPercentage}</li>
+              <li><strong>Precipitation (Last-12hr):</strong> ${rainTotal}mm</li>
+              <li><strong>Soil Unit:</strong> ${station.soilUnit}</li>
+            </ul>
+          </div>
         </div>
-      </div>
+      </a>
       `;
 
       marker.setPopupContent(popupContent);
@@ -304,6 +365,64 @@ document.addEventListener("DOMContentLoaded", async function () {
   }
 
   /**
+   * Fetches and parses legend colors from the ImageServer.
+   * @returns {Array} The array of legend colors and labels.
+   */
+  async function fetchLegendColors() {
+    const legendUrl =
+      "https://mapservices.weather.noaa.gov/raster/rest/services/obs/mrms_qpe/ImageServer/legend?bandIds=&variable=&renderingRule=&f=pjson";
+
+    try {
+      const response = await fetch(legendUrl);
+
+      // Check if the response is OK (status code 200-299)
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      const data = await response.json();
+      console.log(data.layers[0].legend);
+
+      // Extract colors and labels from the legend data
+      const legendColors = data.layers[0].legend.map((item) => ({
+        label: item.label,
+        imageData: item.imageData,
+      }));
+
+      console.log("Legend Colors:", legendColors);
+      return legendColors;
+    } catch (error) {
+      console.error("Error fetching legend colors:", error);
+      return [];
+    }
+  }
+
+  /**
+   * Populates the dropdown menu with legend colors.
+   * @param {Array} legendColors - The array of legend colors and labels.
+   */
+  function populateDropdown(legendColors) {
+    const dropdownContent = document.querySelector(".dropdown-content");
+
+    legendColors.forEach((item) => {
+      const dropdownItem = document.createElement("div");
+      dropdownItem.className = "dropdown-item";
+
+      // Create an img element for the base64-encoded image
+      const img = document.createElement("img");
+      img.src = `data:image/png;base64,${item.imageData}`;
+      img.alt = item.label;
+      img.style.width = "20px";
+      img.style.height = "20px";
+      img.style.marginRight = "10px";
+
+      dropdownItem.appendChild(img);
+      dropdownItem.appendChild(document.createTextNode(item.label));
+      dropdownContent.appendChild(dropdownItem);
+    });
+  }
+
+  /**
    * Main initialization function.
    * Fetches and processes station data, initializes the map and markers, and sets up event listeners.
    */
@@ -311,6 +430,10 @@ document.addEventListener("DOMContentLoaded", async function () {
     await processFiles(); // Fetch and process station data
     var map = initializeMap();
     var stations = initializeMarkers(map, "soilSaturation");
+
+    // Fetch legend colors and populate the dropdown menu
+    const legendColors = await fetchLegendColors();
+    populateDropdown(legendColors);
 
     // Event listeners for data switching buttons
     document
