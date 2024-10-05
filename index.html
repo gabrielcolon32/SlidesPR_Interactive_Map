@@ -10,6 +10,11 @@
       rel="stylesheet"
       href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css"
     />
+    <!-- Include Font Awesome CSS -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css"
+    />
 
     <!-- Include Leaflet JavaScript -->
     <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
@@ -19,12 +24,28 @@
   </head>
   <body>
     <main>
-      <div id="map" style="height: 600px"></div>
+      <div id="map" style="height: 600px">
+        <!-- Gear button -->
+        <button id="gear-button" class="gear-button"><i class="fas fa-cog"></i></button>
+        <!-- Sidebar structure -->
+        <div id="sidebar" class="sidebar closed">
+          <button id="sidebar-toggle" class="sidebar-toggle"></button>
+          <div class="sidebar-content">
+            <h2>Layers</h2>
+            <label><input type="checkbox" id="worldImageryLayer" checked> World Imagery</label>
+            <label><input type="checkbox" id="susceptibilityLayer" checked> Landslide Susceptibility</label>
+            <label><input type="checkbox" id="municipalityLayer" checked> Municipalities</label>
+            <label><input type="checkbox" id="precipitationLayer" unchecked> Precipitation Estimates</label>
+            <label><input type="checkbox" id="legendToggle"> Show Precipitation Legend</label>
+          </div>
+        </div>
+        <!-- Static Legend Image -->
+        <div id="legend-container" style="display: none;">
+          <img src="/files/images/precipitation_estimate_legend.png" alt="Legend" id="legend-image">
+        </div>
+      </div>
     </main>
-    <footer>
-      <p>Copyright © Your Organization. All rights reserved.</p>
-    </footer>
-    <script type="module" src="stationData.js"></script>
+    <script type="module" src="stationInfo.js"></script>
     <script type="module" src="mapInit.js"></script>
   </body>
 </html>

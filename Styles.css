@@ -1,194 +1,6 @@
-/* styles.css */
-
-/* Custom marker styles */
-/* styles.css */
-
-/* styles.css */
-
-/* Custom marker styles */
-.leaflet-popup-content {
-  display: flex;
-  align-items: center;
-  background-color: #161616;
-  padding: 0;
-}
-
-.leaflet-popup-content-wrapper {
-  background: rgb(20, 20, 20) !important;
-  border-radius: 5px;
-  padding: 0;
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  overflow: hidden; /* Ensure content doesn't overflow */
-  position: relative; /* Allow absolute positioning of the image */
-  width: 500px;
-}
-
-.leaflet-popup-content figure {
-  margin: 0;
-  padding: 0;
-  width: 50%; /* Cover 50% of the popup width */
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  position: absolute; /* Position the figure absolutely */
-  left: 0; /* Align to the left */
-  top: 0; /* Align to the top */
-  height: 100%; /* Cover the full height of the popup */
-  z-index: 1; /* Ensure it is above other content */
-}
-
-.leaflet-popup-content img {
-  width: 100%; /* Make the image cover the full width of the figure */
-  height: 100%; /* Make the image cover the full height of the figure */
-  object-fit: cover; /* Ensure the image covers the area without distortion */
-  border-radius: 5px 0 0 5px; /* Rounded corners on the left side */
-}
-
-.leaflet-popup-content figcaption {
-  color: white;
-  font-size: 12px;
-  background-color: rgba(
-    0,
-    0,
-    0,
-    0.85
-  ); /* Semi-transparent background for readability */
-  width: 100%; /* Cover the full width of the figure */
-  text-align: center; /* Center the text */
-  padding: 5px 0; /* Add some padding */
-  position: absolute; /* Position the caption absolutely */
-  bottom: 0; /* Align to the bottom */
-  z-index: 2; /* Ensure it is above the image */
-}
-
-.leaflet-popup-content .info {
-  margin-left: 100%; /* Start the info section after the image */
-  padding: 10px;
-  color: white;
-  width: 100%; /* Cover the remaining 50% of the popup width */
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: flex-start;
-}
-
-.leaflet-popup-content .info p {
-  margin: 5px 0;
-  font-size: 16px; /* Ensure the text is large enough */
-}
-
-.leaflet-popup-content .info ul {
-  list-style-type: disc; /* Display bullet points */
-  padding-left: 20px; /* Indent bullet points */
-  font-size: 16px; /* Ensure the text is large enough */
-}
-
-.leaflet-popup-content .info li {
-  margin-bottom: 8px; /* Space between list items */
-  font-size: 16px; /* Ensure the text is large enough */
-}
-
-.leaflet-popup-link {
-  text-decoration: none; /* Remove underline from link */
-  color: inherit; /* Inherit text color */
-}
-
-.leaflet-popup-link:hover {
-  text-decoration: none; /* Remove underline on hover */
-}
-
-#map-overlay {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-color: rgba(0, 0, 0, 0.5);
-  color: white;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  font-size: 3em;
-  z-index: 1000;
-  display: none; /* Initially hidden */
-  pointer-events: none; /* Allow interactions to pass through */
-}
-
-.legend-control {
-  background: rgb(39, 38, 38);
-  padding: 5px;
-  border-radius: 5px;
-  box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
-}
-
-.dropdown {
-  position: relative;
-  display: inline-block;
-}
-
-.dropdown-toggle {
-  background-color: #333;
-  color: white;
-  padding: 5px 10px;
-  border: none;
-  cursor: pointer;
-  font-size: 12px;
-}
-
-.dropdown-content {
-  display: none;
-  position: absolute;
-  background-color: #f9f9f9;
-  min-width: 200px; /* Increased width */
-  box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
-  z-index: 1;
-  max-height: 200px;
-  overflow-y: auto;
-  right: 0; /* Align to the right */
-}
-
-.dropdown-content .dropdown-item {
-  padding: 5px 10px;
-  cursor: pointer;
-  font-size: 12px;
-  display: flex;
-  align-items: center;
-}
-
-.dropdown-content .dropdown-item img {
-  margin-right: 5px;
-  width: 15px;
-  height: 15px;
-}
-
-.dropdown-content .dropdown-item:hover {
-  background-color: #ddd;
-}
-
-/* Show the dropdown menu on hover */
-.dropdown:hover .dropdown-content {
-  display: block;
-}
-
+/* General Styles */
 body {
   background-color: #121212; /* Matte black background */
-}
-
-/* Additional styles for new buttons */
-.button-bar {
-  display: flex;
-  justify-content: center;
-  padding: 1rem 0;
-}
-
-.button-bar button {
-  background-color: #333;
-  color: white;
-  border: none;
-  padding: 0.5rem 1rem;
-  margin: 0 0.5rem;
 }
 
 header {
@@ -243,4 +55,256 @@ form input[type="submit"] {
 
 form input[type="submit"]:hover {
   background-color: #555;
+}
+
+/* Map Overlay */
+#map-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  color: white;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 3em;
+  z-index: 1000;
+  display: none; /* Initially hidden */
+  pointer-events: none; /* Allow interactions to pass through */
+}
+
+/* Sidebar Styles */
+.sidebar {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 250px;
+  background-color: rgba(50, 50, 50, 0.85); /* Dark gray with 0.85 opacity */
+  color: white; /* White font color */
+  box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+  overflow: hidden; /* Hide overflow */
+  transition: transform 0.5s ease, padding 1s ease; /* Smooth transition for transform and padding */
+  padding-top: 60px;
+  z-index: 1000;
+  transform: translateX(0); /* Initially visible */
+}
+
+.sidebar.closed {
+  transform: translateX(-100%); /* Move sidebar out of view */
+  padding-top: 0;
+  padding-left: 0;
+}
+
+.sidebar-toggle {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  font-size: 30px;
+  cursor: pointer;
+  background: none;
+  border: none;
+  color: white; /* White font color for the toggle button */
+}
+
+.sidebar-content {
+  padding: 15px;
+  transition: opacity 0.5s ease; /* Smooth transition for opacity */
+}
+
+.sidebar.closed .sidebar-content {
+  opacity: 0; /* Hide content when sidebar is closed */
+}
+
+.sidebar h2 {
+  margin-top: 0;
+  color: white; /* White font color for the heading */
+}
+
+.sidebar label {
+  display: block;
+  margin: 10px 0;
+  color: white; /* White font color for the labels */
+}
+
+/* Gear Icon Button Styles */
+.gear-button {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  font-size: 24px;
+  cursor: pointer;
+  background: none;
+  border: none;
+  color: white; /* White font color */
+  z-index: 1001; /* Ensure it is above other elements */
+}
+
+/* Custom Marker Styles */
+.leaflet-popup-content {
+  display: flex;
+  align-items: center;
+  background-color: #161616;
+  padding: 0;
+}
+
+.leaflet-popup-content-wrapper {
+  background: rgb(20, 20, 20) !important;
+  border-radius: 5px;
+  padding: 0;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  overflow: hidden; /* Ensure content doesn't overflow */
+  position: relative; /* Allow absolute positioning of the image */
+  width: 500px;
+}
+
+.leaflet-popup-content figure {
+  margin: 0;
+  padding: 0;
+  width: 50%; /* Cover 50% of the popup width */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: absolute; /* Position the figure absolutely */
+  left: 0; /* Align to the left */
+  top: 0; /* Align to the top */
+  height: 100%; /* Cover the full height of the popup */
+  z-index: 1; /* Ensure it is above other content */
+}
+
+.leaflet-popup-content img {
+  width: 100%; /* Make the image cover the full width of the figure */
+  height: 100%; /* Make the image cover the full height of the figure */
+  object-fit: cover; /* Ensure the image covers the area without distortion */
+  border-radius: 5px 0 0 5px; /* Rounded corners on the left side */
+}
+
+.leaflet-popup-content figcaption {
+  color: white;
+  font-size: 12px;
+  background-color: rgba(0, 0, 0, 0.85); /* Semi-transparent background for readability */
+  width: 100%; /* Cover the full width of the figure */
+  text-align: center; /* Center the text */
+  padding: 5px 0; /* Add some padding */
+  position: absolute; /* Position the caption absolutely */
+  bottom: 0; /* Align to the bottom */
+  z-index: 2; /* Ensure it is above the image */
+}
+
+.leaflet-popup-content .info {
+  margin-left: 100%; /* Start the info section after the image */
+  padding: 10px;
+  color: white;
+  width: 100%; /* Cover the remaining 50% of the popup width */
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start;
+}
+
+.leaflet-popup-content .info p {
+  margin: 5px 0;
+  font-size: 16px; /* Ensure the text is large enough */
+}
+
+.leaflet-popup-content .info ul {
+  list-style-type: disc; /* Display bullet points */
+  padding-left: 20px; /* Indent bullet points */
+  font-size: 16px; /* Ensure the text is large enough */
+}
+
+.leaflet-popup-content .info li {
+  margin-bottom: 8px; /* Space between list items */
+  font-size: 16px; /* Ensure the text is large enough */
+}
+
+.leaflet-popup-link {
+  text-decoration: none; /* Remove underline from link */
+  color: inherit; /* Inherit text color */
+}
+
+.leaflet-popup-link:hover {
+  text-decoration: none; /* Remove underline on hover */
+}
+
+/* Legend Container Styles */
+#legend-container {
+  position: absolute;
+  bottom: 10px;
+  right: 10px;
+  max-height: 200px; /* Adjust the height as needed */
+  overflow-y: auto;
+  background: rgba(255, 255, 255, 0.9); /* Semi-transparent white background */
+  padding: 10px;
+  border-radius: 5px;
+  box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
+  z-index: 1000; /* Ensure it is above other elements */
+}
+
+#legend-image {
+  max-width: 100%;
+  height: auto;
+}
+
+/* Additional Styles for New Buttons */
+.button-bar {
+  display: flex;
+  justify-content: center;
+  padding: 1rem 0;
+}
+
+.button-bar button {
+  background-color: #333;
+  color: #fff;
+  border: none;
+  padding: 10px 20px;
+  margin: 0 5px;
+  cursor: pointer;
+  border-radius: 5px;
+}
+
+.button-bar button:hover {
+  background-color: #555;
+}
+
+/* Custom Styles for the Zoom Buttons */
+.leaflet-control-zoom {
+  top: 50px !important; /* Adjust the position to be below the gear button */
+}
+
+/* Media Queries for Mobile Devices */
+@media (max-width: 768px) {
+  .sidebar {
+    width: 200px; /* Adjust the width for mobile devices */
+  }
+
+  .sidebar.closed {
+    transform: translateX(-100%); /* Move sidebar out of view */
+  }
+
+  .leaflet-popup-content-wrapper {
+    width: 100%; /* Make the popup content wrapper full width */
+  }
+
+  .leaflet-popup-content figure {
+    width: 100%; /* Make the figure full width */
+    height: auto; /* Adjust the height automatically */
+  }
+
+  .leaflet-popup-content .info {
+    margin-left: 0; /* Remove the left margin */
+    width: 100%; /* Make the info section full width */
+  }
+
+  .button-bar {
+    flex-direction: column; /* Stack buttons vertically */
+  }
+
+  .button-bar button {
+    margin: 5px 0; /* Add margin between buttons */
+  }
 }

@@ -1,6 +1,13 @@
+/**
+ * Station information for various monitoring stations.
+ * Each station object contains details such as name, coordinates, soil and geologic units, and more.
+ * The "url-name" property is used for the website links.
+ */
+
 var stations = [
   {
     name: "adjuntas",
+    "url-name": "adjuntas",
     display_name: "Adjuntas",
     coords: [18.1629, -66.7231],
     vwc_max: 0.521,
@@ -15,6 +22,7 @@ var stations = [
   },
   {
     name: "anasco",
+    "url-name": "anasco",
     display_name: "Añasco",
     coords: [18.2844, -67.1424],
     vwc_max: 0.5,
@@ -29,6 +37,7 @@ var stations = [
   },
   {
     name: "barranquitas",
+    "url-name": "barranquitas",
     display_name: "Barranquitas",
     coords: [18.1886, -66.3071],
     vwc_max: 0.263,
@@ -43,6 +52,7 @@ var stations = [
   },
   {
     name: "cayey",
+    "url-name": "cayey",
     display_name: "Cayey",
     coords: [18.111, -66.166],
     vwc_max: 0.492,
@@ -57,6 +67,7 @@ var stations = [
   },
   {
     name: "ciales",
+    "url-name": "ciales",
     display_name: "Ciales",
     coords: [18.3367, -66.4682],
     vwc_max: 0.475,
@@ -71,6 +82,7 @@ var stations = [
   },
   {
     name: "lares",
+    "url-name": "lares",
     display_name: "Lares",
     coords: [18.2958, -66.8782],
     vwc_max: 0.495,
@@ -85,6 +97,7 @@ var stations = [
   },
   {
     name: "maricao",
+    "url-name": "maricao",
     display_name: "Maricao",
     coords: [18.1823, -66.9818],
     vwc_max: 0.447,
@@ -99,6 +112,7 @@ var stations = [
   },
   {
     name: "maunabo",
+    "url-name": "maunabo",
     display_name: "Maunabo",
     coords: [18.0086, -65.9011],
     vwc_max: 0.372,
@@ -113,6 +127,7 @@ var stations = [
   },
   {
     name: "mayaguez",
+    "url-name": "mayaguez",
     display_name: "Mayagüez",
     coords: [18.2013, -67.1397],
     vwc_max: 0.45,
@@ -127,6 +142,7 @@ var stations = [
   },
   {
     name: "naguabo",
+    "url-name": "naguabo",
     display_name: "Naguabo",
     coords: [18.2113, -65.7358],
     vwc_max: 0.439,
@@ -141,6 +157,7 @@ var stations = [
   },
   {
     name: "naranjito",
+    "url-name": "naranjito",
     display_name: "Naranjito",
     coords: [18.3, -66.25],
     vwc_max: 0.424,
@@ -155,6 +172,7 @@ var stations = [
   },
   {
     name: "orocovis",
+    "url-name": "orocovis",
     display_name: "Orocovis",
     coords: [18.23, -66.3883],
     vwc_max: 0.479,
@@ -169,6 +187,7 @@ var stations = [
   },
   {
     name: "ponce",
+    "url-name": "ponce",
     display_name: "Ponce",
     coords: [18.0111, -66.6141],
     vwc_max: 0.434,
@@ -183,6 +202,7 @@ var stations = [
   },
   {
     name: "sanlorenzo",
+    "url-name": "san-lorenzo",
     display_name: "San Lorenzo",
     coords: [18.1897, -65.9721],
     vwc_max: 0.485,
@@ -197,6 +217,7 @@ var stations = [
   },
   {
     name: "toronegro",
+    "url-name": "toro-negro",
     display_name: "Toro Negro",
     coords: [18.1723, -66.495],
     vwc_max: 0.483,
@@ -211,6 +232,7 @@ var stations = [
   },
   {
     name: "utuado",
+    "url-name": "utuado",
     display_name: "Utuado",
     coords: [18.2681, -66.7005],
     vwc_max: 0.45,
@@ -225,6 +247,7 @@ var stations = [
   },
   {
     name: "yabucoa",
+    "url-name": "yabucoa",
     display_name: "Yabucoa",
     coords: [18.0919, -65.8802],
     vwc_max: 0.372,
@@ -239,6 +262,7 @@ var stations = [
   },
   {
     name: "yauco",
+    "url-name": "yauco",
     display_name: "Yauco",
     coords: [18.034, -66.8497],
     vwc_max: 0.492,
