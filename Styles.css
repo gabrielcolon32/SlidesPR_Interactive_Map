@@ -1,6 +1,7 @@
 /* General Styles */
 body {
   background-color: #121212; /* Matte black background */
+  font-family: 'Bebas Neue', "Helvetica Neue", Helvetica, Arial, sans-serif; /* Apply font family */
 }
 
 header {
@@ -90,6 +91,8 @@ form input[type="submit"]:hover {
   padding-top: 60px;
   z-index: 1000;
   transform: translateX(0); /* Initially visible */
+  font-size: 24px; /* Increase font size */
+  font-family: 'Bebas Neue', "Helvetica Neue", Helvetica, Arial, sans-serif; /* Apply font family */
 }
 
 .sidebar.closed {
@@ -142,24 +145,17 @@ form input[type="submit"]:hover {
   z-index: 1001; /* Ensure it is above other elements */
 }
 
-/* Custom Marker Styles */
-.leaflet-popup-content {
-  display: flex;
-  align-items: center;
-  background-color: #161616;
-  padding: 0;
-}
-
 .leaflet-popup-content-wrapper {
   background: rgb(20, 20, 20) !important;
   border-radius: 5px;
   padding: 0;
   display: flex;
   flex-direction: row;
-  align-items: center;
+  align-items: stretch; /* Ensure child elements stretch to fill the container */
   overflow: hidden; /* Ensure content doesn't overflow */
-  position: relative; /* Allow absolute positioning of the image */
+  position: relative;
   width: 500px;
+  font-family: 'Bebas Neue', "Helvetica Neue", Helvetica, Arial, sans-serif; /* Apply font family */
 }
 
 .leaflet-popup-content figure {
@@ -169,9 +165,7 @@ form input[type="submit"]:hover {
   display: flex;
   flex-direction: column;
   align-items: center;
-  position: absolute; /* Position the figure absolutely */
-  left: 0; /* Align to the left */
-  top: 0; /* Align to the top */
+  position: relative; /* Position the figure relatively */
   height: 100%; /* Cover the full height of the popup */
   z-index: 1; /* Ensure it is above other content */
 }
@@ -196,19 +190,19 @@ form input[type="submit"]:hover {
 }
 
 .leaflet-popup-content .info {
-  margin-left: 100%; /* Start the info section after the image */
+  margin-left: 0; /* Remove left margin */
   padding: 10px;
   color: white;
-  width: 100%; /* Cover the remaining 50% of the popup width */
+  width: 50%; /* Cover the remaining 50% of the popup width */
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: flex-start;
 }
 
-.leaflet-popup-content .info p {
-  margin: 5px 0;
-  font-size: 16px; /* Ensure the text is large enough */
+.leaflet-popup-content .info h2 {
+  margin: 0;
+  font-size: 18px; /* Adjust the font size as needed */
 }
 
 .leaflet-popup-content .info ul {

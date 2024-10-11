@@ -286,7 +286,7 @@ function initializeMarkers(map, dataType) {
     <a href="https://derrumbe.net/${
       station["url-name"]
     }" target="_blank" class="leaflet-popup-link">
-      <div class="leaflet-popup-content">
+      <div class="leaflet-popup-content-wrapper">
         <figure>
           <img src="/files/images/${station.name}.jpg" alt="${
       station.display_name
