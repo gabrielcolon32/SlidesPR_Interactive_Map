@@ -231,6 +231,42 @@ function setupEventListeners(map, layers, stations) {
       }
     });
 
+  // Event delegation for image toggling
+  document.addEventListener("click", function (event) {
+    if (event.target.classList.contains("arrow")) {
+      toggleImage(event);
+    }
+  });
+
+  function toggleImage(event) {
+    event.stopPropagation();
+    const container = event.target.closest(".image-container");
+    const images = container.querySelectorAll(".popup-image");
+    images.forEach((img) => img.classList.toggle("hidden"));
+  }
+
+  document.addEventListener("DOMContentLoaded", async function () {
+    createOverlay();
+    const { map, layers } = initializeMap();
+    const stations = await initializeStations(map);
+    setupEventListeners(map, layers, stations);
+    uncheckPrecipitationLayer();
+
+    // Event delegation for image toggling
+    document.addEventListener("click", function (event) {
+      if (event.target.classList.contains("arrow")) {
+        toggleImage(event);
+      }
+    });
+  });
+
+  function toggleImage(event) {
+    event.stopPropagation();
+    const container = event.target.closest(".image-container");
+    const images = container.querySelectorAll(".popup-image");
+    images.forEach((img) => img.classList.toggle("hidden"));
+  }
+
   document
     .getElementById("legendToggle")
     .addEventListener("change", (event) => {
@@ -283,30 +319,25 @@ function initializeMarkers(map, dataType) {
     }
 
     const popupContent = `
-    <a href="https://derrumbe.net/${
-      station["url-name"]
-    }" target="_blank" class="leaflet-popup-link">
-      <div class="leaflet-popup-content-wrapper">
-        <figure>
-          <img src="/files/images/${station.name}.jpg" alt="${
-      station.display_name
-    }">
-          <figcaption>${station.display_name} Station</figcaption>
-        </figure>
-        <div class="info">
-          <h2>${station.name.toUpperCase()}</h2>
-          <ul>
-            <li><strong>Landslide Susceptibility:</strong> ${
-              station.landslideSusceptibility
-            }</li>
-            <li><strong>Elevation:</strong> ${station.elevation}</li>
-            <li><strong>Saturation Level:</strong> ${saturationPercentage}</li>
-            <li><strong>Precipitation (Last-12hr):</strong> ${rainTotal}mm</li>
-            <li><strong>Soil Unit:</strong> ${station.soilUnit}</li>
-          </ul>
-        </div>
+    <div class="leaflet-popup-content">
+      <div class="image-container">
+        <div class="arrow left-arrow" onclick="toggleImage(event)">&#9664;</div>
+        <img src="/files/images/${station.name}.jpg" alt="${station.display_name}" class="popup-image">
+        <img src="/files/network/plots/${station.plot_name}" alt="${station.display_name} Graph" class="popup-image hidden">
+        <div class="arrow right-arrow" onclick="toggleImage(event)">&#9654;</div>
       </div>
-    </a>
+      <div class="info">
+        <h2>${station.name.toUpperCase()}</h2>
+        <ul>
+          <li><strong>Landslide Susceptibility:</strong> ${station.landslideSusceptibility}</li>
+          <li><strong>Elevation:</strong> ${station.elevation}</li>
+          <li><strong>Saturation Level:</strong> ${saturationPercentage}</li>
+          <li><strong>Precipitation (Last-12hr):</strong> ${rainTotal}mm</li>
+          <li><strong>Soil Unit:</strong> ${station.soilUnit}</li>
+        </ul>
+        <a href="https://derrumbe.net/${station["url-name"]}" target="_blank" class="leaflet-popup-link">Click here for more details!</a>
+      </div>
+    </div>
     `;
 
     const backgroundColor =
@@ -397,30 +428,25 @@ function changeData(stations, dataType) {
     }
 
     const popupContent = `
-    <a href="https://derrumbe.net/${
-      station["url-name"]
-    }" target="_blank" class="leaflet-popup-link">
-      <div class="leaflet-popup-content">
-        <figure>
-          <img src="/files/images/${station.name}.jpg" alt="${
-      station.display_name
-    }">
-          <figcaption>${station.display_name} Station</figcaption>
-        </figure>
-        <div class="info">
-          <h2>${station.name.toUpperCase()}</h2>
-          <ul>
-            <li><strong>Landslide Susceptibility:</strong> ${
-              station.landslideSusceptibility
-            }</li>
-            <li><strong>Elevation:</strong> ${station.elevation}</li>
-            <li><strong>Saturation Level:</strong> ${saturationPercentage}</li>
-            <li><strong>Precipitation (Last-12hr):</strong> ${rainTotal}mm</li>
-            <li><strong>Soil Unit:</strong> ${station.soilUnit}</li>
-          </ul>
-        </div>
+    <div class="leaflet-popup-content">
+      <div class="image-container">
+        <div class="arrow left-arrow" onclick="toggleImage(event)">&#9664;</div>
+        <img src="/files/images/${station.name}.jpg" alt="${station.display_name}" class="popup-image">
+        <img src="/files/network/plots/${station.plot_name}" alt="${station.display_name} Graph" class="popup-image hidden">
+        <div class="arrow right-arrow" onclick="toggleImage(event)">&#9654;</div>
       </div>
-    </a>
+      <div class="info">
+        <h2>${station.name.toUpperCase()}</h2>
+        <ul>
+          <li><strong>Landslide Susceptibility:</strong> ${station.landslideSusceptibility}</li>
+          <li><strong>Elevation:</strong> ${station.elevation}</li>
+          <li><strong>Saturation Level:</strong> ${saturationPercentage}</li>
+          <li><strong>Precipitation (Last-12hr):</strong> ${rainTotal}mm</li>
+          <li><strong>Soil Unit:</strong> ${station.soilUnit}</li>
+        </ul>
+        <a href="https://derrumbe.net/${station["url-name"]}" target="_blank" class="leaflet-popup-link">Click here for more details!</a>
+      </div>
+    </div>
     `;
 
     marker.setPopupContent(popupContent);

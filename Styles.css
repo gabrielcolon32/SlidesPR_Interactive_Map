@@ -1,7 +1,6 @@
 /* General Styles */
 body {
   background-color: #121212; /* Matte black background */
-  font-family: 'Bebas Neue', "Helvetica Neue", Helvetica, Arial, sans-serif; /* Apply font family */
 }
 
 header {
@@ -91,8 +90,6 @@ form input[type="submit"]:hover {
   padding-top: 60px;
   z-index: 1000;
   transform: translateX(0); /* Initially visible */
-  font-size: 24px; /* Increase font size */
-  font-family: 'Bebas Neue', "Helvetica Neue", Helvetica, Arial, sans-serif; /* Apply font family */
 }
 
 .sidebar.closed {
@@ -145,84 +142,95 @@ form input[type="submit"]:hover {
   z-index: 1001; /* Ensure it is above other elements */
 }
 
+/* Custom Marker Styles */
 .leaflet-popup-content-wrapper {
-  background: rgb(20, 20, 20) !important;
+  background-color: #000; /* Black background */
   border-radius: 5px;
-  padding: 0;
-  display: flex;
-  flex-direction: row;
-  align-items: stretch; /* Ensure child elements stretch to fill the container */
-  overflow: hidden; /* Ensure content doesn't overflow */
-  position: relative;
-  width: 500px;
-  font-family: 'Bebas Neue', "Helvetica Neue", Helvetica, Arial, sans-serif; /* Apply font family */
 }
 
-.leaflet-popup-content figure {
-  margin: 0;
-  padding: 0;
-  width: 50%; /* Cover 50% of the popup width */
+.leaflet-popup-content {
   display: flex;
-  flex-direction: column;
   align-items: center;
-  position: relative; /* Position the figure relatively */
-  height: 100%; /* Cover the full height of the popup */
-  z-index: 1; /* Ensure it is above other content */
+  background-color: #000; /* Black background */
+  padding: 10px;
+  border-radius: 5px;
 }
 
-.leaflet-popup-content img {
-  width: 100%; /* Make the image cover the full width of the figure */
-  height: 100%; /* Make the image cover the full height of the figure */
-  object-fit: cover; /* Ensure the image covers the area without distortion */
-  border-radius: 5px 0 0 5px; /* Rounded corners on the left side */
+.image-container {
+  position: relative;
+  background-color: #161616;
+  width: 50%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden; /* Ensure content doesn't overflow */
 }
 
-.leaflet-popup-content figcaption {
+.arrow {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 24px;
   color: white;
-  font-size: 12px;
-  background-color: rgba(0, 0, 0, 0.85); /* Semi-transparent background for readability */
-  width: 100%; /* Cover the full width of the figure */
-  text-align: center; /* Center the text */
-  padding: 5px 0; /* Add some padding */
-  position: absolute; /* Position the caption absolutely */
-  bottom: 0; /* Align to the bottom */
-  z-index: 2; /* Ensure it is above the image */
+  background-color: rgba(0, 0, 0, 0.5);
+  padding: 5px;
+  cursor: pointer;
+  z-index: 2;
+}
+
+.left-arrow {
+  left: 0;
+}
+
+.right-arrow {
+  right: 0;
+}
+
+.popup-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: opacity 0.5s ease;
+}
+
+.popup-image.hidden {
+  opacity: 0;
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 1;
 }
 
 .leaflet-popup-content .info {
-  margin-left: 0; /* Remove left margin */
-  padding: 10px;
+  margin-left: 20px;
   color: white;
-  width: 50%; /* Cover the remaining 50% of the popup width */
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: flex-start;
+  width: 50%;
 }
 
 .leaflet-popup-content .info h2 {
-  margin: 0;
-  font-size: 18px; /* Adjust the font size as needed */
+  margin-top: 0;
 }
 
 .leaflet-popup-content .info ul {
-  list-style-type: disc; /* Display bullet points */
-  padding-left: 20px; /* Indent bullet points */
-  font-size: 16px; /* Ensure the text is large enough */
+  list-style-type: none;
+  padding: 0;
 }
 
 .leaflet-popup-content .info li {
-  margin-bottom: 8px; /* Space between list items */
-  font-size: 16px; /* Ensure the text is large enough */
+  margin-bottom: 8px;
+  font-size: 14px;
 }
 
 .leaflet-popup-link {
-  text-decoration: none; /* Remove underline from link */
-  color: inherit; /* Inherit text color */
+  text-decoration: none;
+  color: inherit;
+  display: block;
+  margin-top: 10px;
 }
 
 .leaflet-popup-link:hover {
-  text-decoration: none; /* Remove underline on hover */
+  text-decoration: underline;
 }
 
 /* Legend Container Styles */
@@ -241,6 +249,19 @@ form input[type="submit"]:hover {
 
 #legend-image {
   max-width: 100%;
+  height: auto;
+}
+
+/* Logo Container Styles */
+#logo-container {
+  position: absolute;
+  bottom: 10px;
+  right: 10px;
+  z-index: 1000; /* Ensure it is above other elements */
+}
+
+#logo-image {
+  max-width: 150px; /* Adjust the size as needed */
   height: auto;
 }
 
@@ -280,13 +301,8 @@ form input[type="submit"]:hover {
     transform: translateX(-100%); /* Move sidebar out of view */
   }
 
-  .leaflet-popup-content-wrapper {
-    width: 100%; /* Make the popup content wrapper full width */
-  }
-
-  .leaflet-popup-content figure {
-    width: 100%; /* Make the figure full width */
-    height: auto; /* Adjust the height automatically */
+  .image-container {
+    width: 100%; /* Make the image container full width */
   }
 
   .leaflet-popup-content .info {
