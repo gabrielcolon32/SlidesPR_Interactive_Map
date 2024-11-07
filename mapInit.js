@@ -29,13 +29,16 @@ function initializeMap() {
     minZoom: 9,
     maxZoom: 18,
     scrollWheelZoom: false,
-    zoomControl: false,
+    zoomControl: false, // Disable default zoom control
   });
 
-  L.control.zoom({ position: "topright" }).addTo(map);
+  // Add custom controls
+  addCustomControls(map);
+
+  // Add zoom control below the gear button
+  L.control.zoom({ position: "topleft" }).addTo(map);
 
   const layers = addBaseLayers(map);
-  addCustomControls(map);
   setupScrollZoom(map);
 
   return { map, layers };
@@ -78,8 +81,8 @@ function addBaseLayers(map) {
   );
 
   const precipitationLayer = L.esri.imageMapLayer({
-    url: "https://mapservices.weather.noaa.gov/raster/rest/services/obs/mrms_qpe/ImageServer",
-    opacity: 0.7,
+    url:"https://mapservices.weather.noaa.gov/raster/rest/services/obs/mrms_qpe/ImageServer/exportImage?renderingRule={\"rasterFunction\":\"rft_12hr\"}",
+    opacity: 0.5,
     attribution: "Precipitation data © NOAA",
   });
 
@@ -96,7 +99,7 @@ function addBaseLayers(map) {
 }
 
 function addCustomControls(map) {
-  const legendControl = L.control({ position: "bottomright" });
+  const legendControl = L.control({ position: "topright" });
 
   legendControl.onAdd = function () {
     const div = L.DomUtil.create("div", "legend-control");
@@ -240,9 +243,9 @@ function setupEventListeners(map, layers, stations) {
 
   function toggleImage(event) {
     event.stopPropagation();
-    const container = event.target.closest(".image-container");
-    const images = container.querySelectorAll(".popup-image");
-    images.forEach((img) => img.classList.toggle("hidden"));
+    const container = event.target.closest('.image-container');
+    const links = container.querySelectorAll('.image-link');
+    links.forEach(link => link.classList.toggle('hidden'));
   }
 
   document.addEventListener("DOMContentLoaded", async function () {
@@ -309,31 +312,40 @@ function initializeMarkers(map, dataType) {
       ? ((stationData[wcKey] / station.vwc_max) * 100).toFixed(0) + "%"
       : "N/A";
 
-    const rainTotal =
+    const rainTotalMM =
       parseFloat(stationData["12hr_rain_mm_total"]).toFixed(0) || "N/A";
+    const rainTotalInches =
+      rainTotalMM !== "N/A" ? (rainTotalMM / 25.4).toFixed(2) : "N/A";
 
     const timestamp = stationData["TIMESTAMP"] || "N/A";
     let formattedTimestamp = "N/A";
     if (timestamp !== "N/A") {
-      // Format the timestamp here
+      const cleanedTimestamp = timestamp.replace(/['"]/g, "");
+      const parsedDate = Date.parse(cleanedTimestamp);
+      if (!isNaN(parsedDate)) {
+        formattedTimestamp = new Date(parsedDate).toLocaleString();
+      }
     }
 
     const popupContent = `
-    <div class="leaflet-popup-content">
+    <div class="custom-popup-content">
       <div class="image-container">
         <div class="arrow left-arrow" onclick="toggleImage(event)">&#9664;</div>
-        <img src="/files/images/${station.name}.jpg" alt="${station.display_name}" class="popup-image">
-        <img src="/files/network/plots/${station.plot_name}" alt="${station.display_name} Graph" class="popup-image hidden">
+        <a href="/files/network/plots/${station.plot_name}" target="_blank" class="image-link">
+          <img src="/files/images/${station.name}.jpg" alt="${station.display_name}" class="popup-image">
+        </a>
+        <a href="/files/images/${station.name}.jpg" target="_blank" class="image-link hidden">
+          <img src="/files/network/plots/${station.plot_name}" alt="${station.display_name} Graph" class="popup-image hidden">
+        </a>
         <div class="arrow right-arrow" onclick="toggleImage(event)">&#9654;</div>
       </div>
       <div class="info">
         <h2>${station.name.toUpperCase()}</h2>
         <ul>
-          <li><strong>Landslide Susceptibility:</strong> ${station.landslideSusceptibility}</li>
-          <li><strong>Elevation:</strong> ${station.elevation}</li>
-          <li><strong>Saturation Level:</strong> ${saturationPercentage}</li>
-          <li><strong>Precipitation (Last-12hr):</strong> ${rainTotal}mm</li>
-          <li><strong>Soil Unit:</strong> ${station.soilUnit}</li>
+          <li><strong>Last Updated:</strong> ${formattedTimestamp}</li>
+          <li><strong>Soil Saturation:</strong> ${saturationPercentage}</li>
+          <li><strong>12 HRS Precipitation:</strong> ${rainTotalInches} inches</li>
+          <li><strong>Today's Forecast:</strong> ${station.forecast}</li>
         </ul>
         <a href="https://derrumbe.net/${station["url-name"]}" target="_blank" class="leaflet-popup-link">Click here for more details!</a>
       </div>
@@ -351,9 +363,9 @@ function initializeMarkers(map, dataType) {
       className: "custom-div-icon",
       html: `<div style="background-color: ${backgroundColor}; color: white; padding: 5px; border-radius: 5px; display: flex; flex-direction: column; text-align: center; justify-content: center; align-items: center; height: 100%;">
         <span style="font-size: 24px; color: white;">
-          ${dataType === "rainfall" ? rainTotal : saturationPercentage}
+          ${dataType === "rainfall" ? rainTotalInches : saturationPercentage}
         </span>
-        ${dataType === "rainfall" ? "mm" : ""}
+        ${dataType === "rainfall" ? "inches" : ""}
         </div>`,
       iconSize: [50, 50],
       iconAnchor: [25, 25],
@@ -379,7 +391,6 @@ function initializeMarkers(map, dataType) {
 
   return stations;
 }
-
 // Data Change Handling
 function changeData(stations, dataType) {
   stations.forEach(function (station) {
@@ -406,8 +417,10 @@ function changeData(stations, dataType) {
       ? ((stationData[wcKey] / station.vwc_max) * 100).toFixed(0) + "%"
       : "N/A";
 
-    const rainTotal =
+    const rainTotalMM =
       parseFloat(stationData["12hr_rain_mm_total"]).toFixed(0) || "N/A";
+    const rainTotalInches =
+      rainTotalMM !== "N/A" ? (rainTotalMM / 25.4).toFixed(2) : "N/A";
 
     const timestamp = stationData["TIMESTAMP"] || "N/A";
     let formattedTimestamp = "N/A";
@@ -420,7 +433,7 @@ function changeData(stations, dataType) {
     }
 
     if (dataType === "rainfall") {
-      value = rainTotal;
+      value = rainTotalInches;
     } else if (dataType === "soilSaturation") {
       value = saturationPercentage;
     } else {
@@ -428,21 +441,24 @@ function changeData(stations, dataType) {
     }
 
     const popupContent = `
-    <div class="leaflet-popup-content">
+    <div class="custom-popup-content">
       <div class="image-container">
         <div class="arrow left-arrow" onclick="toggleImage(event)">&#9664;</div>
-        <img src="/files/images/${station.name}.jpg" alt="${station.display_name}" class="popup-image">
-        <img src="/files/network/plots/${station.plot_name}" alt="${station.display_name} Graph" class="popup-image hidden">
+        <a href="/files/network/plots/${station.plot_name}" target="_blank" class="image-link">
+          <img src="/files/images/${station.name}.jpg" alt="${station.display_name}" class="popup-image">
+        </a>
+        <a href="/files/images/${station.name}.jpg" target="_blank" class="image-link hidden">
+          <img src="/files/network/plots/${station.plot_name}" alt="${station.display_name} Graph" class="popup-image hidden">
+        </a>
         <div class="arrow right-arrow" onclick="toggleImage(event)">&#9654;</div>
       </div>
       <div class="info">
         <h2>${station.name.toUpperCase()}</h2>
         <ul>
-          <li><strong>Landslide Susceptibility:</strong> ${station.landslideSusceptibility}</li>
-          <li><strong>Elevation:</strong> ${station.elevation}</li>
-          <li><strong>Saturation Level:</strong> ${saturationPercentage}</li>
-          <li><strong>Precipitation (Last-12hr):</strong> ${rainTotal}mm</li>
-          <li><strong>Soil Unit:</strong> ${station.soilUnit}</li>
+          <li><strong>Last Updated:</strong> ${formattedTimestamp}</li>
+          <li><strong>Soil Saturation:</strong> ${saturationPercentage}</li>
+          <li><strong>12 HRS Precipitation:</strong> ${rainTotalInches} inches</li>
+          <li><strong>Today's Forecast:</strong> ${station.forecast}</li>
         </ul>
         <a href="https://derrumbe.net/${station["url-name"]}" target="_blank" class="leaflet-popup-link">Click here for more details!</a>
       </div>
@@ -471,7 +487,7 @@ function changeData(stations, dataType) {
         <span style="font-size: 24px; color: white;">
           ${value}
         </span>
-        ${dataType === "rainfall" ? "<span>mm</span>" : ""}
+        ${dataType === "rainfall" ? "<span>inches</span>" : ""}
       </div>`;
 
     marker.setIcon(

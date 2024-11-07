@@ -4,7 +4,7 @@
  * The "url-name" property is used for the website links.
  */
 
-var stations = [
+const stations = [
   {
     name: "adjuntas",
     "url-name": "adjuntas",
@@ -19,7 +19,8 @@ var stations = [
     sensorDepths: "20cm, 40cm, 60cm, 80cm",
     dateInstalled: "Mar-2022",
     collaborator: "Departamento de Recursos Naturales y Ambientales",
-    plot_name: "Adjuntas.jpeg"
+    plot_name: "Adjuntas.jpeg",
+    forecast: "Incoming Feature"
   },
   {
     name: "anasco",
@@ -35,7 +36,8 @@ var stations = [
     sensorDepths: "25cm, 50cm, 75cm, 100cm",
     dateInstalled: "Sep-2023",
     collaborator: "Private Landowner",
-    plot_name: "Anasco.jpeg"
+    plot_name: "Anasco.jpeg",
+    forecast: "Incoming Feature"
   },
   {
     name: "barranquitas",
@@ -51,7 +53,8 @@ var stations = [
     sensorDepths: "25cm, 53cm, 82cm, 100cm",
     dateInstalled: "Feb-2022",
     collaborator: "Para la Naturaleza",
-    plot_name: "Barranquitas.jpeg"
+    plot_name: "Barranquitas.jpeg",
+    forecast: "Incoming Feature"
   },
   {
     name: "cayey",
@@ -67,7 +70,8 @@ var stations = [
     sensorDepths: "21cm, 42cm, 63cm, 84cm",
     dateInstalled: "Dec-2021",
     collaborator: "USGS Geomagnetic Observatory",
-    plot_name: "Cayey.jpeg"
+    plot_name: "Cayey.jpeg",
+    forecast: "Incoming Feature"
   },
   {
     name: "ciales",
@@ -83,7 +87,8 @@ var stations = [
     sensorDepths: "22.5cm, 45cm, 67.5cm, 90cm",
     dateInstalled: "Feb-2022",
     collaborator: "Private Landowner",
-    plot_name: "Ciales.jpeg"
+    plot_name: "Ciales.jpeg",
+    forecast: "Incoming Feature"
   },
   {
     name: "lares",
@@ -99,7 +104,8 @@ var stations = [
     sensorDepths: "22cm, 44cm, 66cm, 88cm",
     dateInstalled: "Mar-2022",
     collaborator: "Private Landowner",
-    plot_name: "Lares.jpeg"
+    plot_name: "Lares.jpeg",
+    forecast: "Incoming Feature"
   },
   {
     name: "maricao",
@@ -115,7 +121,8 @@ var stations = [
     sensorDepths: "33cm, 66cm, 99cm, 130cm",
     dateInstalled: "Dec-2022",
     collaborator: "Private Landowner",
-    plot_name: "Maricao.jpeg"
+    plot_name: "Maricao.jpeg",
+    forecast: "Incoming Feature"
   },
   {
     name: "maunabo",
@@ -131,7 +138,8 @@ var stations = [
     sensorDepths: "27.5cm, 55cm, 77.5cm, 110cm",
     dateInstalled: "Feb-2022",
     collaborator: "Para la Naturaleza",
-    plot_name: "Maunabo.jpeg"
+    plot_name: "Maunabo.jpeg",
+    forecast: "Incoming Feature"
   },
   {
     name: "mayaguez",
@@ -147,7 +155,8 @@ var stations = [
     sensorDepths: "20cm, 40cm, 60cm, 80cm",
     dateInstalled: "Mar-2022",
     collaborator: "UPR Mayagüez",
-    plot_name: "Mayaguez.jpeg"
+    plot_name: "Mayaguez.jpeg",
+    forecast: "Incoming Feature"
   },
   {
     name: "naguabo",
@@ -163,7 +172,8 @@ var stations = [
     sensorDepths: "25cm, 50cm, 75cm, 100cm",
     dateInstalled: "July-2022",
     collaborator: "Private Landowner",
-    plot_name: "Naguabo.jpeg"
+    plot_name: "Naguabo.jpeg",
+    forecast: "Incoming Feature"
   },
   {
     name: "naranjito",
@@ -179,7 +189,8 @@ var stations = [
     sensorDepths: "25cm, 50cm, 75cm, 100cm",
     dateInstalled: "August-2022",
     collaborator: "Municipio de Naranjito",
-    plot_name: "Naranjito.jpeg"
+    plot_name: "Naranjito.jpeg",
+    forecast: "Incoming Feature"
   },
   {
     name: "orocovis",
@@ -195,7 +206,8 @@ var stations = [
     sensorDepths: "25cm, 50cm, 75cm, 100cm",
     dateInstalled: "Apr-2024",
     collaborator: "Private Collaborator",
-    plot_name: "Orocovis.jpeg"
+    plot_name: "Orocovis.jpeg",
+    forecast: "Incoming Feature"
   },
   {
     name: "ponce",
@@ -211,7 +223,8 @@ var stations = [
     sensorDepths: "25cm, 50cm, 75cm, 100cm",
     dateInstalled: "March-2023",
     collaborator: "Para la Naturaleza",
-    plot_name: "Ponce.jpeg"
+    plot_name: "Ponce.jpeg",
+    forecast: "Incoming Feature"
   },
   {
     name: "sanlorenzo",
@@ -227,7 +240,8 @@ var stations = [
     sensorDepths: "17.5cm, 35cm, 52.5cm, 70cm",
     dateInstalled: "Feb-2022",
     collaborator: "Para la Naturaleza",
-    plot_name: "San_Lorenzo.jpeg"
+    plot_name: "San_Lorenzo.jpeg",
+    forecast: "Incoming Feature"
   },
   {
     name: "toronegro",
@@ -243,7 +257,8 @@ var stations = [
     sensorDepths: "30cm, 50cm, 90cm, 100cm",
     dateInstalled: "2018",
     collaborator: "Departamento de Recursos Naturales e Ambientales",
-    plot_name: "Toro_Negro.jpeg"
+    plot_name: "Toro_Negro.jpeg",
+    forecast: "Incoming Feature"
   },
   {
     name: "utuado",
@@ -259,7 +274,8 @@ var stations = [
     sensorDepths: "27cm, 42cm, 57cm, 72cm",
     dateInstalled: "2018",
     collaborator: "Private Landowner",
-    plot_name: "Utuado.jpeg"
+    plot_name: "Utuado.jpeg",
+    forecast: "Incoming Feature"
   },
   {
     name: "yabucoa",
@@ -275,7 +291,8 @@ var stations = [
     sensorDepths: "25cm, 50cm, 75cm, 100cm",
     dateInstalled: "Dec-2023",
     collaborator: "Private Landowner",
-    plot_name: "Yabucoa.jpeg"
+    plot_name: "Yabucoa.jpeg",
+    forecast: "Incoming Feature"
   },
   {
     name: "yauco",
@@ -291,7 +308,8 @@ var stations = [
     sensorDepths: "25cm, 50cm, 75cm, 100cm",
     dateInstalled: "Jan-2023",
     collaborator: "Private Landowner",
-    plot_name: "Yauco.jpeg"
+    plot_name: "Yauco.jpeg",
+    forecast: "Incoming Feature"
   }
 ];
 
