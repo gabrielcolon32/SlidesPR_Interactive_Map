@@ -1,42 +1,6 @@
-/* styles.css */
-
-/* Custom marker styles */
-/* styles.css */
-
-.custom-div-icon {
-  background-color: rgba(10, 41, 95, 0.9);
-  color: white;
-  padding: 5px;
-  border-radius: 5px;
-  text-align: center;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 100%;
-}
-
-/* Marker text styles */
-.custom-div-icon span {
-  font-size: 24px;
-  color: white; /* Set text color to white */
-}
-
-/* Popup styles */
-.leaflet-popup-content {
-  font-size: 14px;
-  line-height: 1.4;
-}
-
-.leaflet-popup-content-wrapper {
-  background: rgba(255, 255, 255, 0.8); /* Semi-transparent white background */
-  border-radius: 5px;
-  padding: 8px;
-}
-
+/* General Styles */
 body {
-  font-family: Arial, sans-serif;
-  margin: 0;
-  padding: 0;
+  background-color: #121212; /* Matte black background */
 }
 
 header {
@@ -91,4 +55,342 @@ form input[type="submit"] {
 
 form input[type="submit"]:hover {
   background-color: #555;
+}
+
+/* Map Overlay */
+#map-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  color: white;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 3em;
+  z-index: 1000;
+  display: none; /* Initially hidden */
+  pointer-events: none; /* Allow interactions to pass through */
+}
+
+/* Sidebar Styles */
+.sidebar {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 250px;
+  background-color: rgba(50, 50, 50, 0.85); /* Dark gray with 0.85 opacity */
+  color: white; /* White font color */
+  box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+  overflow: hidden; /* Hide overflow */
+  transition: transform 0.5s ease, padding 1s ease; /* Smooth transition for transform and padding */
+  padding-top: 60px;
+  z-index: 1001; /* Ensure it is above other elements */
+  transform: translateX(0); /* Initially visible */
+}
+
+.sidebar.closed {
+  transform: translateX(-100%); /* Move sidebar out of view */
+  padding-top: 0;
+  padding-left: 0;
+}
+
+.sidebar-toggle {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  font-size: 30px;
+  cursor: pointer;
+  background: none;
+  border: none;
+  color: white; /* White font color for the toggle button */
+}
+
+.sidebar-content {
+  padding: 15px;
+  transition: opacity 0.5s ease; /* Smooth transition for opacity */
+}
+
+.sidebar.closed .sidebar-content {
+  opacity: 0; /* Hide content when sidebar is closed */
+}
+
+.sidebar h2 {
+  margin-top: 0;
+  color: white; /* White font color for the heading */
+}
+
+.sidebar label {
+  display: block;
+  margin: 10px 0;
+  color: white; /* White font color for the labels */
+}
+
+/* Gear Icon Button Styles */
+.gear-button {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  font-size: 24px;
+  cursor: pointer;
+  background: none;
+  border: none;
+  color: white; /* White font color */
+  z-index: 1002; /* Ensure it is above other elements */
+}
+
+/* Custom Marker Styles */
+.leaflet-popup-content-wrapper {
+  background: rgb(20, 20, 20) !important;
+  border-radius: 5px;
+  padding: 0;
+  display: flex;
+  flex-direction: row;
+  overflow: hidden; /* Ensure content doesn't overflow */
+  position: relative;
+  width: 500px;
+  font-family: 'Bebas Neue', "Helvetica Neue", Helvetica, Arial, sans-serif; /* Apply font family */
+}
+
+.leaflet-popup-content {
+  width: 100% !important; /* Extend to maximum width */
+  height: 400px !important;
+}
+
+.custom-popup-content {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #000; /* Black background */
+  padding: 10px;
+  border-radius: 5px;
+  height: 95%;
+}
+
+.image-container {
+  position: relative;
+  background-color: #161616;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden; /* Ensure content doesn't overflow */
+}
+
+.arrow {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 24px;
+  color: white;
+  background-color: rgba(0, 0, 0, 0.5);
+  padding: 5px;
+  cursor: pointer;
+  z-index: 2;
+}
+
+.left-arrow {
+  left: 0;
+}
+
+.right-arrow {
+  right: 0;
+}
+
+.popup-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: opacity 0.5s ease;
+}
+
+.popup-image.hidden {
+  opacity: 0;
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 1;
+}
+
+.custom-popup-content .info {
+  margin-left: 20px;
+  color: white;
+  font-size: 18px;
+  width: 50%;
+  justify-content: center !important;
+}
+
+.custom-popup-content .info h2 {
+  margin-top: 0;
+}
+
+.custom-popup-content .info ul {
+  list-style-type: none;
+  padding: 0;
+}
+
+.custom-popup-content .info ul li {
+  margin-bottom: 8px;
+}
+
+.custom-popup-content .info a {
+  color: coral;
+}
+
+.leaflet-popup-link {
+  text-decoration: none;
+  color: inherit;
+  display: block;
+  margin-top: 10px;
+}
+
+.custom-popup-content .info ul li {
+  margin-bottom: 8px;
+}
+
+.custom-popup-content .info ul li strong {
+  display: block;
+  color: coral; /* Set the title color to coral */
+}
+
+.leaflet-popup-link:hover {
+  text-decoration: underline;
+}
+
+/* Legend Container Styles */
+#legend-container {
+  position: absolute;
+  top: 10px; 
+  right: 10px; /* Move to right */
+  max-height: 200px; /* Adjust the height as needed */
+  overflow-y: auto;
+  background: rgba(255, 255, 255, 0.9); /* Semi-transparent white background */
+  padding: 10px;
+  border-radius: 5px;
+  box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
+  z-index: 1000; /* Ensure it is above other elements */
+}
+
+#legend-image {
+  max-width: 100%;
+  height: auto;
+}
+
+/* Logo Container Styles */
+#logo-container {
+  position: absolute;
+  bottom: 10px;
+  right: 10px;
+  z-index: 1000; /* Ensure it is above other elements */
+}
+
+#logo-image {
+  max-width: 150px; /* Adjust the size as needed */
+  height: auto;
+}
+
+/* Additional Styles for New Buttons */
+.button-bar-container {
+  position: absolute;
+  bottom: 10px;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: black; /* Black background */
+  padding: 10px;
+  border-radius: 5px;
+  box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
+  z-index: 999; /* Ensure it is below the sidebar */
+}
+
+.button-bar {
+  display: flex;
+  justify-content: center;
+}
+
+.button-bar button {
+  background-color: #333;
+  color: #fff;
+  border: none;
+  padding: 10px 20px;
+  margin: 0 5px;
+  cursor: pointer;
+  border-radius: 5px;
+}
+
+.button-bar button:hover {
+  background-color: #555;
+}
+
+/* Custom Styles for the Zoom Buttons */
+.leaflet-control-zoom {
+  top: 50px !important; /* Adjust the position to be below the gear button */
+}
+
+/* Media Queries for Mobile Devices */
+@media (max-width: 768px) {
+  .sidebar {
+    width: 200px; /* Adjust the width for mobile devices */
+  }
+
+  .sidebar.closed {
+    transform: translateX(-100%); /* Move sidebar out of view */
+  }
+
+  .leaflet-popup-content {
+    width: 200px !important; 
+  }
+
+  .image-container {
+    width: 100%; /* Make the image container full width */
+  }
+
+  .arrow {
+    font-size: 8px;
+  }
+
+  .custom-popup-content {
+    flex-direction: column; /* Stack content vertically */
+    height: auto; /* Adjust height for mobile devices */
+  }
+
+  .custom-popup-content .info {
+    margin-left: 0; /* Remove the left margin */
+    width: 100%; /* Make the info section full width */
+    text-align: center; /* Center align text */
+  }
+
+  .custom-popup-content .info h2 {
+    font-size: 18px; /* Adjust font size for mobile devices */
+  }
+
+  .custom-popup-content .info ul li {
+    font-size: 14px; /* Adjust font size for mobile devices */
+    margin-bottom: 0px;
+  }
+
+  .button-bar {
+    flex-direction: column; /* Stack buttons vertically */
+  }
+
+  .button-bar button {
+    margin: 5px 0; /* Add margin between buttons */
+  }
+
+  .leaflet-popup-content-wrapper {
+    width: 100% !important; /* Make the popup full width */
+    height: auto !important; /* Adjust height for mobile devices */
+  }
+
+  .leaflet-popup-content {
+    height: auto !important; /* Adjust height for mobile devices */
+  }
+
+  #logo-image {
+    max-width: 80px; /* Adjust the size as needed */
+    height: auto;
+  }
 }

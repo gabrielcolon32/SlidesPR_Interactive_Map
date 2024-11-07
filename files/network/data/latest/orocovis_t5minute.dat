@@ -1,0 +1,5 @@
+"TOA5","orocovis","CR1000X","57471","CR1000X.Std.07.01","CPU:orocovis_19-apr-2024.CR1X","28700","t5minute"
+"TIMESTAMP","RECORD","BattV_Min","PanelTemp_C","Enc_RH_Max","Rain_mm_Tot","rain_cum","Freq2","air_temp","atmos_pressure","Freq","piezTemp","Lvl","suction1_25cm","suction2_50cm","suction3_75cm","wc1_25cm","wc2_50cm","wc3_75cm","wc4_100cm"
+"TS","RN","Volts","","%","mm","cm","Hz","degC","kPa","Hz","degC","mh20","kPa","kPa","kPa","vol water/total vol","vol water/total vol","vol water/total vol","vol water/total vol"
+"","","Min","Smp","Max","Tot","Smp","Smp","Smp","Smp","Smp","Smp","Smp","Smp","Smp","Smp","Smp","Smp","Smp","Smp"
+"2024-08-07 20:00:00",30371,13.14,22.31,16.35,0,82.4,3000,25.27853,108.7923,3029,25.09,0.05248553,"NAN",-153.4,-114.5,0.1921121,0.2657041,0.350346,0.4030149

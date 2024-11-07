@@ -1,0 +1,5 @@
+"TOA5","toronegro","CR6","16536","CR6.Std.11.00","CPU:ToroNegro_824_me2.CR6","39055","t5minute"
+"TIMESTAMP","RECORD","BattV_Min","PTemp_C","Rain_mm_Tot","rain_cum","wc1_30cm","wc2_50cm","wc5_100cm","wc4_90cm","Freq","TT","thermTemp_degC","waterLevel","waterLevelTempCorr","suction100","suction50"
+"TS","RN","Volts","Deg C","mm","cm","mV","mV","mV","mV","Hz","ohms","degC","m","m","kpa","kPa"
+"","","Min","Smp","Tot","Smp","Smp","Smp","Smp","Smp","Smp","Smp","Smp","Smp","Smp","Smp","Smp"
+"2024-08-07 20:00:00",157593,12.74,20.46,0,369.7,0.3467072,0.4750711,0.4518256,0.03088778,2948,3892,19.32,-0.922449,-0.9590359,-0.2,-0.3

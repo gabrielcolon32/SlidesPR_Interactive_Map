@@ -1,0 +1,5 @@
+"TOA5","cayey","CR6","16532","CR6.Std.11.00","CPU:cayey_12_2_21.CR6","28551","t5minute"
+"TIMESTAMP","RECORD","BattV_Min","PanelTemp_C","Rain_mm_Tot","rain_cum","Freq","piezTemp","waterLevel","suction1_21cm","suction2_42cm","suction3_63cm","wc1_21cm","wc2_42cm","wc3_63cm","wc4_84cm"
+"TS","RN","Volts","Deg C","mm","cm","Hz","degC","m","kPa","kPa","kPa","mV","mV","mV","mV"
+"","","Min","Smp","Tot","Smp","Smp","Smp","Smp","Smp","Smp","Smp","Smp","Smp","Smp","Smp"
+"2024-08-07 20:00:00",197026,13.14,25.37,0,19.34,3108,24.07,-0.02832166,-37.7,-0.5,-0.4,0.2758086,0.4193679,0.4704256,0.4339867
