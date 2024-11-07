@@ -32,11 +32,11 @@ function initializeMap() {
     zoomControl: false, // Disable default zoom control
   });
 
-  // Add custom controls
-  addCustomControls(map);
-
   // Add zoom control below the gear button
   L.control.zoom({ position: "topleft" }).addTo(map);
+
+  // Add scale control
+  L.control.scale({ position: "bottomleft" }).addTo(map);
 
   const layers = addBaseLayers(map);
   setupScrollZoom(map);
@@ -81,7 +81,7 @@ function addBaseLayers(map) {
   );
 
   const precipitationLayer = L.esri.imageMapLayer({
-    url:"https://mapservices.weather.noaa.gov/raster/rest/services/obs/mrms_qpe/ImageServer/exportImage?renderingRule={\"rasterFunction\":\"rft_12hr\"}",
+    url: 'https://mapservices.weather.noaa.gov/raster/rest/services/obs/mrms_qpe/ImageServer/exportImage?renderingRule={"rasterFunction":"rft_12hr"}',
     opacity: 0.5,
     attribution: "Precipitation data © NOAA",
   });
@@ -98,41 +98,12 @@ function addBaseLayers(map) {
   };
 }
 
-function addCustomControls(map) {
-  const legendControl = L.control({ position: "topright" });
-
-  legendControl.onAdd = function () {
-    const div = L.DomUtil.create("div", "legend-control");
-    div.innerHTML = `
-      <div id="legend-dropdown" class="dropdown">
-        <div id="legend-content" class="dropdown-content"></div>
-      </div>
-    `;
-    div.style.display = "none";
-    return div;
-  };
-
-  legendControl.addTo(map);
-
-  const buttonControl = L.control({ position: "bottomleft" });
-
-  buttonControl.onAdd = function () {
-    const div = L.DomUtil.create("div", "button-bar");
-    div.innerHTML = `
-      <button id="soilSaturation-button">Soil Saturation</button>
-      <button id="rainfall-button">Precipitation</button>
-    `;
-    return div;
-  };
-
-  buttonControl.addTo(map);
-}
-
 function setupScrollZoom(map) {
   let overlayTimeout;
   let isMouseOverLegend = false;
 
   const legendImage = document.getElementById("legend-image");
+  const susceptibilityLegendImage = document.getElementById("legend-image");
 
   legendImage.addEventListener("mouseenter", () => {
     isMouseOverLegend = true;
@@ -142,28 +113,35 @@ function setupScrollZoom(map) {
     isMouseOverLegend = false;
   });
 
+  susceptibilityLegendImage.addEventListener("mouseenter", () => {
+    isMouseOverLegend = true;
+  });
+
+  susceptibilityLegendImage.addEventListener("mouseleave", () => {
+    isMouseOverLegend = false;
+  });
+
   document.addEventListener("keydown", (event) => {
-    if (event.ctrlKey) {
+    if (event.key === "Control") {
       map.scrollWheelZoom.enable();
-      document.getElementById("map-overlay").style.display = "none";
       clearTimeout(overlayTimeout);
+      document.getElementById("map-overlay").style.display = "none";
     }
   });
 
   document.addEventListener("keyup", (event) => {
-    if (!event.ctrlKey) {
+    if (event.key === "Control") {
       map.scrollWheelZoom.disable();
     }
   });
 
   map.getContainer().addEventListener("wheel", (event) => {
-    if (!event.ctrlKey && !isMouseOverLegend) {
-      const overlay = document.getElementById("map-overlay");
-      overlay.style.display = "flex";
+    if (!event.ctrlKey && (!isMouseOverLegend || !isMouseOverSusceptibilityLegend)) {
+      document.getElementById("map-overlay").style.display = "block";
       clearTimeout(overlayTimeout);
       overlayTimeout = setTimeout(() => {
-        overlay.style.display = "none";
-      }, 2000);
+        document.getElementById("map-overlay").style.display = "none";
+      }, 1000);
     }
   });
 }
@@ -202,17 +180,6 @@ function setupEventListeners(map, layers, stations) {
     });
 
   document
-    .getElementById("susceptibilityLayer")
-    .addEventListener("change", (event) => {
-      const { susceptibilityLayer } = layers;
-      if (event.target.checked) {
-        susceptibilityLayer.addTo(map);
-      } else {
-        map.removeLayer(susceptibilityLayer);
-      }
-    });
-
-  document
     .getElementById("municipalityLayer")
     .addEventListener("change", (event) => {
       const { municipalityLayer } = layers;
@@ -234,7 +201,6 @@ function setupEventListeners(map, layers, stations) {
       }
     });
 
-  // Event delegation for image toggling
   document.addEventListener("click", function (event) {
     if (event.target.classList.contains("arrow")) {
       toggleImage(event);
@@ -243,9 +209,9 @@ function setupEventListeners(map, layers, stations) {
 
   function toggleImage(event) {
     event.stopPropagation();
-    const container = event.target.closest('.image-container');
-    const links = container.querySelectorAll('.image-link');
-    links.forEach(link => link.classList.toggle('hidden'));
+    const container = event.target.closest(".image-container");
+    const links = container.querySelectorAll(".image-link");
+    links.forEach((link) => link.classList.toggle("hidden"));
   }
 
   document.addEventListener("DOMContentLoaded", async function () {
@@ -255,7 +221,6 @@ function setupEventListeners(map, layers, stations) {
     setupEventListeners(map, layers, stations);
     uncheckPrecipitationLayer();
 
-    // Event delegation for image toggling
     document.addEventListener("click", function (event) {
       if (event.target.classList.contains("arrow")) {
         toggleImage(event);
@@ -275,6 +240,13 @@ function setupEventListeners(map, layers, stations) {
     .addEventListener("change", (event) => {
       const legendContainer = document.getElementById("legend-container");
       legendContainer.style.display = event.target.checked ? "block" : "none";
+    });
+
+    document
+    .getElementById("susceptibilityLegendToggle")
+    .addEventListener("change", (event) => {
+      const susceptibilityLegendContainer = document.getElementById("susceptibility-legend-container");
+      susceptibilityLegendContainer.style.display = event.target.checked ? "block" : "none";
     });
 
   document.getElementById("sidebar-toggle").addEventListener("click", () => {
@@ -331,11 +303,19 @@ function initializeMarkers(map, dataType) {
     <div class="custom-popup-content">
       <div class="image-container">
         <div class="arrow left-arrow" onclick="toggleImage(event)">&#9664;</div>
-        <a href="/files/network/plots/${station.plot_name}" target="_blank" class="image-link">
-          <img src="/files/images/${station.name}.jpg" alt="${station.display_name}" class="popup-image">
+        <a href="/files/network/plots/${
+          station.plot_name
+        }" target="_blank" class="image-link">
+          <img src="/files/images/${station.name}.jpg" alt="${
+      station.display_name
+    }" class="popup-image">
         </a>
-        <a href="/files/images/${station.name}.jpg" target="_blank" class="image-link hidden">
-          <img src="/files/network/plots/${station.plot_name}" alt="${station.display_name} Graph" class="popup-image hidden">
+        <a href="/files/images/${
+          station.name
+        }.jpg" target="_blank" class="image-link hidden">
+          <img src="/files/network/plots/${station.plot_name}" alt="${
+      station.display_name
+    } Graph" class="popup-image hidden">
         </a>
         <div class="arrow right-arrow" onclick="toggleImage(event)">&#9654;</div>
       </div>
@@ -347,7 +327,9 @@ function initializeMarkers(map, dataType) {
           <li><strong>12 HRS Precipitation:</strong> ${rainTotalInches} inches</li>
           <li><strong>Today's Forecast:</strong> ${station.forecast}</li>
         </ul>
-        <a href="https://derrumbe.net/${station["url-name"]}" target="_blank" class="leaflet-popup-link">Click here for more details!</a>
+        <a href="https://derrumbe.net/${
+          station["url-name"]
+        }" target="_blank" class="leaflet-popup-link">Click here for more details!</a>
       </div>
     </div>
     `;
@@ -444,11 +426,19 @@ function changeData(stations, dataType) {
     <div class="custom-popup-content">
       <div class="image-container">
         <div class="arrow left-arrow" onclick="toggleImage(event)">&#9664;</div>
-        <a href="/files/network/plots/${station.plot_name}" target="_blank" class="image-link">
-          <img src="/files/images/${station.name}.jpg" alt="${station.display_name}" class="popup-image">
+        <a href="/files/network/plots/${
+          station.plot_name
+        }" target="_blank" class="image-link">
+          <img src="/files/images/${station.name}.jpg" alt="${
+      station.display_name
+    }" class="popup-image">
         </a>
-        <a href="/files/images/${station.name}.jpg" target="_blank" class="image-link hidden">
-          <img src="/files/network/plots/${station.plot_name}" alt="${station.display_name} Graph" class="popup-image hidden">
+        <a href="/files/images/${
+          station.name
+        }.jpg" target="_blank" class="image-link hidden">
+          <img src="/files/network/plots/${station.plot_name}" alt="${
+      station.display_name
+    } Graph" class="popup-image hidden">
         </a>
         <div class="arrow right-arrow" onclick="toggleImage(event)">&#9654;</div>
       </div>
@@ -460,7 +450,9 @@ function changeData(stations, dataType) {
           <li><strong>12 HRS Precipitation:</strong> ${rainTotalInches} inches</li>
           <li><strong>Today's Forecast:</strong> ${station.forecast}</li>
         </ul>
-        <a href="https://derrumbe.net/${station["url-name"]}" target="_blank" class="leaflet-popup-link">Click here for more details!</a>
+        <a href="https://derrumbe.net/${
+          station["url-name"]
+        }" target="_blank" class="leaflet-popup-link">Click here for more details!</a>
       </div>
     </div>
     `;

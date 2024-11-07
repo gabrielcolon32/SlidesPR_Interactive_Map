@@ -15,37 +15,60 @@
       rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css"
     />
-    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&display=swap" rel="stylesheet">
+    <link
+      href="https://fonts.googleapis.com/css2?family=Bebas+Neue&display=swap"
+      rel="stylesheet"
+    />
     <!-- Include Leaflet JavaScript -->
     <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
 
     <!-- Include Esri Leaflet JavaScript -->
-    <script src="https://unpkg.com/esri-leaflet" defer></script>
+    <script src="https://unpkg.com/esri-leaflet"></script>
   </head>
   <body>
     <main>
       <div id="map" style="height: 600px">
         <!-- Gear button -->
-        <button id="gear-button" class="gear-button"><i class="fas fa-cog"></i></button>
+        <button id="gear-button" class="gear-button">
+          <i class="fas fa-cog"></i>
+        </button>
         <!-- Sidebar structure -->
         <div id="sidebar" class="sidebar closed">
           <button id="sidebar-toggle" class="sidebar-toggle"></button>
           <div class="sidebar-content">
-            <h2>Layers</h2>
-            <label><input type="checkbox" id="worldImageryLayer" checked>World Imagery</label>
-            <label><input type="checkbox" id="susceptibilityLayer" checked>Landslide Susceptibility</label>
-            <label><input type="checkbox" id="municipalityLayer" checked>Municipalities</label>
-            <label><input type="checkbox" id="precipitationLayer">Precipitation Estimates</label>
-            <label><input type="checkbox" id="legendToggle">Precipitation Legend</label>
+            <h1>Puerto Rico Landslide Hazard Mitigation Office</h1>
+            <h2>Basemaps</h2>
+              <label><input type="checkbox" id="worldImageryLayer" checked>World Imagery</label>
+              <label><input type="checkbox" id="susceptibilityLayer" checked>Landslide Susceptibility</label>
+              <label><input type="checkbox" id="municipalityLayer" checked>Municipalities</label>
+              <label><input type="checkbox" id="precipitationLayer">12 Hour Radar Precipitation Estimates</label>
+              <label><input type="checkbox" id="legendToggle">Precipitation Legend</label>
+              <label><input type="checkbox" id="susceptibilityLegendToggle">Susceptibility Legend</label>
+            <h2>Monitoring Station Data</h2>
+            <div class="button-bar">
+              <button id="soilSaturation-button">Soil Saturation</button>
+              <button id="rainfall-button">Precipitation Last 12 Hrs</button>
+            </div>
           </div>
         </div>
-        <!-- Static Legend Image -->
-        <div id="legend-container" style="display: none;">
-          <img src="/files/images/precipitation_estimate_legend.png" alt="Legend" id="legend-image">
+        <!-- Static Legend Images -->
+        <div id="legend-container" style="display: none">
+          <img
+            src="/files/images/precipitation_estimate_legend.png"
+            alt="Precipitation Legend"
+            id="legend-image"
+          />
+        </div>
+        <div id="susceptibility-legend-container" style="display: none">
+          <img
+            src="/files/images/susceptibility_legend.png"
+            alt="Susceptibility Legend"
+            id="susceptibility-legend-image"
+          />
         </div>
         <!-- Logo Image -->
         <div id="logo-container">
-          <img src="/files/images/logo.png" alt="Logo" id="logo-image">
+          <img src="/files/images/logo.png" alt="Logo" id="logo-image" />
         </div>
       </div>
     </main>
