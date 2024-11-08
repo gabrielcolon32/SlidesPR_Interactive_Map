@@ -7,6 +7,11 @@ document.addEventListener("DOMContentLoaded", async function () {
   const stations = await initializeStations(map);
   setupEventListeners(map, layers, stations);
   uncheckPrecipitationLayer();
+
+  // Set the initial data type and update the label
+  const initialDataType = "soilSaturation"; // Change this to your desired initial data type
+  updateMapLabel(getLabelText(initialDataType));
+  changeData(stations, initialDataType);
 });
 
 // Overlay Creation
@@ -19,20 +24,22 @@ function createOverlay() {
 
 // Map Initialization
 function initializeMap() {
+  const isSmallDevice = window.innerWidth <= 768;
+  const initialZoom = isSmallDevice ? 8.0 : 10; // Zoom out for small devices
   const map = L.map("map", {
     center: [18.220833, -66.420149],
-    zoom: 10,
+    zoom: initialZoom,
     maxBounds: [
       [19.0, -68.0],
       [17.0, -65.0],
     ],
-    minZoom: 9,
+    minZoom: 7,
     maxZoom: 18,
     scrollWheelZoom: false,
     zoomControl: false, // Disable default zoom control
   });
 
-  // Add zoom control below the gear button
+  // Add zoom control below the hamburger button
   L.control.zoom({ position: "topleft" }).addTo(map);
 
   // Add scale control
@@ -44,12 +51,31 @@ function initializeMap() {
   return { map, layers };
 }
 
+function updateMapLabel(text) {
+  const label = document.getElementById("map-label");
+  label.innerText = text;
+  label.style.display = text ? "block" : "none";
+}
+
+function getLabelText(dataType) {
+  if (dataType === "rainfall") {
+    return "12 HOUR PRECIPITATION";
+  } else if (dataType === "soilSaturation") {
+    return "SOIL SATURATION";
+  } else if (dataType === "todayLandslideForecast") {
+    return "TODAY'S LANDSLIDE FORECAST";
+  } else if (dataType === "tomorrowLandslideForecast") {
+    return "TOMORROW'S LANDSLIDE FORECAST";
+  }
+  return "";
+}
+
 function addBaseLayers(map) {
   const worldImageryLayer = L.tileLayer(
     "https://services.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",
     {
       attribution:
-        "Tiles © Esri — Source: Esri, PRLHMO, UPRM, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community",
+        "Tiles © Esri — Source: Esri, UPRM, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community",
       maxZoom: 18,
     }
   ).addTo(map);
@@ -58,7 +84,7 @@ function addBaseLayers(map) {
     .tiledMapLayer({
       url: "https://tiles.arcgis.com/tiles/TQ9qkk0dURXSP7LQ/arcgis/rest/services/Susceptibilidad_Derrumbe_PR/MapServer",
       opacity: 0.5,
-      attribution: "Susceptibility data © Esri",
+      attribution: "Dr. Stephen Hughes, PRLHMO",
     })
     .addTo(map);
   susceptibilityLayer.bringToFront();
@@ -67,12 +93,17 @@ function addBaseLayers(map) {
     console.error("Tile error:", error)
   );
 
+  const hillshadeLayer = L.esri.tiledMapLayer({
+    url: "https://tiles.arcgis.com/tiles/TQ9qkk0dURXSP7LQ/arcgis/rest/services/Hillshade_Puerto_Rico/MapServer",
+    opacity: 0.5,
+    attribution: "Hillshade data © Esri",
+  }).addTo(map);
+
   const municipalityLayer = L.esri
     .featureLayer({
       url: "https://services5.arcgis.com/TQ9qkk0dURXSP7LQ/arcgis/rest/services/LIMITES_LEGALES_MUNICIPIOS/FeatureServer/0",
       opacity: 0.2,
       color: "black",
-      attribution: "Municipality boundaries © Esri",
     })
     .addTo(map);
 
@@ -95,6 +126,7 @@ function addBaseLayers(map) {
     susceptibilityLayer,
     municipalityLayer,
     precipitationLayer,
+    hillshadeLayer
   };
 }
 
@@ -136,8 +168,11 @@ function setupScrollZoom(map) {
   });
 
   map.getContainer().addEventListener("wheel", (event) => {
-    if (!event.ctrlKey && (!isMouseOverLegend || !isMouseOverSusceptibilityLegend)) {
-      document.getElementById("map-overlay").style.display = "block";
+    if (
+      !event.ctrlKey &&
+      (!isMouseOverLegend || !isMouseOverSusceptibilityLegend)
+    ) {
+      document.getElementById("map-overlay").style.display = "flex";
       clearTimeout(overlayTimeout);
       overlayTimeout = setTimeout(() => {
         document.getElementById("map-overlay").style.display = "none";
@@ -151,6 +186,15 @@ async function initializeStations(map) {
   await processFiles();
   return initializeMarkers(map, "soilSaturation");
 }
+
+function toggleImage(event) {
+  event.stopPropagation();
+  const container = event.target.closest(".image-container");
+  const images = container.querySelectorAll(".popup-image");
+  images.forEach((img) => img.classList.toggle("hidden"));
+}
+
+window.toggleImage = toggleImage;
 
 // Event Listeners Setup
 function setupEventListeners(map, layers, stations) {
@@ -167,26 +211,15 @@ function setupEventListeners(map, layers, stations) {
       await processFiles();
       changeData(stations, "soilSaturation");
     });
-
+    
   document
-    .getElementById("worldImageryLayer")
+    .getElementById("susceptibilityLayer")
     .addEventListener("change", (event) => {
-      const { worldImageryLayer } = layers;
+      const { susceptibilityLayer } = layers;
       if (event.target.checked) {
-        worldImageryLayer.addTo(map);
+        susceptibilityLayer.addTo(map);
       } else {
-        map.removeLayer(worldImageryLayer);
-      }
-    });
-
-  document
-    .getElementById("municipalityLayer")
-    .addEventListener("change", (event) => {
-      const { municipalityLayer } = layers;
-      if (event.target.checked) {
-        municipalityLayer.addTo(map);
-      } else {
-        map.removeLayer(municipalityLayer);
+        map.removeLayer(susceptibilityLayer);
       }
     });
 
@@ -201,39 +234,33 @@ function setupEventListeners(map, layers, stations) {
       }
     });
 
+  // Prevent double-click on sidebar from zooming the map
+  document
+    .getElementById("sidebar")
+    .addEventListener("dblclick", function (event) {
+      event.stopPropagation();
+    });
+
+  // Event delegation for image toggling
   document.addEventListener("click", function (event) {
     if (event.target.classList.contains("arrow")) {
       toggleImage(event);
     }
   });
 
-  function toggleImage(event) {
-    event.stopPropagation();
-    const container = event.target.closest(".image-container");
-    const links = container.querySelectorAll(".image-link");
-    links.forEach((link) => link.classList.toggle("hidden"));
-  }
-
-  document.addEventListener("DOMContentLoaded", async function () {
-    createOverlay();
-    const { map, layers } = initializeMap();
-    const stations = await initializeStations(map);
-    setupEventListeners(map, layers, stations);
-    uncheckPrecipitationLayer();
-
-    document.addEventListener("click", function (event) {
-      if (event.target.classList.contains("arrow")) {
-        toggleImage(event);
-      }
-    });
+  // Toggle attributions visibility
+  const attributionControl = document.querySelector(
+    ".leaflet-control-attribution"
+  );
+  const toggleButton = document.getElementById("toggle-attributions");
+  attributionControl.style.display = "none";
+  toggleButton.addEventListener("click", function () {
+    if (attributionControl.style.display === "none") {
+      attributionControl.style.display = "block";
+    } else {
+      attributionControl.style.display = "none";
+    }
   });
-
-  function toggleImage(event) {
-    event.stopPropagation();
-    const container = event.target.closest(".image-container");
-    const images = container.querySelectorAll(".popup-image");
-    images.forEach((img) => img.classList.toggle("hidden"));
-  }
 
   document
     .getElementById("legendToggle")
@@ -242,18 +269,22 @@ function setupEventListeners(map, layers, stations) {
       legendContainer.style.display = event.target.checked ? "block" : "none";
     });
 
-    document
+  document
     .getElementById("susceptibilityLegendToggle")
     .addEventListener("change", (event) => {
-      const susceptibilityLegendContainer = document.getElementById("susceptibility-legend-container");
-      susceptibilityLegendContainer.style.display = event.target.checked ? "block" : "none";
+      const susceptibilityLegendContainer = document.getElementById(
+        "susceptibility-legend-container"
+      );
+      susceptibilityLegendContainer.style.display = event.target.checked
+        ? "block"
+        : "none";
     });
 
   document.getElementById("sidebar-toggle").addEventListener("click", () => {
     document.getElementById("sidebar").classList.toggle("closed");
   });
 
-  document.getElementById("gear-button").addEventListener("click", () => {
+  document.getElementById("hamburger-button").addEventListener("click", () => {
     document.getElementById("sidebar").classList.toggle("closed");
   });
 }
@@ -264,6 +295,11 @@ function uncheckPrecipitationLayer() {
 
 // Marker Initialization
 function initializeMarkers(map, dataType) {
+  const isSmallDevice = window.innerWidth <= 768;
+  const iconSize = isSmallDevice ? [20, 20] : [50, 50];
+  const iconAnchor = isSmallDevice ? [10, 10] : [25, 25];
+  const fontSize = isSmallDevice ? "12px" : "24px";
+
   stations.forEach(function (station) {
     const stationData = JSON.parse(
       JSON.stringify(fetchedStationData[station.name])
@@ -281,7 +317,7 @@ function initializeMarkers(map, dataType) {
             key.toString().startsWith('"wc4')
           );
     const saturationPercentage = wcKey
-      ? ((stationData[wcKey] / station.vwc_max) * 100).toFixed(0) + "%"
+      ? ((stationData[wcKey] / station.vwc_max) * 100).toFixed(0)
       : "N/A";
 
     const rainTotalMM =
@@ -295,7 +331,14 @@ function initializeMarkers(map, dataType) {
       const cleanedTimestamp = timestamp.replace(/['"]/g, "");
       const parsedDate = Date.parse(cleanedTimestamp);
       if (!isNaN(parsedDate)) {
-        formattedTimestamp = new Date(parsedDate).toLocaleString();
+        const date = new Date(parsedDate);
+        formattedTimestamp = date.toLocaleString([], {
+          year: "numeric",
+          month: "2-digit",
+          day: "2-digit",
+          hour: "2-digit",
+          minute: "2-digit",
+        });
       }
     }
 
@@ -322,10 +365,10 @@ function initializeMarkers(map, dataType) {
       <div class="info">
         <h2>${station.name.toUpperCase()}</h2>
         <ul>
-          <li><strong>Last Updated:</strong> ${formattedTimestamp}</li>
-          <li><strong>Soil Saturation:</strong> ${saturationPercentage}</li>
+          <li><strong>Last Updated:</strong> ${formattedTimestamp} AST</li>
+          <li><strong>Soil Saturation:</strong> ${saturationPercentage}%</li>
           <li><strong>12 HRS Precipitation:</strong> ${rainTotalInches} inches</li>
-          <li><strong>Today's Forecast:</strong> ${station.forecast}</li>
+          <li><strong>Forecast:</strong> ${station.forecast}</li>
         </ul>
         <a href="https://derrumbe.net/${
           station["url-name"]
@@ -334,23 +377,29 @@ function initializeMarkers(map, dataType) {
     </div>
     `;
 
-    const backgroundColor =
-      dataType === "soilSaturation" && parseFloat(saturationPercentage) >= 90
-        ? "rgba(4, 28, 63, 0.9)"
-        : dataType === "soilSaturation"
-        ? "rgba(10, 41, 95, 0.9)"
-        : "rgba(10, 41, 95, 0.9)";
+    let backgroundColor;
+    if (saturationPercentage >= 90) {
+      backgroundColor = "rgb(0,28,104,0.9)"; // Blue
+    } else if (saturationPercentage >= 80) {
+      backgroundColor = "rgba(0,179,255,0.9)"; // Light Blue
+    } else {
+      backgroundColor = "rgb(175,152,0,0.9)"; // Brown
+    }
 
     var customIcon = L.divIcon({
       className: "custom-div-icon",
       html: `<div style="background-color: ${backgroundColor}; color: white; padding: 5px; border-radius: 5px; display: flex; flex-direction: column; text-align: center; justify-content: center; align-items: center; height: 100%;">
-        <span style="font-size: 24px; color: white;">
-          ${dataType === "rainfall" ? rainTotalInches : saturationPercentage}
+        <span style="font-size: ${fontSize}; color: white;">
+          ${
+            dataType === "rainfall"
+              ? rainTotalInches
+              : saturationPercentage + "%"
+          }
         </span>
         ${dataType === "rainfall" ? "inches" : ""}
         </div>`,
-      iconSize: [50, 50],
-      iconAnchor: [25, 25],
+      iconSize: iconSize,
+      iconAnchor: iconAnchor,
     });
 
     var marker = L.marker(station.coords, { icon: customIcon }).addTo(map);
@@ -364,7 +413,7 @@ function initializeMarkers(map, dataType) {
         const offset = map.latLngToContainerPoint(marker.getLatLng());
         const newOffset = L.point(offset.x, offset.y - popupHeight / 2);
         const newLatLng = map.containerPointToLatLng(newOffset);
-        map.setView(newLatLng, map.getZoom(), { animate: true });
+        map.setView(newLatLng, map.getZoom(), { animate: true, duration: 1.5 }); // Slower animation
       }
     });
 
@@ -373,8 +422,14 @@ function initializeMarkers(map, dataType) {
 
   return stations;
 }
+
 // Data Change Handling
 function changeData(stations, dataType) {
+  const isSmallDevice = window.innerWidth <= 768;
+  const iconSize = isSmallDevice ? [20, 20] : [50, 50];
+  const iconAnchor = isSmallDevice ? [10, 10] : [25, 25];
+  const fontSize = isSmallDevice ? "10px" : "24px";
+
   stations.forEach(function (station) {
     const stationData = JSON.parse(
       JSON.stringify(fetchedStationData[station.name])
@@ -396,7 +451,7 @@ function changeData(stations, dataType) {
             key.toString().startsWith('"wc4')
           );
     const saturationPercentage = wcKey
-      ? ((stationData[wcKey] / station.vwc_max) * 100).toFixed(0) + "%"
+      ? ((stationData[wcKey] / station.vwc_max) * 100).toFixed(0)
       : "N/A";
 
     const rainTotalMM =
@@ -410,14 +465,21 @@ function changeData(stations, dataType) {
       const cleanedTimestamp = timestamp.replace(/['"]/g, "");
       const parsedDate = Date.parse(cleanedTimestamp);
       if (!isNaN(parsedDate)) {
-        formattedTimestamp = new Date(parsedDate).toLocaleString();
+        const date = new Date(parsedDate);
+        formattedTimestamp = date.toLocaleString([], {
+          year: "numeric",
+          month: "2-digit",
+          day: "2-digit",
+          hour: "2-digit",
+          minute: "2-digit",
+        });
       }
     }
 
     if (dataType === "rainfall") {
       value = rainTotalInches;
     } else if (dataType === "soilSaturation") {
-      value = saturationPercentage;
+      value = saturationPercentage + "%";
     } else {
       value = "N/A";
     }
@@ -445,10 +507,10 @@ function changeData(stations, dataType) {
       <div class="info">
         <h2>${station.name.toUpperCase()}</h2>
         <ul>
-          <li><strong>Last Updated:</strong> ${formattedTimestamp}</li>
-          <li><strong>Soil Saturation:</strong> ${saturationPercentage}</li>
+          <li><strong>Last Updated:</strong> ${formattedTimestamp} AST</li>
+          <li><strong>Soil Saturation:</strong> ${saturationPercentage}%</li>
           <li><strong>12 HRS Precipitation:</strong> ${rainTotalInches} inches</li>
-          <li><strong>Today's Forecast:</strong> ${station.forecast}</li>
+          <li><strong>Forecast:</strong> ${station.forecast}</li>
         </ul>
         <a href="https://derrumbe.net/${
           station["url-name"]
@@ -457,26 +519,17 @@ function changeData(stations, dataType) {
     </div>
     `;
 
-    marker.setPopupContent(popupContent);
-    var popup = marker.getPopup();
-
-    marker.on("popupopen", function () {
-      const popupElement = popup.getElement();
-      if (popupElement) {
-        const popupHeight = popupElement.offsetHeight;
-        const popupWidth = popupElement.offsetWidth;
-      }
-    });
-
-    const backgroundColor =
-      dataType === "soilSaturation" && parseFloat(saturationPercentage) >= 90
-        ? "rgba(4, 28, 63, 0.9)"
-        : dataType === "soilSaturation"
-        ? "rgba(10, 41, 95, 0.9)"
-        : "rgba(10, 41, 95, 0.9)";
+    let backgroundColor;
+    if (saturationPercentage >= 90) {
+      backgroundColor = "rgb(0,28,104,0.9)"; // Blue
+    } else if (saturationPercentage >= 80) {
+      backgroundColor = "rgb(0,179,255,0.9)"; // Light Blue
+    } else {
+      backgroundColor = "rgb(175,152,0,0.9)"; // Brown
+    }
 
     var newIconHTML = `<div style="background-color: ${backgroundColor}; color: white; padding: 5px; border-radius: 5px; display: flex; flex-direction: column; text-align: center; justify-content: center; align-items: center; height: 100%;">
-        <span style="font-size: 24px; color: white;">
+        <span style="font-size: ${fontSize}; color: white;">
           ${value}
         </span>
         ${dataType === "rainfall" ? "<span>inches</span>" : ""}
@@ -486,9 +539,24 @@ function changeData(stations, dataType) {
       L.divIcon({
         className: "custom-div-icon",
         html: newIconHTML,
-        iconSize: [50, 50],
-        iconAnchor: [25, 25],
+        iconSize: iconSize,
+        iconAnchor: iconAnchor,
       })
     );
+
+    marker.setPopupContent(popupContent);
+    var popup = marker.getPopup();
+
+    marker.on("popupopen", function () {
+      const popupElement = popup.getElement();
+      if (popupElement) {
+        const popupHeight = popupElement.offsetHeight;
+        const popupWidth = popupElement.offsetWidth;
+        const offset = map.latLngToContainerPoint(marker.getLatLng());
+        const newOffset = L.point(offset.x, offset.y - popupHeight / 2);
+        const newLatLng = map.containerPointToLatLng(newOffset);
+        map.setView(newLatLng, map.getZoom(), { animate: true, duration: 1.5 }); // Slower animation
+      }
+    });
   });
 }

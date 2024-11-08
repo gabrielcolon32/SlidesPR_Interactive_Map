@@ -148,7 +148,6 @@ async function processFiles() {
       const fileDataPromises = batch.map((fileName) => fetchFileData(fileName));
       await Promise.all(fileDataPromises);
     }
-    console.log("Station Info:", fetchedStationData);
     return fetchedStationData;
   } catch (error) {
     console.error("Error processing files:", error);

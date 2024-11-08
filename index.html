@@ -28,29 +28,29 @@
   <body>
     <main>
       <div id="map" style="height: 600px">
-        <!-- Gear button -->
-        <button id="gear-button" class="gear-button">
-          <i class="fas fa-cog"></i>
-        </button>
+        <div id="map-label" class="map-label"></div>
+        <!-- Hamburger button -->
+        <button id="hamburger-button" class="hamburger-button">
+          <i class="fas fa-bars"></i>
+        </button>>
         <!-- Sidebar structure -->
         <div id="sidebar" class="sidebar closed">
           <button id="sidebar-toggle" class="sidebar-toggle"></button>
           <div class="sidebar-content">
             <h1>Puerto Rico Landslide Hazard Mitigation Office</h1>
-            <h2>Basemaps</h2>
-              <label><input type="checkbox" id="worldImageryLayer" checked>World Imagery</label>
-              <label><input type="checkbox" id="susceptibilityLayer" checked>Landslide Susceptibility</label>
-              <label><input type="checkbox" id="municipalityLayer" checked>Municipalities</label>
-              <label><input type="checkbox" id="precipitationLayer">12 Hour Radar Precipitation Estimates</label>
-              <label><input type="checkbox" id="legendToggle">Precipitation Legend</label>
-              <label><input type="checkbox" id="susceptibilityLegendToggle">Susceptibility Legend</label>
+            <h2>Basemap Layers</h2>
+            <label><input type="checkbox" id="susceptibilityLayer" checked>Landslide Susceptibility</label>
+            <label><input type="checkbox" id="precipitationLayer">12 Hour Radar Precipitation Estimates</label>
+            <label><input type="checkbox" id="legendToggle">Precipitation Legend</label>
+            <label><input type="checkbox" id="susceptibilityLegendToggle">Susceptibility Legend</label>
+            <label><input type="checkbox" id="toggle-attributions">Attributions</label>
             <h2>Monitoring Station Data</h2>
             <div class="button-bar">
               <button id="soilSaturation-button">Soil Saturation</button>
               <button id="rainfall-button">Precipitation Last 12 Hrs</button>
             </div>
           </div>
-        </div>
+        </div>>
         <!-- Static Legend Images -->
         <div id="legend-container" style="display: none">
           <img
@@ -73,6 +73,7 @@
       </div>
     </main>
     <script type="module" src="stationInfo.js"></script>
+    <script type="module" src="fetchStationData.js"></script>
     <script type="module" src="mapInit.js"></script>
   </body>
 </html>
