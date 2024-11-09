@@ -514,4 +514,17 @@ form input[type="submit"]:hover {
     font-size: 14px; /* Reduce font size for attributions on small devices */
   }
 
+  /* Adjust legend container styles for mobile devices */
+  #legend-container,
+  #susceptibility-legend-container {
+    max-height: 100px; /* Reduce max height */
+    padding: 5px; /* Reduce padding */
+    font-size: 12px; /* Reduce font size */
+  }
+
+  #legend-image,
+  #susceptibility-legend-image {
+    max-width: 100%;
+    height: auto;
+  }
 }

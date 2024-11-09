@@ -240,7 +240,7 @@ const stations = [
     sensorDepths: "20cm, 40cm, 60cm, 80cm",
     dateInstalled: "Mar-2022",
     collaborator: "Departamento de Recursos Naturales y Ambientales",
-    plot_name: "SanLorenzo.jpeg",
+    plot_name: "San_Lorenzo.jpeg",
     forecast: "Incoming Feature"
   },
   {
@@ -257,7 +257,7 @@ const stations = [
     sensorDepths: "20cm, 40cm, 60cm, 80cm",
     dateInstalled: "Mar-2022",
     collaborator: "Departamento de Recursos Naturales y Ambientales",
-    plot_name: "ToroNegro.jpeg",
+    plot_name: "Toro_Negro.jpeg",
     forecast: "Incoming Feature"
   },
   {

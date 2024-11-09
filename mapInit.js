@@ -30,7 +30,7 @@ function initializeMap() {
     center: [18.220833, -66.420149],
     zoom: initialZoom,
     maxBounds: [
-      [19.0, -68.0],
+      [19.5, -68.0],
       [17.0, -65.0],
     ],
     minZoom: 7,
@@ -463,7 +463,7 @@ function initializeMarkers(map, dataType) {
         const popupHeight = popupElement.offsetHeight;
         const popupWidth = popupElement.offsetWidth;
         const offset = map.latLngToContainerPoint(marker.getLatLng());
-        const newOffset = L.point(offset.x, offset.y - popupHeight / 2);
+        const newOffset = L.point(offset.x, offset.y - popupHeight / 1.7);
         const newLatLng = map.containerPointToLatLng(newOffset);
         map.setView(newLatLng, map.getZoom(), { animate: true, duration: 1.5 }); // Slower animation
       }
@@ -612,7 +612,7 @@ function changeData(stations, dataType) {
         const popupHeight = popupElement.offsetHeight;
         const popupWidth = popupElement.offsetWidth;
         const offset = map.latLngToContainerPoint(marker.getLatLng());
-        const newOffset = L.point(offset.x, offset.y - popupHeight / 2);
+        const newOffset = L.point(offset.x, offset.y - popupHeight / 1.7);
         const newLatLng = map.containerPointToLatLng(newOffset);
         map.setView(newLatLng, map.getZoom(), { animate: true, duration: 1.5 }); // Slower animation
       }
