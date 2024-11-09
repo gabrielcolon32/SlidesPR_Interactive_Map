@@ -280,10 +280,6 @@ function setupEventListeners(map, layers, stations) {
         : "none";
     });
 
-  document.getElementById("sidebar-toggle").addEventListener("click", () => {
-    document.getElementById("sidebar").classList.toggle("closed");
-  });
-
   document.getElementById("hamburger-button").addEventListener("click", () => {
     document.getElementById("sidebar").classList.toggle("closed");
   });

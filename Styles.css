@@ -111,6 +111,7 @@ form input[type="submit"]:hover {
   cursor: pointer;
   background: none;
   border: none;
+  outline: 2px solid #fff;
   color: white; /* White font color for the toggle button */
 }
 
@@ -145,6 +146,8 @@ form input[type="submit"]:hover {
   font-family: "Bebas Neue", "Helvetica Neue", Helvetica, Arial, sans-serif; /* Apply font family */
   font-size: 18px; /* Increase font size */
 }
+
+
 
 .attributions {
   display: block;
