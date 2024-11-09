@@ -431,9 +431,9 @@ function initializeMarkers(map, dataType) {
       if (saturationPercentage >= 90) {
         backgroundColor = "rgb(0,28,104,0.9)"; // Blue
       } else if (saturationPercentage >= 80) {
-        backgroundColor = "rgba(0,179,255,0.9)"; // Light Blue
+        backgroundColor = "rgba(0,150,200,0.9)"; // Light Blue
       } else {
-        backgroundColor = "rgb(175,152,0,0.9)"; // Brown
+        backgroundColor = "rgb(67,54,13,0.9)"; // Brown
       }
     } else {
       backgroundColor = "rgba(0,28,104,0.9)"; // Blue
