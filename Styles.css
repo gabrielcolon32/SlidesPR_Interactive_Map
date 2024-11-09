@@ -125,13 +125,7 @@ form input[type="submit"]:hover {
   opacity: 0; /* Hide content when sidebar is closed */
 }
 
-.sidebar h1 {
-  margin-top: 0;
-  color: rgb(255, 255, 255); /* Coral font color for the heading */
-  font-family: "Bebas Neue", "Helvetica Neue", Helvetica, Arial, sans-serif; /* Apply font family */
-  font-size: 24px; /* Increase font size */
-}
-
+.sidebar h1,
 .sidebar h2 {
   margin-top: 0;
   color: coral; /* Coral font color for the heading */
@@ -146,8 +140,6 @@ form input[type="submit"]:hover {
   font-family: "Bebas Neue", "Helvetica Neue", Helvetica, Arial, sans-serif; /* Apply font family */
   font-size: 18px; /* Increase font size */
 }
-
-
 
 .attributions {
   display: block;
@@ -183,8 +175,8 @@ form input[type="submit"]:hover {
   margin: 0 5px;
   cursor: pointer;
   border-radius: 5px;
-  font-family: "Bebas Neue", "Helvetica Neue", Helvetica, Arial, sans-serif; /* Apply font family */
-  font-size: 18px; /* Increase font size */
+  font-family: "Bebas Neue", "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-size: 18px;
 }
 
 .button-bar button:hover {
@@ -210,15 +202,32 @@ form input[type="submit"]:hover {
 
 /* Hamburger Icon Button Styles */
 .hamburger-button {
+  display: inline-block;
+  cursor: pointer;
   position: absolute;
   top: 10px;
   left: 10px;
-  font-size: 24px;
-  cursor: pointer;
-  background: none;
-  border: none;
-  color: white; /* White font color */
-  z-index: 1002; /* Ensure it is above other elements */
+  z-index: 1002;
+}
+
+.bar1, .bar2, .bar3 {
+  width: 35px;
+  height: 4px;
+  background-color: white;
+  margin: 6px 0;
+  transition: 0.4s;
+}
+
+.change .bar1 {
+  transform: translate(0, 11px) rotate(-45deg);
+}
+
+.change .bar2 {
+  opacity: 0;
+}
+
+.change .bar3 {
+  transform: translate(0, -11px) rotate(45deg);
 }
 
 .leaflet-control-attribution {
@@ -232,14 +241,14 @@ form input[type="submit"]:hover {
   padding: 0;
   display: flex;
   flex-direction: row;
-  overflow: hidden; /* Ensure content doesn't overflow */
+  overflow: hidden;
   position: relative;
   width: 500px;
-  font-family: "Bebas Neue", "Helvetica Neue", Helvetica, Arial, sans-serif; /* Apply font family */
+  font-family: "Bebas Neue", "Helvetica Neue", Helvetica, Arial, sans-serif;
 }
 
 .leaflet-popup-content {
-  width: 100% !important; /* Extend to maximum width */
+  width: 100% !important;
   height: 400px !important;
 }
 
@@ -247,7 +256,7 @@ form input[type="submit"]:hover {
   display: flex;
   align-items: center;
   justify-content: center;
-  background-color: #000; /* Black background */
+  background-color: #000;
   padding: 10px;
   border-radius: 5px;
   height: 95%;
@@ -261,7 +270,7 @@ form input[type="submit"]:hover {
   display: flex;
   align-items: center;
   justify-content: center;
-  overflow: hidden; /* Ensure content doesn't overflow */
+  overflow: hidden;
 }
 
 .arrow {
@@ -330,13 +339,9 @@ form input[type="submit"]:hover {
   margin-top: 10px;
 }
 
-.custom-popup-content .info ul li {
-  margin-bottom: 8px;
-}
-
 .custom-popup-content .info ul li strong {
   display: block;
-  color: coral; /* Set the title color to coral */
+  color: coral;
 }
 
 .leaflet-popup-link:hover {
@@ -344,17 +349,18 @@ form input[type="submit"]:hover {
 }
 
 /* Legend Container Styles */
-#legend-container {
+#legend-container,
+#susceptibility-legend-container {
   position: absolute;
   top: 10px;
-  right: 10px; /* Move to right */
-  max-height: 200px; /* Adjust the height as needed */
+  right: 10px;
+  max-height: 200px;
   overflow-y: auto;
-  background: rgba(255, 255, 255, 0.9); /* Semi-transparent white background */
+  background: rgba(255, 255, 255, 0.9);
   padding: 10px;
   border-radius: 5px;
   box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
-  z-index: 1000; /* Ensure it is above other elements */
+  z-index: 1000;
 }
 
 #legend-image {

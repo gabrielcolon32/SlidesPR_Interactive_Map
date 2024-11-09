@@ -282,6 +282,7 @@ function setupEventListeners(map, layers, stations) {
 
   document.getElementById("hamburger-button").addEventListener("click", () => {
     document.getElementById("sidebar").classList.toggle("closed");
+    document.getElementById("hamburger-button").classList.toggle("change");
   });
 }
 
