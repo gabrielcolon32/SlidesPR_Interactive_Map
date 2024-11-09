@@ -12,22 +12,6 @@ document.addEventListener("DOMContentLoaded", async function () {
   const initialDataType = "soilSaturation"; // Change this to your desired initial data type
   updateMapLabel(getLabelText(initialDataType));
   map.on("zoomend", () => updateIconSizes(map, stations));
-
-  // Sidebar toggle functionality Safari
-  const sidebarToggle = document.getElementById("sidebar-toggle");
-  const sidebar = document.getElementById("sidebar");
-  const hamburgerButton = document.getElementById("hamburger-button");
-
-  function toggleSidebar() {
-    if (sidebar.classList.contains("closed")) {
-      sidebar.classList.remove("closed");
-    } else {
-      sidebar.classList.add("closed");
-    }
-  }
-
-  sidebarToggle.addEventListener("click", toggleSidebar);
-  hamburgerButton.addEventListener("click", toggleSidebar);
 });
 
 // Overlay Creation

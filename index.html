@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>PRLHMO - Landslide Monitoring Map </title>
+    <title>PRLHMO - Landslide Monitoring Map</title>
     <link rel="stylesheet" href="styles.css" />
     <!-- Include Leaflet CSS -->
     <link
@@ -21,7 +21,6 @@
     />
     <!-- Include Leaflet JavaScript -->
     <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
-
     <!-- Include Esri Leaflet JavaScript -->
     <script src="https://unpkg.com/esri-leaflet"></script>
   </head>
@@ -32,25 +31,25 @@
         <!-- Hamburger button -->
         <button id="hamburger-button" class="hamburger-button">
           <i class="fas fa-bars"></i>
-        </button>>
+        </button>
         <!-- Sidebar structure -->
         <div id="sidebar" class="sidebar closed">
           <button id="sidebar-toggle" class="sidebar-toggle"></button>
           <div class="sidebar-content">
             <h1>Puerto Rico Landslide Hazard Mitigation Office</h1>
             <h2>Basemap Layers</h2>
-            <label><input type="checkbox" id="susceptibilityLayer" checked>Landslide Susceptibility</label>
-            <label><input type="checkbox" id="precipitationLayer">12 Hour Radar Precipitation Estimates</label>
-            <label><input type="checkbox" id="legendToggle">Precipitation Legend</label>
-            <label><input type="checkbox" id="susceptibilityLegendToggle">Susceptibility Legend</label>
-            <label><input type="checkbox" id="toggle-attributions">Attributions</label>
+            <label><input type="checkbox" id="susceptibilityLayer" checked />Landslide Susceptibility</label>
+            <label><input type="checkbox" id="precipitationLayer" />12 Hour Radar Precipitation Estimates</label>
+            <label><input type="checkbox" id="legendToggle" />Precipitation Legend</label>
+            <label><input type="checkbox" id="susceptibilityLegendToggle" />Susceptibility Legend</label>
+            <label><input type="checkbox" id="toggle-attributions" />Attributions</label>
             <h2>Monitoring Station Data</h2>
             <div class="button-bar">
               <button id="soilSaturation-button">Soil Saturation</button>
               <button id="rainfall-button">Precipitation Last 12 Hrs</button>
             </div>
           </div>
-        </div>>
+        </div>
         <!-- Static Legend Images -->
         <div id="legend-container" style="display: none">
           <img
