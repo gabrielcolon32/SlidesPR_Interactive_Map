@@ -74,8 +74,7 @@ function addBaseLayers(map) {
   const worldImageryLayer = L.tileLayer(
     "https://services.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",
     {
-      attribution:
-        "Tiles © Esri — Source: Esri, UPRM, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community",
+      attribution: '&copy; <a href="https://www.esri.com/">Esri</a> &mdash; <a href="https://www.arcgis.com/home/item.html?id=39b4a7fce8284f99b234db5859a39721">World Imagery</a>',
       maxZoom: 18,
     }
   ).addTo(map);
@@ -84,7 +83,7 @@ function addBaseLayers(map) {
     .tiledMapLayer({
       url: "https://tiles.arcgis.com/tiles/TQ9qkk0dURXSP7LQ/arcgis/rest/services/Susceptibilidad_Derrumbe_PR/MapServer",
       opacity: 0.5,
-      attribution: "Dr. Stephen Hughes, PRLHMO",
+      attribution: "Dr. Stephen Hughes, PRLHMO. UPRM, USGS, ArcGIS",
     })
     .addTo(map);
   susceptibilityLayer.bringToFront();
@@ -96,7 +95,6 @@ function addBaseLayers(map) {
   const hillshadeLayer = L.esri.tiledMapLayer({
     url: "https://tiles.arcgis.com/tiles/TQ9qkk0dURXSP7LQ/arcgis/rest/services/Hillshade_Puerto_Rico/MapServer",
     opacity: 0.5,
-    attribution: "Hillshade data © Esri",
   }).addTo(map);
 
   const municipalityLayer = L.esri
@@ -114,7 +112,7 @@ function addBaseLayers(map) {
   const precipitationLayer = L.esri.imageMapLayer({
     url: 'https://mapservices.weather.noaa.gov/raster/rest/services/obs/mrms_qpe/ImageServer/exportImage?renderingRule={"rasterFunction":"rft_12hr"}',
     opacity: 0.5,
-    attribution: "Precipitation data © NOAA",
+    attribution: "Precipitation data © NOAA, NWS",
   });
 
   precipitationLayer.on("tileerror", (error) =>
@@ -196,50 +194,65 @@ function toggleImage(event) {
 
 window.toggleImage = toggleImage;
 
-// Event Listeners Setup
 function setupEventListeners(map, layers, stations) {
-  document
-    .getElementById("rainfall-button")
-    .addEventListener("click", async () => {
-      await processFiles();
-      changeData(stations, "rainfall");
-    });
+  let isAnimating = false;
 
-  document
-    .getElementById("soilSaturation-button")
-    .addEventListener("click", async () => {
-      await processFiles();
-      changeData(stations, "soilSaturation");
-    });
-    
-  document
-    .getElementById("susceptibilityLayer")
-    .addEventListener("change", (event) => {
-      const { susceptibilityLayer } = layers;
-      if (event.target.checked) {
-        susceptibilityLayer.addTo(map);
-      } else {
-        map.removeLayer(susceptibilityLayer);
-      }
-    });
+  document.getElementById("rainfall-button").addEventListener("click", async () => {
+    if (isAnimating) return;
+    isAnimating = true;
+    setTimeout(() => { isAnimating = false; }, 200);
 
-  document
-    .getElementById("precipitationLayer")
-    .addEventListener("change", (event) => {
-      const { precipitationLayer } = layers;
-      if (event.target.checked) {
-        precipitationLayer.addTo(map);
-      } else {
-        map.removeLayer(precipitationLayer);
-      }
-    });
+    await processFiles();
+    changeData(stations, "rainfall");
+  });
+
+  document.getElementById("soilSaturation-button").addEventListener("click", async () => {
+    if (isAnimating) return;
+    isAnimating = true;
+    setTimeout(() => { isAnimating = false; }, 200);
+
+    await processFiles();
+    changeData(stations, "soilSaturation");
+  });
+
+  // Checkbox for susceptibility layer
+  document.getElementById("susceptibilityLayer").addEventListener("change", (event) => {
+    if (isAnimating) {
+      event.target.checked = !event.target.checked; // Prevent state change
+      return;
+    }
+    isAnimating = true;
+    setTimeout(() => { isAnimating = false; }, 200);
+
+    const { susceptibilityLayer } = layers;
+    if (event.target.checked) {
+      susceptibilityLayer.addTo(map);
+    } else {
+      map.removeLayer(susceptibilityLayer);
+    }
+  });
+
+  // Checkbox for precipitation layer
+  document.getElementById("precipitationLayer").addEventListener("change", (event) => {
+    if (isAnimating) {
+      event.target.checked = !event.target.checked; // Prevent state change
+      return;
+    }
+    isAnimating = true;
+    setTimeout(() => { isAnimating = false; }, 200);
+
+    const { precipitationLayer } = layers;
+    if (event.target.checked) {
+      precipitationLayer.addTo(map);
+    } else {
+      map.removeLayer(precipitationLayer);
+    }
+  });
 
   // Prevent double-click on sidebar from zooming the map
-  document
-    .getElementById("sidebar")
-    .addEventListener("dblclick", function (event) {
-      event.stopPropagation();
-    });
+  document.getElementById("sidebar").addEventListener("dblclick", function (event) {
+    event.stopPropagation();
+  });
 
   // Event delegation for image toggling
   document.addEventListener("click", function (event) {
@@ -249,9 +262,7 @@ function setupEventListeners(map, layers, stations) {
   });
 
   // Toggle attributions visibility
-  const attributionControl = document.querySelector(
-    ".leaflet-control-attribution"
-  );
+  const attributionControl = document.querySelector(".leaflet-control-attribution");
   const toggleButton = document.getElementById("toggle-attributions");
   attributionControl.style.display = "none";
   toggleButton.addEventListener("click", function () {
@@ -262,30 +273,39 @@ function setupEventListeners(map, layers, stations) {
     }
   });
 
-  document
-    .getElementById("legendToggle")
-    .addEventListener("change", (event) => {
-      const legendContainer = document.getElementById("legend-container");
-      legendContainer.style.display = event.target.checked ? "block" : "none";
-    });
+  // Legend toggle with animation logic
+  document.getElementById("legendToggle").addEventListener("change", (event) => {
+    if (isAnimating) {
+      event.target.checked = !event.target.checked; // Prevent state change
+      return;
+    }
+    isAnimating = true;
+    setTimeout(() => { isAnimating = false; }, 200);
 
-  document
-    .getElementById("susceptibilityLegendToggle")
-    .addEventListener("change", (event) => {
-      const susceptibilityLegendContainer = document.getElementById(
-        "susceptibility-legend-container"
-      );
-      susceptibilityLegendContainer.style.display = event.target.checked
-        ? "block"
-        : "none";
-    });
+    const legendContainer = document.getElementById("legend-container");
+    legendContainer.style.display = event.target.checked ? "block" : "none";
+  });
 
-  let isAnimating = false;
+  // Susceptibility legend toggle with animation logic
+  document.getElementById("susceptibilityLegendToggle").addEventListener("change", (event) => {
+    if (isAnimating) {
+      event.target.checked = !event.target.checked; // Prevent state change
+      return;
+    }
+    isAnimating = true;
+    setTimeout(() => { isAnimating = false; }, 200);
+
+    const susceptibilityLegendContainer = document.getElementById("susceptibility-legend-container");
+    susceptibilityLegendContainer.style.display = event.target.checked ? "block" : "none";
+  });
+
+  // Hamburger button with animation logic
   document.getElementById("hamburger-button").addEventListener("click", () => {
-    if (isAnimating) return; // Skip if already animating
+    if (isAnimating) return;
 
-    isAnimating = true; // Block further clicks
-    setTimeout(() => { isAnimating = false; }, 600); // Match timeout to animation duration
+    isAnimating = true;
+    setTimeout(() => { isAnimating = false; }, 600);
+
     document.getElementById("sidebar").classList.toggle("closed");
     document.getElementById("hamburger-button").classList.toggle("change");
   });
@@ -339,6 +359,13 @@ function updateIconSizes(map, stations) {
   });
 }
 
+function getBackgroundColor(saturation, isOldData) {
+  if (isOldData) return "gray";
+  if (saturation >= 90) return "rgb(0,28,104,0.9)";
+  if (saturation >= 80) return "rgba(0,150,200,0.9)";
+  return "rgb(67,54,13,0.9)";
+}
+
 // Marker Initialization
 function initializeMarkers(map, dataType) {
   const isSmallDevice = window.innerWidth <= 768;
@@ -351,8 +378,9 @@ function initializeMarkers(map, dataType) {
       JSON.stringify(fetchedStationData[station.name])
     );
     if (!stationData) {
+      console.warn(`No data found for station: ${station.name}`);
       return;
-    }
+    }    
 
     const wcKey = Object.keys(stationData).find((key) =>
       key.toString().startsWith('"wc4')
@@ -426,20 +454,7 @@ function initializeMarkers(map, dataType) {
     </div>
     `;
 
-    let backgroundColor;
-    if (isOldData) {
-      backgroundColor = "gray"; // Gray for old data
-    } else if (dataType === "soilSaturation") {
-      if (saturationPercentage >= 90) {
-        backgroundColor = "rgb(0,28,104,0.9)"; // Blue
-      } else if (saturationPercentage >= 80) {
-        backgroundColor = "rgba(0,150,200,0.9)"; // Light Blue
-      } else {
-        backgroundColor = "rgb(67,54,13,0.9)"; // Brown
-      }
-    } else {
-      backgroundColor = "rgba(0,28,104,0.9)"; // Blue
-    }
+    let backgroundColor = getBackgroundColor(saturationPercentage, isOldData);
 
     var customIcon = L.divIcon({
       className: "custom-div-icon",
@@ -575,20 +590,7 @@ function changeData(stations, dataType) {
     </div>
     `;
 
-    let backgroundColor;
-    if (isOldData) {
-      backgroundColor = "gray"; // Gray for old data
-    } else if (dataType === "soilSaturation") {
-      if (saturationPercentage >= 90) {
-        backgroundColor = "rgb(0,28,104,0.9)"; // Blue
-      } else if (saturationPercentage >= 80) {
-        backgroundColor = "rgba(0,150,200,0.9)"; // Light Blue
-      } else {
-        backgroundColor = "rgb(67,54,13,0.9)"; // Brown
-      }
-    } else {
-      backgroundColor = "rgba(0,28,104,0.9)"; // Blue
-    }
+    let backgroundColor = getBackgroundColor(saturationPercentage, isOldData);
 
     var newIconHTML = `<div style="background-color: ${backgroundColor}; color: white; padding: 5px; border-radius: 5px; display: flex; flex-direction: column; text-align: center; justify-content: center; align-items: center; height: 100%;">
         <span style="font-size: ${fontSize}; color: white;">

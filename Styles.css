@@ -353,18 +353,7 @@ form input[type="submit"]:hover {
   z-index: 1000;
 }
 
-#legend-image {
-  max-width: 100%;
-  height: auto;
-}
-
-#susceptibility-legend-container {
-  position: absolute;
-  top: 10px;
-  left: 10px;
-}
-
-#susceptibility-legend-image {
+#legend-image, #susceptibility-legend-image {
   max-width: 100%;
   height: auto;
 }
