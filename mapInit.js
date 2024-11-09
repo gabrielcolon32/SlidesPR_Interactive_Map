@@ -11,7 +11,7 @@ document.addEventListener("DOMContentLoaded", async function () {
   // Set the initial data type and update the label
   const initialDataType = "soilSaturation"; // Change this to your desired initial data type
   updateMapLabel(getLabelText(initialDataType));
-  changeData(stations, initialDataType);
+  map.on("zoomend", () => updateIconSizes(map, stations));
 });
 
 // Overlay Creation
@@ -59,7 +59,7 @@ function updateMapLabel(text) {
 
 function getLabelText(dataType) {
   if (dataType === "rainfall") {
-    return "12 HOUR PRECIPITATION";
+    return "12 HOUR PRECIPITATION (Inches)";
   } else if (dataType === "soilSaturation") {
     return "SOIL SATURATION";
   } else if (dataType === "todayLandslideForecast") {
@@ -293,6 +293,50 @@ function uncheckPrecipitationLayer() {
   document.getElementById("precipitationLayer").checked = false;
 }
 
+// Add this function to update icon sizes based on the zoom level
+function updateIconSizes(map, stations) {
+  const zoomLevel = map.getZoom();
+  const isSmallDevice = window.innerWidth <= 768;
+  let iconSize, iconAnchor, fontSize;
+
+  if (isSmallDevice) {
+    if (zoomLevel >= 12) {
+      iconSize = [50, 50];
+      iconAnchor = [25, 25];
+      fontSize = "20px";
+    } else if (zoomLevel >= 10) {
+      iconSize = [30, 30];
+      iconAnchor = [15, 15];
+      fontSize = "16px";
+    } else {
+      iconSize = [20, 20];
+      iconAnchor = [10, 10];
+      fontSize = "12px";
+    }
+  } else {
+    iconSize = [50, 50];
+    iconAnchor = [25, 25];
+    fontSize = "24px";
+  }
+
+  stations.forEach(station => {
+    const marker = station.marker;
+    const currentIcon = marker.getIcon();
+    const currentHtml = currentIcon.options.html;
+
+    const newIconHTML = currentHtml.replace(/font-size: \d+px;/, `font-size: ${fontSize};`);
+
+    marker.setIcon(
+      L.divIcon({
+        className: "custom-div-icon",
+        html: newIconHTML,
+        iconSize: iconSize,
+        iconAnchor: iconAnchor,
+      })
+    );
+  });
+}
+
 // Marker Initialization
 function initializeMarkers(map, dataType) {
   const isSmallDevice = window.innerWidth <= 768;
@@ -308,14 +352,10 @@ function initializeMarkers(map, dataType) {
       return;
     }
 
-    const wcKey =
-      station.name === "toronegro"
-        ? Object.keys(stationData).find((key) =>
-            key.toString().startsWith('"wc5')
-          )
-        : Object.keys(stationData).find((key) =>
-            key.toString().startsWith('"wc4')
-          );
+    const wcKey = Object.keys(stationData).find((key) =>
+      key.toString().startsWith('"wc4')
+    );
+
     const saturationPercentage = wcKey
       ? ((stationData[wcKey] / station.vwc_max) * 100).toFixed(0)
       : "N/A";
@@ -327,6 +367,7 @@ function initializeMarkers(map, dataType) {
 
     const timestamp = stationData["TIMESTAMP"] || "N/A";
     let formattedTimestamp = "N/A";
+    let isOldData = false;
     if (timestamp !== "N/A") {
       const cleanedTimestamp = timestamp.replace(/['"]/g, "");
       const parsedDate = Date.parse(cleanedTimestamp);
@@ -339,6 +380,12 @@ function initializeMarkers(map, dataType) {
           hour: "2-digit",
           minute: "2-digit",
         });
+        const currentTime = new Date();
+        const timeDifference = currentTime - date;
+        const hoursDifference = timeDifference / (1000 * 60 * 60);
+        if (hoursDifference > 12) {
+          isOldData = true;
+        }
       }
     }
 
@@ -367,7 +414,7 @@ function initializeMarkers(map, dataType) {
         <ul>
           <li><strong>Last Updated:</strong> ${formattedTimestamp} AST</li>
           <li><strong>Soil Saturation:</strong> ${saturationPercentage}%</li>
-          <li><strong>12 HRS Precipitation:</strong> ${rainTotalInches} inches</li>
+          <li><strong>12 HRS Precipitation:</strong> ${rainTotalInches}</li>
           <li><strong>Forecast:</strong> ${station.forecast}</li>
         </ul>
         <a href="https://derrumbe.net/${
@@ -378,12 +425,18 @@ function initializeMarkers(map, dataType) {
     `;
 
     let backgroundColor;
-    if (saturationPercentage >= 90) {
-      backgroundColor = "rgb(0,28,104,0.9)"; // Blue
-    } else if (saturationPercentage >= 80) {
-      backgroundColor = "rgba(0,179,255,0.9)"; // Light Blue
+    if (isOldData) {
+      backgroundColor = "gray"; // Gray for old data
+    } else if (dataType === "soilSaturation") {
+      if (saturationPercentage >= 90) {
+        backgroundColor = "rgb(0,28,104,0.9)"; // Blue
+      } else if (saturationPercentage >= 80) {
+        backgroundColor = "rgba(0,179,255,0.9)"; // Light Blue
+      } else {
+        backgroundColor = "rgb(175,152,0,0.9)"; // Brown
+      }
     } else {
-      backgroundColor = "rgb(175,152,0,0.9)"; // Brown
+      backgroundColor = "rgba(0,28,104,0.9)"; // Blue
     }
 
     var customIcon = L.divIcon({
@@ -396,7 +449,6 @@ function initializeMarkers(map, dataType) {
               : saturationPercentage + "%"
           }
         </span>
-        ${dataType === "rainfall" ? "inches" : ""}
         </div>`,
       iconSize: iconSize,
       iconAnchor: iconAnchor,
@@ -429,7 +481,7 @@ function changeData(stations, dataType) {
   const iconSize = isSmallDevice ? [20, 20] : [50, 50];
   const iconAnchor = isSmallDevice ? [10, 10] : [25, 25];
   const fontSize = isSmallDevice ? "10px" : "24px";
-
+  updateMapLabel(getLabelText(dataType));
   stations.forEach(function (station) {
     const stationData = JSON.parse(
       JSON.stringify(fetchedStationData[station.name])
@@ -442,14 +494,9 @@ function changeData(stations, dataType) {
     var marker = station.marker;
     var value;
 
-    const wcKey =
-      station.name === "toronegro"
-        ? Object.keys(stationData).find((key) =>
-            key.toString().startsWith('"wc5')
-          )
-        : Object.keys(stationData).find((key) =>
-            key.toString().startsWith('"wc4')
-          );
+    const wcKey = Object.keys(stationData).find((key) =>
+      key.toString().startsWith('"wc4')
+    );
     const saturationPercentage = wcKey
       ? ((stationData[wcKey] / station.vwc_max) * 100).toFixed(0)
       : "N/A";
@@ -461,6 +508,7 @@ function changeData(stations, dataType) {
 
     const timestamp = stationData["TIMESTAMP"] || "N/A";
     let formattedTimestamp = "N/A";
+    let isOldData = false;
     if (timestamp !== "N/A") {
       const cleanedTimestamp = timestamp.replace(/['"]/g, "");
       const parsedDate = Date.parse(cleanedTimestamp);
@@ -473,6 +521,12 @@ function changeData(stations, dataType) {
           hour: "2-digit",
           minute: "2-digit",
         });
+        const currentTime = new Date();
+        const timeDifference = currentTime - date;
+        const hoursDifference = timeDifference / (1000 * 60 * 60);
+        if (hoursDifference > 12) {
+          isOldData = true;
+        }
       }
     }
 
@@ -509,7 +563,7 @@ function changeData(stations, dataType) {
         <ul>
           <li><strong>Last Updated:</strong> ${formattedTimestamp} AST</li>
           <li><strong>Soil Saturation:</strong> ${saturationPercentage}%</li>
-          <li><strong>12 HRS Precipitation:</strong> ${rainTotalInches} inches</li>
+          <li><strong>12 HRS Precipitation:</strong> ${rainTotalInches}</li>
           <li><strong>Forecast:</strong> ${station.forecast}</li>
         </ul>
         <a href="https://derrumbe.net/${
@@ -520,19 +574,24 @@ function changeData(stations, dataType) {
     `;
 
     let backgroundColor;
-    if (saturationPercentage >= 90) {
-      backgroundColor = "rgb(0,28,104,0.9)"; // Blue
-    } else if (saturationPercentage >= 80) {
-      backgroundColor = "rgb(0,179,255,0.9)"; // Light Blue
+    if (isOldData) {
+      backgroundColor = "gray"; // Gray for old data
+    } else if (dataType === "soilSaturation") {
+      if (saturationPercentage >= 90) {
+        backgroundColor = "rgb(0,28,104,0.9)"; // Blue
+      } else if (saturationPercentage >= 80) {
+        backgroundColor = "rgba(0,179,255,0.9)"; // Light Blue
+      } else {
+        backgroundColor = "rgb(175,152,0,0.9)"; // Brown
+      }
     } else {
-      backgroundColor = "rgb(175,152,0,0.9)"; // Brown
+      backgroundColor = "rgba(0,28,104,0.9)"; // Blue
     }
 
     var newIconHTML = `<div style="background-color: ${backgroundColor}; color: white; padding: 5px; border-radius: 5px; display: flex; flex-direction: column; text-align: center; justify-content: center; align-items: center; height: 100%;">
         <span style="font-size: ${fontSize}; color: white;">
           ${value}
         </span>
-        ${dataType === "rainfall" ? "<span>inches</span>" : ""}
       </div>`;
 
     marker.setIcon(

@@ -195,6 +195,7 @@ form input[type="submit"]:hover {
   padding: 10px 20px;
   font-size: 24px;
   font-weight: bold;
+  text-align: center; 
   border-radius: 5px;
   z-index: 1001; /* Ensure it is above other elements */
   display: none; /* Initially hidden */
@@ -296,7 +297,6 @@ form input[type="submit"]:hover {
   color: white;
   font-size: 18px;
   width: 50%;
-  justify-content: center !important;
 }
 
 .custom-popup-content .info h2 {
@@ -432,12 +432,14 @@ form input[type="submit"]:hover {
   .map-label {
     font-size: 16px; /* Reduce font size for small devices */
     padding: 5px 10px; /* Adjust padding for small devices */
+    text-align: center; 
   }
 
   .leaflet-popup-content-wrapper {
     width: 300px; /* Adjust width for mobile devices */
     height: auto; /* Adjust height for mobile devices */
     padding: 5px; /* Reduce padding */
+    display: flex;
   }
 
   .leaflet-popup-content {
@@ -446,7 +448,8 @@ form input[type="submit"]:hover {
   }
 
   .custom-popup-content {
-    flex-direction: column; /* Stack content vertically */
+    flex-direction: horizontal; /* Stack content vertically */
+    text-align: center; 
     height: auto; /* Adjust height for mobile devices */
     padding: 5px; /* Reduce padding */
   }
@@ -454,16 +457,20 @@ form input[type="submit"]:hover {
   .custom-popup-content .info {
     margin-left: 0; /* Remove the left margin */
     width: 100%; /* Make the info section full width */
-    text-align: center; /* Center align text */
+    text-align: horizontal; /* Center align text */
   }
 
   .custom-popup-content .info h2 {
-    font-size: 12px; /* Reduce font size */
+    font-size: 14px; /* Reduce font size */
     margin: 5px 0; /* Reduce margin */
   }
 
+  .custom-popup-content .info a {
+    font-size: 12px; /* Reduce font size */
+    margin: 5px 0; /* Reduce margin */
+  }
   .custom-popup-content .info ul li {
-    font-size: 10px; /* Reduce font size */
+    font-size: 12px; /* Reduce font size */
     margin-bottom: 3px; /* Reduce margin */
   }
 
@@ -483,7 +490,7 @@ form input[type="submit"]:hover {
   .button-bar button {
     margin: 3px 0; /* Reduce margin between buttons */
     padding: 5px; /* Reduce padding */
-    font-size: 12px; /* Reduce font size */
+    font-size: 16px; /* Reduce font size */
   }
 
   #logo-image {
