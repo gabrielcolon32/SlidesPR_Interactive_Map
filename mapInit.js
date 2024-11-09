@@ -280,7 +280,12 @@ function setupEventListeners(map, layers, stations) {
         : "none";
     });
 
+  let isAnimating = false;
   document.getElementById("hamburger-button").addEventListener("click", () => {
+    if (isAnimating) return; // Skip if already animating
+
+    isAnimating = true; // Block further clicks
+    setTimeout(() => { isAnimating = false; }, 600); // Match timeout to animation duration
     document.getElementById("sidebar").classList.toggle("closed");
     document.getElementById("hamburger-button").classList.toggle("change");
   });

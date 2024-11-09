@@ -82,63 +82,50 @@ form input[type="submit"]:hover {
   left: 0;
   height: 100%;
   width: 250px;
-  background-color: rgba(50, 50, 50, 0.95); /* Dark gray with 0.85 opacity */
-  color: white; /* White font color */
+  background-color: rgba(50, 50, 50, 0.95);
+  color: white;
   box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
-  overflow: hidden; /* Hide overflow */
-  transition: transform 0.5s ease, padding 1s ease; /* Smooth transition for transform and padding */
-  -webkit-transition: transform 0.5s ease, padding 1s ease; /* Safari */
+  overflow: hidden;
+  transition: transform 0.5s ease;
+  -webkit-transition: transform 0.5s ease;
   padding-top: 60px;
-  z-index: 1001; /* Ensure it is above other elements */
-  transform: translateX(0); /* Initially visible */
-  -webkit-transform: translateX(0); /* Safari */
-  font-family: "Bebas Neue", "Helvetica Neue", Helvetica, Arial, sans-serif; /* Apply font family */
-  font-size: 18px; /* Increase font size */
+  z-index: 1002;
+  transform: translateX(0);
+  -webkit-transform: translateX(0);
+  will-change: transform; /* Optimization hint */
+  font-family: "Bebas Neue", "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-size: 18px;
 }
 
 .sidebar.closed {
-  transform: translateX(-100%); /* Move sidebar out of view */
-  -webkit-transform: translateX(-100%); /* Safari */
-  padding-top: 0;
-  padding-left: 0;
-}
-
-.sidebar-toggle {
-  position: absolute;
-  top: 10px;
-  left: 10px;
-  font-size: 30px;
-  cursor: pointer;
-  background: none;
-  border: none;
-  outline: 2px solid #fff;
-  color: white; /* White font color for the toggle button */
+  transform: translateX(-100%);
+  -webkit-transform: translateX(-100%);
 }
 
 .sidebar-content {
   padding: 15px;
-  transition: opacity 0.5s ease; /* Smooth transition for opacity */
-  -webkit-transition: opacity 0.5s ease; /* Safari */
+  transition: opacity 0.5s ease;
+  -webkit-transition: opacity 0.5s ease;
 }
 
 .sidebar.closed .sidebar-content {
-  opacity: 0; /* Hide content when sidebar is closed */
+  opacity: 0;
 }
 
 .sidebar h1,
 .sidebar h2 {
   margin-top: 0;
-  color: coral; /* Coral font color for the heading */
-  font-family: "Bebas Neue", "Helvetica Neue", Helvetica, Arial, sans-serif; /* Apply font family */
-  font-size: 24px; /* Increase font size */
+  color: coral;
+  font-family: "Bebas Neue", "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-size: 24px;
 }
 
 .sidebar label {
   display: block;
   margin: 10px 0;
-  color: white; /* White font color for the labels */
-  font-family: "Bebas Neue", "Helvetica Neue", Helvetica, Arial, sans-serif; /* Apply font family */
-  font-size: 18px; /* Increase font size */
+  color: white;
+  font-family: "Bebas Neue", "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-size: 18px;
 }
 
 .attributions {
@@ -194,10 +181,10 @@ form input[type="submit"]:hover {
   padding: 10px 20px;
   font-size: 24px;
   font-weight: bold;
-  text-align: center; 
+  text-align: center;
   border-radius: 5px;
-  z-index: 1001; /* Ensure it is above other elements */
-  display: none; /* Initially hidden */
+  z-index: 1001;
+  display: none;
 }
 
 /* Hamburger Icon Button Styles */
@@ -207,17 +194,21 @@ form input[type="submit"]:hover {
   position: absolute;
   top: 10px;
   left: 10px;
-  z-index: 1002;
+  z-index: 1004;
+  pointer-events: auto;
+  will-change: transform; /* Optimization hint */
 }
 
+/* Hamburger Icon Bars */
 .bar1, .bar2, .bar3 {
   width: 35px;
   height: 4px;
   background-color: white;
   margin: 6px 0;
-  transition: 0.4s;
+  transition: transform 0.5s ease, opacity 0.5s ease;
 }
 
+/* Rotate Bars on Click */
 .change .bar1 {
   transform: translate(0, 11px) rotate(-45deg);
 }
@@ -229,7 +220,6 @@ form input[type="submit"]:hover {
 .change .bar3 {
   transform: translate(0, -11px) rotate(45deg);
 }
-
 .leaflet-control-attribution {
   display: none;
 }
@@ -371,14 +361,7 @@ form input[type="submit"]:hover {
 #susceptibility-legend-container {
   position: absolute;
   top: 10px;
-  right: 10px; /* Move to right */
-  max-height: 200px; /* Adjust the height as needed */
-  overflow-y: auto;
-  background: rgba(255, 255, 255, 0.9); /* Semi-transparent white background */
-  padding: 10px;
-  border-radius: 5px;
-  box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
-  z-index: 1000; /* Ensure it is above other elements */
+  left: 10px;
 }
 
 #susceptibility-legend-image {
@@ -440,101 +423,101 @@ form input[type="submit"]:hover {
   top: 50px !important; /* Adjust the position to be below the hamburger button */
 }
 
-/* Media Queries for Mobile Devices */
+/* Mobile Media Query */
 @media (max-width: 768px) {
   .map-label {
-    font-size: 16px; /* Reduce font size for small devices */
-    padding: 5px 10px; /* Adjust padding for small devices */
+    font-size: 16px;
+    padding: 5px 10px;
     text-align: center; 
-    top: 90%; /* Move to the bottom */
+    top: 90%;
   }
 
   .leaflet-popup-content-wrapper {
-    width: 300px; /* Adjust width for mobile devices */
-    height: auto; /* Adjust height for mobile devices */
-    padding: 5px; /* Reduce padding */
+    width: 300px;
+    height: auto;
+    padding: 5px;
     display: flex;
   }
 
   .leaflet-popup-content {
-    width: 100% !important; /* Make the popup full width */
-    height: auto !important; /* Adjust height for mobile devices */
+    width: 100% !important;
+    height: auto !important;
   }
 
   .custom-popup-content {
-    flex-direction: horizontal; /* Stack content vertically */
+    flex-direction: column;
     text-align: center; 
-    height: auto; /* Adjust height for mobile devices */
-    padding: 5px; /* Reduce padding */
+    height: auto;
+    padding: 5px;
   }
 
   .custom-popup-content .info {
-    margin-left: 0; /* Remove the left margin */
-    width: 100%; /* Make the info section full width */
-    text-align: horizontal; /* Center align text */
+    margin-left: 0;
+    width: 100%;
+    text-align: center;
   }
 
   .custom-popup-content .info h2 {
-    font-size: 14px; /* Reduce font size */
-    margin: 5px 0; /* Reduce margin */
+    font-size: 14px;
+    margin: 5px 0;
   }
 
   .custom-popup-content .info a {
-    font-size: 12px; /* Reduce font size */
-    margin: 5px 0; /* Reduce margin */
+    font-size: 12px;
+    margin: 5px 0;
   }
+
   .custom-popup-content .info ul li {
-    font-size: 12px; /* Reduce font size */
-    margin-bottom: 3px; /* Reduce margin */
+    font-size: 12px;
+    margin-bottom: 3px;
   }
 
   .image-container {
-    width: 100%; /* Make the image container full width */
-    height: auto; /* Adjust height for mobile devices */
+    width: 100%;
+    height: auto;
   }
 
   .arrow {
-    font-size: 12px; /* Reduce font size */
+    font-size: 12px;
   }
 
   .button-bar {
-    flex-direction: column; /* Stack buttons vertically */
+    flex-direction: column;
   }
 
   .button-bar button {
-    margin: 3px 0; /* Reduce margin between buttons */
-    padding: 5px; /* Reduce padding */
-    font-size: 16px; /* Reduce font size */
+    margin: 3px 0;
+    padding: 5px;
+    font-size: 16px;
   }
 
   #logo-image {
-    max-width: 80px; /* Adjust the size as needed */
+    max-width: 80px;
     height: auto;
   }
 
   .sidebar {
-    font-size: 14px; /* Reduce font size for sidebar on small devices */
+    font-size: 14px;
   }
 
   .sidebar h1, .sidebar h2 {
-    font-size: 18px; /* Reduce font size for headings on small devices */
+    font-size: 18px;
   }
 
   .sidebar label {
-    font-size: 14px; /* Reduce font size for labels on small devices */
+    font-size: 14px;
   }
 
   .attributions {
-    font-size: 14px; /* Reduce font size for attributions on small devices */
+    font-size: 14px;
   }
 
-  /* Adjust legend container styles for mobile devices */
   #legend-container,
   #susceptibility-legend-container {
-    max-height: 130px; /* Reduce max height */
+    max-height: 130px;
     max-width: 130px;
-    padding: 5px; /* Reduce padding */
-    font-size: 12px; /* Reduce font size */
+    padding: 5px;
+    font-size: 12px;
   }
 
   #legend-image,
