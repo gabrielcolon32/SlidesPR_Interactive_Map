@@ -87,15 +87,18 @@ form input[type="submit"]:hover {
   box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
   overflow: hidden; /* Hide overflow */
   transition: transform 0.5s ease, padding 1s ease; /* Smooth transition for transform and padding */
+  -webkit-transition: transform 0.5s ease, padding 1s ease; /* Safari */
   padding-top: 60px;
   z-index: 1001; /* Ensure it is above other elements */
   transform: translateX(0); /* Initially visible */
+  -webkit-transform: translateX(0); /* Safari */
   font-family: "Bebas Neue", "Helvetica Neue", Helvetica, Arial, sans-serif; /* Apply font family */
   font-size: 18px; /* Increase font size */
 }
 
 .sidebar.closed {
   transform: translateX(-100%); /* Move sidebar out of view */
+  -webkit-transform: translateX(-100%); /* Safari */
   padding-top: 0;
   padding-left: 0;
 }
@@ -114,6 +117,7 @@ form input[type="submit"]:hover {
 .sidebar-content {
   padding: 15px;
   transition: opacity 0.5s ease; /* Smooth transition for opacity */
+  -webkit-transition: opacity 0.5s ease; /* Safari */
 }
 
 .sidebar.closed .sidebar-content {
