@@ -427,11 +427,12 @@ function updateIconSizes(map, stations) {
   });
 }
 
-function getBackgroundColor(saturation, isOldData) {
-  if (isOldData) return "gray";
-  if (saturation >= 90) return "rgb(0,28,104,0.9)";
-  if (saturation >= 80) return "rgba(0,150,200,0.9)";
-  return "rgb(67,54,13,0.9)";
+function getBackgroundColor(dataType, saturation, isOldData) {
+  if (dataType === "N/A" || isOldData) return "gray";
+  if(dataType === "rainfall") return "rgb(0,28,104,0.9)"; // Blue
+  if (saturation >= 90) return "rgb(0,28,104,0.9)"; // Blue
+  if (saturation >= 80) return "rgb(0,150,200,0.9)"; // Light Blue
+  return "rgb(67,54,13,0.9)"; // Brown
 }
 
 // Marker Initialization
@@ -522,7 +523,7 @@ function initializeMarkers(map, dataType) {
     </div>
     `;
 
-    let backgroundColor = getBackgroundColor(saturationPercentage, isOldData);
+    let backgroundColor = getBackgroundColor(dataType, saturationPercentage, isOldData);
 
     var customIcon = L.divIcon({
       className: "custom-div-icon",
@@ -658,7 +659,7 @@ function changeData(stations, dataType) {
     </div>
     `;
 
-    let backgroundColor = getBackgroundColor(saturationPercentage, isOldData);
+    let backgroundColor = getBackgroundColor(dataType, saturationPercentage, isOldData);
 
     var newIconHTML = `<div style="background-color: ${backgroundColor}; color: white; padding: 5px; border-radius: 5px; display: flex; flex-direction: column; text-align: center; justify-content: center; align-items: center; height: 100%;">
         <span style="font-size: ${fontSize}; color: white;">
