@@ -13,7 +13,7 @@ main {
 /* Make sure the map fills the entire viewport */
 #map {
   width: 100%; /* Take the full width of the parent */
-  height: 95vh !important; /* Take full viewport height */
+  height: 100vh !important; /* Take full viewport height */
   margin: 0;
   padding: 0;
   display: block;

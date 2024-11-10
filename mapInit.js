@@ -282,26 +282,6 @@ function setupEventListeners(map, layers, stations) {
     }
   });
 
-  // Checkbox for precipitation layer
-  document
-    .getElementById("precipitationLayer")
-    .addEventListener("change", (event) => {
-      if (isAnimating) {
-        event.target.checked = !event.target.checked; // Prevent state change
-        return;
-      }
-      isAnimating = true;
-      setTimeout(() => {
-        isAnimating = false;
-      }, 200);
-
-      const { precipitationLayer } = layers;
-      if (event.target.checked) {
-        precipitationLayer.addTo(map);
-      } else {
-        map.removeLayer(precipitationLayer);
-      }
-    });
   // Toggle attributions visibility
   const attributionControl = document.querySelector(
     ".leaflet-control-attribution"
