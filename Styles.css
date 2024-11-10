@@ -1,6 +1,8 @@
 /* General Styles */
 
-html, body, main {
+html,
+body,
+main {
   height: 100%;
   width: 100%;
   margin: 0;
@@ -11,7 +13,7 @@ html, body, main {
 /* Make sure the map fills the entire viewport */
 #map {
   width: 100%; /* Take the full width of the parent */
-  height: 100vh !important; /* Take full viewport height */
+  height: 95vh !important; /* Take full viewport height */
   margin: 0;
   padding: 0;
   display: block;
@@ -19,8 +21,6 @@ html, body, main {
   top: 0;
   left: 0;
 }
-
-
 
 body {
   background-color: #121212; /* Matte black background */
@@ -223,7 +223,9 @@ form input[type="submit"]:hover {
 }
 
 /* Hamburger Icon Bars */
-.bar1, .bar2, .bar3 {
+.bar1,
+.bar2,
+.bar3 {
   width: 35px;
   height: 4px;
   background-color: white;
@@ -389,7 +391,8 @@ form input[type="submit"]:hover {
   z-index: 1000;
 }
 
-#legend-image, #susceptibility-legend-image {
+#legend-image,
+#susceptibility-legend-image {
   max-width: 100%;
   height: auto;
 }
@@ -448,13 +451,20 @@ form input[type="submit"]:hover {
   top: 50px !important; /* Adjust the position to be below the hamburger button */
 }
 
+/* Ipad Media Query */
+@media all and (device-width: 768px) and (device-height: 1024px) and (orientation: portrait),
+ all and (device-width: 1024px) and (device-height: 768px) and (orientation: landscape) {
+  #map {
+    height: 85vh !important;
+  }
+}
+
 /* Mobile Media Query */
 @media (max-width: 768px) {
-
   .map-label {
     font-size: 12px;
     padding: 2px 8px;
-    text-align: center; 
+    text-align: center;
     top: 90%;
   }
 
@@ -472,7 +482,7 @@ form input[type="submit"]:hover {
 
   .custom-popup-content {
     flex-direction: horizontal;
-    text-align: center; 
+    text-align: center;
     height: auto;
     padding: 5px;
   }
@@ -526,7 +536,8 @@ form input[type="submit"]:hover {
     font-size: 14px;
   }
 
-  .sidebar h1, .sidebar h2 {
+  .sidebar h1,
+  .sidebar h2 {
     font-size: 18px;
   }
 
@@ -553,7 +564,6 @@ form input[type="submit"]:hover {
   }
 
   #map {
-    height: 90vh !important; 
+    height: 85vh !important;
   }
-  
 }

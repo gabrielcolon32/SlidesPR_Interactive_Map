@@ -74,7 +74,8 @@ function addBaseLayers(map) {
   const worldImageryLayer = L.tileLayer(
     "https://services.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",
     {
-      attribution: '&copy; <a href="https://www.esri.com/">Esri</a> &mdash; <a href="https://www.arcgis.com/home/item.html?id=39b4a7fce8284f99b234db5859a39721">World Imagery</a>',
+      attribution:
+        '&copy; <a href="https://www.esri.com/">Esri</a> &mdash; <a href="https://www.arcgis.com/home/item.html?id=39b4a7fce8284f99b234db5859a39721">World Imagery</a>',
       maxZoom: 18,
     }
   ).addTo(map);
@@ -92,10 +93,12 @@ function addBaseLayers(map) {
     console.error("Tile error:", error)
   );
 
-  const hillshadeLayer = L.esri.tiledMapLayer({
-    url: "https://tiles.arcgis.com/tiles/TQ9qkk0dURXSP7LQ/arcgis/rest/services/Hillshade_Puerto_Rico/MapServer",
-    opacity: 0.5,
-  }).addTo(map);
+  const hillshadeLayer = L.esri
+    .tiledMapLayer({
+      url: "https://tiles.arcgis.com/tiles/TQ9qkk0dURXSP7LQ/arcgis/rest/services/Hillshade_Puerto_Rico/MapServer",
+      opacity: 0.5,
+    })
+    .addTo(map);
 
   const municipalityLayer = L.esri
     .featureLayer({
@@ -124,7 +127,7 @@ function addBaseLayers(map) {
     susceptibilityLayer,
     municipalityLayer,
     precipitationLayer,
-    hillshadeLayer
+    hillshadeLayer,
   };
 }
 
@@ -197,62 +200,80 @@ window.toggleImage = toggleImage;
 function setupEventListeners(map, layers, stations) {
   let isAnimating = false;
 
-  document.getElementById("rainfall-button").addEventListener("click", async () => {
-    if (isAnimating) return;
-    isAnimating = true;
-    setTimeout(() => { isAnimating = false; }, 200);
+  document
+    .getElementById("rainfall-button")
+    .addEventListener("click", async () => {
+      if (isAnimating) return;
+      isAnimating = true;
+      setTimeout(() => {
+        isAnimating = false;
+      }, 200);
 
-    await processFiles();
-    changeData(stations, "rainfall");
-  });
+      await processFiles();
+      changeData(stations, "rainfall");
+    });
 
-  document.getElementById("soilSaturation-button").addEventListener("click", async () => {
-    if (isAnimating) return;
-    isAnimating = true;
-    setTimeout(() => { isAnimating = false; }, 200);
+  document
+    .getElementById("soilSaturation-button")
+    .addEventListener("click", async () => {
+      if (isAnimating) return;
+      isAnimating = true;
+      setTimeout(() => {
+        isAnimating = false;
+      }, 200);
 
-    await processFiles();
-    changeData(stations, "soilSaturation");
-  });
+      await processFiles();
+      changeData(stations, "soilSaturation");
+    });
 
   // Checkbox for susceptibility layer
-  document.getElementById("susceptibilityLayer").addEventListener("change", (event) => {
-    if (isAnimating) {
-      event.target.checked = !event.target.checked; // Prevent state change
-      return;
-    }
-    isAnimating = true;
-    setTimeout(() => { isAnimating = false; }, 200);
+  document
+    .getElementById("susceptibilityLayer")
+    .addEventListener("change", (event) => {
+      if (isAnimating) {
+        event.target.checked = !event.target.checked; // Prevent state change
+        return;
+      }
+      isAnimating = true;
+      setTimeout(() => {
+        isAnimating = false;
+      }, 200);
 
-    const { susceptibilityLayer } = layers;
-    if (event.target.checked) {
-      susceptibilityLayer.addTo(map);
-    } else {
-      map.removeLayer(susceptibilityLayer);
-    }
-  });
+      const { susceptibilityLayer } = layers;
+      if (event.target.checked) {
+        susceptibilityLayer.addTo(map);
+      } else {
+        map.removeLayer(susceptibilityLayer);
+      }
+    });
 
   // Checkbox for precipitation layer
-  document.getElementById("precipitationLayer").addEventListener("change", (event) => {
-    if (isAnimating) {
-      event.target.checked = !event.target.checked; // Prevent state change
-      return;
-    }
-    isAnimating = true;
-    setTimeout(() => { isAnimating = false; }, 200);
+  document
+    .getElementById("precipitationLayer")
+    .addEventListener("change", (event) => {
+      if (isAnimating) {
+        event.target.checked = !event.target.checked; // Prevent state change
+        return;
+      }
+      isAnimating = true;
+      setTimeout(() => {
+        isAnimating = false;
+      }, 200);
 
-    const { precipitationLayer } = layers;
-    if (event.target.checked) {
-      precipitationLayer.addTo(map);
-    } else {
-      map.removeLayer(precipitationLayer);
-    }
-  });
+      const { precipitationLayer } = layers;
+      if (event.target.checked) {
+        precipitationLayer.addTo(map);
+      } else {
+        map.removeLayer(precipitationLayer);
+      }
+    });
 
   // Prevent double-click on sidebar from zooming the map
-  document.getElementById("sidebar").addEventListener("dblclick", function (event) {
-    event.stopPropagation();
-  });
+  document
+    .getElementById("sidebar")
+    .addEventListener("dblclick", function (event) {
+      event.stopPropagation();
+    });
 
   // Event delegation for image toggling
   document.addEventListener("click", function (event) {
@@ -261,11 +282,41 @@ function setupEventListeners(map, layers, stations) {
     }
   });
 
+  // Checkbox for precipitation layer
+  document
+    .getElementById("precipitationLayer")
+    .addEventListener("change", (event) => {
+      if (isAnimating) {
+        event.target.checked = !event.target.checked; // Prevent state change
+        return;
+      }
+      isAnimating = true;
+      setTimeout(() => {
+        isAnimating = false;
+      }, 200);
+
+      const { precipitationLayer } = layers;
+      if (event.target.checked) {
+        precipitationLayer.addTo(map);
+      } else {
+        map.removeLayer(precipitationLayer);
+      }
+    });
   // Toggle attributions visibility
-  const attributionControl = document.querySelector(".leaflet-control-attribution");
+  const attributionControl = document.querySelector(
+    ".leaflet-control-attribution"
+  );
   const toggleButton = document.getElementById("toggle-attributions");
   attributionControl.style.display = "none";
-  toggleButton.addEventListener("click", function () {
+  toggleButton.addEventListener("change", (event) => {
+    if (isAnimating) {
+      event.target.checked = !event.target.checked; // Prevent state change
+      return;
+    }
+    isAnimating = true;
+    setTimeout(() => {
+      isAnimating = false;
+    }, 200);
     if (attributionControl.style.display === "none") {
       attributionControl.style.display = "block";
     } else {
@@ -274,37 +325,51 @@ function setupEventListeners(map, layers, stations) {
   });
 
   // Legend toggle with animation logic
-  document.getElementById("legendToggle").addEventListener("change", (event) => {
-    if (isAnimating) {
-      event.target.checked = !event.target.checked; // Prevent state change
-      return;
-    }
-    isAnimating = true;
-    setTimeout(() => { isAnimating = false; }, 200);
+  document
+    .getElementById("legendToggle")
+    .addEventListener("change", (event) => {
+      if (isAnimating) {
+        event.target.checked = !event.target.checked; // Prevent state change
+        return;
+      }
+      isAnimating = true;
+      setTimeout(() => {
+        isAnimating = false;
+      }, 200);
 
-    const legendContainer = document.getElementById("legend-container");
-    legendContainer.style.display = event.target.checked ? "block" : "none";
-  });
+      const legendContainer = document.getElementById("legend-container");
+      legendContainer.style.display = event.target.checked ? "block" : "none";
+    });
 
   // Susceptibility legend toggle with animation logic
-  document.getElementById("susceptibilityLegendToggle").addEventListener("change", (event) => {
-    if (isAnimating) {
-      event.target.checked = !event.target.checked; // Prevent state change
-      return;
-    }
-    isAnimating = true;
-    setTimeout(() => { isAnimating = false; }, 200);
+  document
+    .getElementById("susceptibilityLegendToggle")
+    .addEventListener("change", (event) => {
+      if (isAnimating) {
+        event.target.checked = !event.target.checked; // Prevent state change
+        return;
+      }
+      isAnimating = true;
+      setTimeout(() => {
+        isAnimating = false;
+      }, 200);
 
-    const susceptibilityLegendContainer = document.getElementById("susceptibility-legend-container");
-    susceptibilityLegendContainer.style.display = event.target.checked ? "block" : "none";
-  });
+      const susceptibilityLegendContainer = document.getElementById(
+        "susceptibility-legend-container"
+      );
+      susceptibilityLegendContainer.style.display = event.target.checked
+        ? "block"
+        : "none";
+    });
 
   // Hamburger button with animation logic
   document.getElementById("hamburger-button").addEventListener("click", () => {
     if (isAnimating) return;
 
     isAnimating = true;
-    setTimeout(() => { isAnimating = false; }, 600);
+    setTimeout(() => {
+      isAnimating = false;
+    }, 600);
 
     document.getElementById("sidebar").classList.toggle("closed");
     document.getElementById("hamburger-button").classList.toggle("change");
@@ -341,12 +406,15 @@ function updateIconSizes(map, stations) {
     fontSize = "24px";
   }
 
-  stations.forEach(station => {
+  stations.forEach((station) => {
     const marker = station.marker;
     const currentIcon = marker.getIcon();
     const currentHtml = currentIcon.options.html;
 
-    const newIconHTML = currentHtml.replace(/font-size: \d+px;/, `font-size: ${fontSize};`);
+    const newIconHTML = currentHtml.replace(
+      /font-size: \d+px;/,
+      `font-size: ${fontSize};`
+    );
 
     marker.setIcon(
       L.divIcon({
@@ -358,7 +426,6 @@ function updateIconSizes(map, stations) {
     );
   });
 }
-
 
 function getBackgroundColor(saturation, isOldData) {
   if (isOldData) return "gray";
@@ -381,7 +448,7 @@ function initializeMarkers(map, dataType) {
     if (!stationData) {
       console.warn(`No data found for station: ${station.name}`);
       return;
-    }    
+    }
 
     const wcKey = Object.keys(stationData).find((key) =>
       key.toString().startsWith('"wc4')
