@@ -513,7 +513,7 @@ function initializeMarkers(map, dataType) {
         <ul>
           <li><strong>Last Updated:</strong> ${formattedTimestamp} AST</li>
           <li><strong>Soil Saturation:</strong> ${saturationPercentage}%</li>
-          <li><strong>12 HRS Precipitation:</strong> ${rainTotalInches}</li>
+          <li><strong>12 HRS Precipitation (Inches):</strong> ${rainTotalInches}</li>
           <li><strong>Forecast:</strong> ${station.forecast}</li>
         </ul>
         <a href="https://derrumbe.net/${
@@ -649,7 +649,7 @@ function changeData(stations, dataType) {
         <ul>
           <li><strong>Last Updated:</strong> ${formattedTimestamp} AST</li>
           <li><strong>Soil Saturation:</strong> ${saturationPercentage}%</li>
-          <li><strong>12 HRS Precipitation:</strong> ${rainTotalInches}</li>
+          <li><strong>12 HRS Precipitation (Inches):</strong> ${rainTotalInches}</li>
           <li><strong>Forecast:</strong> ${station.forecast}</li>
         </ul>
         <a href="https://derrumbe.net/${
