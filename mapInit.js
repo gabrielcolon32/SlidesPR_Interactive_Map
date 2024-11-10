@@ -359,6 +359,7 @@ function updateIconSizes(map, stations) {
   });
 }
 
+
 function getBackgroundColor(saturation, isOldData) {
   if (isOldData) return "gray";
   if (saturation >= 90) return "rgb(0,28,104,0.9)";

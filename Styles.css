@@ -1,4 +1,27 @@
 /* General Styles */
+
+html, body, main {
+  height: 100%;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  overflow: hidden; /* Prevent overflow on the page */
+}
+
+/* Make sure the map fills the entire viewport */
+#map {
+  width: 100%; /* Take the full width of the parent */
+  height: 100vh !important; /* Take full viewport height */
+  margin: 0;
+  padding: 0;
+  display: block;
+  position: absolute; /* Fill the container */
+  top: 0;
+  left: 0;
+}
+
+
+
 body {
   background-color: #121212; /* Matte black background */
 }
@@ -267,9 +290,9 @@ form input[type="submit"]:hover {
   position: absolute;
   top: 50%;
   transform: translateY(-50%);
-  font-size: 24px;
+  font-size: 28px;
   color: white;
-  background-color: rgba(0, 0, 0, 0.5);
+  background-color: rgba(0, 0, 0, 0.7);
   padding: 5px;
   cursor: pointer;
   z-index: 2;
@@ -339,8 +362,7 @@ form input[type="submit"]:hover {
 }
 
 /* Legend Container Styles */
-#legend-container,
-#susceptibility-legend-container {
+#legend-container {
   position: absolute;
   top: 10px;
   right: 10px;
@@ -350,6 +372,20 @@ form input[type="submit"]:hover {
   padding: 10px;
   border-radius: 5px;
   box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
+  z-index: 1000;
+}
+
+#susceptibility-legend-container {
+  position: absolute;
+  bottom: 40px;
+  left: 5px;
+  height: 150px;
+  width: 160px;
+  overflow-y: visible;
+  background: rgba(255, 255, 255, 0.9);
+  padding: 10px;
+  border-radius: 2px;
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
   z-index: 1000;
 }
 
@@ -414,9 +450,10 @@ form input[type="submit"]:hover {
 
 /* Mobile Media Query */
 @media (max-width: 768px) {
+
   .map-label {
-    font-size: 16px;
-    padding: 5px 10px;
+    font-size: 12px;
+    padding: 2px 8px;
     text-align: center; 
     top: 90%;
   }
@@ -434,7 +471,7 @@ form input[type="submit"]:hover {
   }
 
   .custom-popup-content {
-    flex-direction: column;
+    flex-direction: horizontal;
     text-align: center; 
     height: auto;
     padding: 5px;
@@ -447,17 +484,17 @@ form input[type="submit"]:hover {
   }
 
   .custom-popup-content .info h2 {
-    font-size: 14px;
+    font-size: 16px;
     margin: 5px 0;
   }
 
   .custom-popup-content .info a {
-    font-size: 12px;
+    font-size: 14px;
     margin: 5px 0;
   }
 
   .custom-popup-content .info ul li {
-    font-size: 12px;
+    font-size: 14px;
     margin-bottom: 3px;
   }
 
@@ -467,7 +504,7 @@ form input[type="submit"]:hover {
   }
 
   .arrow {
-    font-size: 12px;
+    font-size: 20px;
   }
 
   .button-bar {
@@ -503,8 +540,8 @@ form input[type="submit"]:hover {
 
   #legend-container,
   #susceptibility-legend-container {
-    max-height: 130px;
-    max-width: 130px;
+    max-height: 100px;
+    max-width: 100px;
     padding: 5px;
     font-size: 12px;
   }
@@ -514,4 +551,9 @@ form input[type="submit"]:hover {
     max-width: 100%;
     height: auto;
   }
+
+  #map {
+    height: 90vh !important; 
+  }
+  
 }
