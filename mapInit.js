@@ -6,7 +6,7 @@ document.addEventListener("DOMContentLoaded", async function () {
   const { map, layers } = initializeMap();
   const stations = await initializeStations(map);
   setupEventListeners(map, layers, stations);
-  uncheckPrecipitationLayer();
+  // uncheckPrecipitationLayer();
 
   // Set the initial data type and update the label
   const initialDataType = "soilSaturation"; // Change this to your desired initial data type
@@ -59,7 +59,7 @@ function updateMapLabel(text) {
 
 function getLabelText(dataType) {
   if (dataType === "rainfall") {
-    return "12 HOUR PRECIPITATION";
+    return "LAST 12-HOUR PRECIPITATION";
   } else if (dataType === "soilSaturation") {
     return "SOIL SATURATION";
   } else if (dataType === "todayLandslideForecast") {
@@ -86,8 +86,6 @@ function addBaseLayers(map) {
       opacity: 0.5,
       attribution: "Dr. Stephen Hughes, PRLHMO",
     })
-    .addTo(map);
-  susceptibilityLayer.bringToFront();
 
   susceptibilityLayer.on("tileerror", (error) =>
     console.error("Tile error:", error)
@@ -102,7 +100,7 @@ function addBaseLayers(map) {
   const municipalityLayer = L.esri
     .featureLayer({
       url: "https://services5.arcgis.com/TQ9qkk0dURXSP7LQ/arcgis/rest/services/LIMITES_LEGALES_MUNICIPIOS/FeatureServer/0",
-      opacity: 0.2,
+      opacity: 0.7,
       color: "black",
     })
     .addTo(map);
@@ -115,7 +113,7 @@ function addBaseLayers(map) {
     url: 'https://mapservices.weather.noaa.gov/raster/rest/services/obs/mrms_qpe/ImageServer/exportImage?renderingRule={"rasterFunction":"rft_12hr"}',
     opacity: 0.5,
     attribution: "Precipitation data © NOAA",
-  });
+  }).addTo(map);
 
   precipitationLayer.on("tileerror", (error) =>
     console.error("Tile error:", error)
@@ -198,18 +196,24 @@ window.toggleImage = toggleImage;
 
 // Event Listeners Setup
 function setupEventListeners(map, layers, stations) {
+  let dataType;
   document
     .getElementById("rainfall-button")
     .addEventListener("click", async () => {
       await processFiles();
-      changeData(stations, "rainfall");
+      dataType = "rainfall"
+      changeData(stations, dataType);
+      updateMapLabel(getLabelText(dataType));
     });
 
   document
     .getElementById("soilSaturation-button")
     .addEventListener("click", async () => {
       await processFiles();
-      changeData(stations, "soilSaturation");
+      dataType = "soilSaturation"
+      changeData(stations, dataType);
+      updateMapLabel(getLabelText(dataType));
+
     });
     
   document
