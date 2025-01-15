@@ -59,7 +59,7 @@ function updateMapLabel(text) {
 
 function getLabelText(dataType) {
   if (dataType === "rainfall") {
-    return "LAST 12-HOUR PRECIPITATION";
+    return "LAST 12-HOUR PRECIPITATION (Inches)";
   } else if (dataType === "soilSaturation") {
     return "SOIL SATURATION";
   } else if (dataType === "todayLandslideForecast") {
