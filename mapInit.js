@@ -11,7 +11,6 @@ document.addEventListener("DOMContentLoaded", async function () {
   const stations = await initializeStations(map);
   setupEventListeners(map, layers, stations);
   // uncheckPrecipitationLayer();
-
 });
 
 // Overlay Creation
@@ -59,7 +58,7 @@ function updateMapLabel(text) {
 
 function getLabelText(dataType) {
   if (dataType === "rainfall") {
-    return "LAST 12-HOUR PRECIPITATION (Inches)";
+    return "PAST 12-HOUR PRECIPITATION (Inches)";
   } else if (dataType === "soilSaturation") {
     return "SOIL SATURATION";
   } else if (dataType === "todayLandslideForecast") {
@@ -197,9 +196,37 @@ function toggleImage(event) {
 
 window.toggleImage = toggleImage;
 
+let sidebarToggleTimer = 200; // Store the timer to prevent rapid toggling
+
+function toggleSidebarWithDelay() {
+  // Clear any existing timer if the function is triggered again quickly
+  if (sidebarToggleTimer) {
+    clearTimeout(sidebarToggleTimer);
+  }
+
+  // Set a new timer to toggle the sidebar after 200ms
+  sidebarToggleTimer = setTimeout(() => {
+    document.getElementById("sidebar").classList.toggle("closed");
+  }, 200);
+}
+
 // Event Listeners Setup
 function setupEventListeners(map, layers, stations) {
   let dataType;
+  let checkboxToggleTimer = 200;
+
+  // Function to toggle checkbox with delay (used for legend and attributions)
+  const toggleCheckboxWithDelay = (elementId, visibility) => {
+    if (checkboxToggleTimer) {
+      clearTimeout(checkboxToggleTimer); // Clear the previous timer
+    }
+
+    checkboxToggleTimer = setTimeout(() => {
+      const element = document.getElementById(elementId);
+      element.style.display = visibility;
+    }, 200); // Delay of 200ms before toggling visibility
+  };
+
   document
     .getElementById("rainfall-button")
     .addEventListener("click", async () => {
@@ -247,6 +274,13 @@ function setupEventListeners(map, layers, stations) {
       event.stopPropagation();
     });
 
+  // Prevent double-click on sidebar button from zooming the map
+  document
+    .getElementById("hamburger-button")
+    .addEventListener("dblclick", function (event) {
+      event.stopPropagation();
+    });
+
   // Event delegation for image toggling
   document.addEventListener("click", function (event) {
     if (event.target.classList.contains("arrow")) {
@@ -261,38 +295,44 @@ function setupEventListeners(map, layers, stations) {
   const toggleButton = document.getElementById("toggle-attributions");
   attributionControl.style.display = "none";
   toggleButton.addEventListener("click", function () {
-    if (attributionControl.style.display === "none") {
-      attributionControl.style.display = "block";
-    } else {
-      attributionControl.style.display = "none";
+
+    if (checkboxToggleTimer) {
+      clearTimeout(checkboxToggleTimer); // Clear the previous timer
     }
+    checkboxToggleTimer = setTimeout(() => {
+      if (attributionControl.style.display === "none") {
+        attributionControl.style.display = "block";
+      } else {
+        attributionControl.style.display = "none";
+      }
+    }, 200); // Delay of 200ms before toggling visibility
+    
   });
 
+  
+  // Event listener for legend checkbox
   document
     .getElementById("legendToggle")
     .addEventListener("change", (event) => {
-      const legendContainer = document.getElementById("legend-container");
-      legendContainer.style.display = event.target.checked ? "block" : "none";
+      const visibility = event.target.checked ? "block" : "none";
+      toggleCheckboxWithDelay("legend-container", visibility);
     });
+
+      // Event listener for legend checkbox
+  document
+  .getElementById("susceptibilityLegendToggle")
+  .addEventListener("change", (event) => {
+    const visibility = event.target.checked ? "block" : "none";
+    toggleCheckboxWithDelay("susceptibility-legend-container", visibility);
+  });
+  
 
   document
-    .getElementById("susceptibilityLegendToggle")
-    .addEventListener("change", (event) => {
-      const susceptibilityLegendContainer = document.getElementById(
-        "susceptibility-legend-container"
-      );
-      susceptibilityLegendContainer.style.display = event.target.checked
-        ? "block"
-        : "none";
-    });
-
-  document.getElementById("sidebar-toggle").addEventListener("click", () => {
-    document.getElementById("sidebar").classList.toggle("closed");
-  });
-
-  document.getElementById("hamburger-button").addEventListener("click", () => {
-    document.getElementById("sidebar").classList.toggle("closed");
-  });
+    .getElementById("sidebar-toggle")
+    .addEventListener("click", toggleSidebarWithDelay);
+  document
+    .getElementById("hamburger-button")
+    .addEventListener("click", toggleSidebarWithDelay);
 }
 
 function uncheckPrecipitationLayer() {
@@ -320,8 +360,6 @@ function initializeMarkers(map, dataType) {
     const saturationPercentage = wcKey
       ? ((stationData[wcKey] / station.vwc_max) * 100).toFixed(0)
       : "N/A";
-
-    console.log(saturationPercentage + station.name);
 
     const rainTotalMM =
       parseFloat(stationData["12hr_rain_mm_total"]).toFixed(0) || "N/A";
@@ -509,7 +547,7 @@ function changeData(stations, dataType) {
         <ul>
           <li><strong>Last Updated:</strong> ${formattedTimestamp} AST</li>
           <li><strong>Soil Saturation:</strong> ${saturationPercentage}%</li>
-          <li><strong>12 HRS Precipitation:</strong> ${rainTotalInches} inches</li>
+          <li><strong>Past 12 HRS Precipitation:</strong> ${rainTotalInches} inches</li>
           <li><strong>Forecast:</strong> ${station.forecast}</li>
         </ul>
         <a href="https://derrumbe.net/${

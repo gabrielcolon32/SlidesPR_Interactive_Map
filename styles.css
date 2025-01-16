@@ -503,6 +503,12 @@ form input[type="submit"]:hover {
     font-size: 14px; /* Reduce font size for labels on small devices */
   }
 
+  .hamburger-button {
+    position: absolute;
+    left: 5px; 
+    border: none;
+  }
+
   .attributions {
     font-size: 14px; /* Reduce font size for attributions on small devices */
   }
