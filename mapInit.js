@@ -4,14 +4,14 @@ import { stations } from "./stationInfo.js";
 document.addEventListener("DOMContentLoaded", async function () {
   createOverlay();
   const { map, layers } = initializeMap();
-  const stations = await initializeStations(map);
-  setupEventListeners(map, layers, stations);
-  // uncheckPrecipitationLayer();
 
   // Set the initial data type and update the label
   const initialDataType = "soilSaturation"; // Change this to your desired initial data type
   updateMapLabel(getLabelText(initialDataType));
-  changeData(stations, initialDataType);
+  const stations = await initializeStations(map);
+  setupEventListeners(map, layers, stations);
+  // uncheckPrecipitationLayer();
+
 });
 
 // Overlay Creation
@@ -80,22 +80,23 @@ function addBaseLayers(map) {
     }
   ).addTo(map);
 
-  const susceptibilityLayer = L.esri
-    .tiledMapLayer({
-      url: "https://tiles.arcgis.com/tiles/TQ9qkk0dURXSP7LQ/arcgis/rest/services/Susceptibilidad_Derrumbe_PR/MapServer",
-      opacity: 0.5,
-      attribution: "Dr. Stephen Hughes, PRLHMO",
-    })
+  const susceptibilityLayer = L.esri.tiledMapLayer({
+    url: "https://tiles.arcgis.com/tiles/TQ9qkk0dURXSP7LQ/arcgis/rest/services/Susceptibilidad_Derrumbe_PR/MapServer",
+    opacity: 0.5,
+    attribution: "Dr. Stephen Hughes, PRLHMO",
+  });
 
   susceptibilityLayer.on("tileerror", (error) =>
     console.error("Tile error:", error)
   );
 
-  const hillshadeLayer = L.esri.tiledMapLayer({
-    url: "https://tiles.arcgis.com/tiles/TQ9qkk0dURXSP7LQ/arcgis/rest/services/Hillshade_Puerto_Rico/MapServer",
-    opacity: 0.5,
-    attribution: "Hillshade data © Esri",
-  }).addTo(map);
+  const hillshadeLayer = L.esri
+    .tiledMapLayer({
+      url: "https://tiles.arcgis.com/tiles/TQ9qkk0dURXSP7LQ/arcgis/rest/services/Hillshade_Puerto_Rico/MapServer",
+      opacity: 0.5,
+      attribution: "Hillshade data © Esri",
+    })
+    .addTo(map);
 
   const municipalityLayer = L.esri
     .featureLayer({
@@ -109,11 +110,13 @@ function addBaseLayers(map) {
     console.error("Feature layer error:", error)
   );
 
-  const precipitationLayer = L.esri.imageMapLayer({
-    url: 'https://mapservices.weather.noaa.gov/raster/rest/services/obs/mrms_qpe/ImageServer/exportImage?renderingRule={"rasterFunction":"rft_12hr"}',
-    opacity: 0.5,
-    attribution: "Precipitation data © NOAA",
-  }).addTo(map);
+  const precipitationLayer = L.esri
+    .imageMapLayer({
+      url: 'https://mapservices.weather.noaa.gov/raster/rest/services/obs/mrms_qpe/ImageServer/exportImage?renderingRule={"rasterFunction":"rft_12hr"}',
+      opacity: 0.5,
+      attribution: "Precipitation data © NOAA",
+    })
+    .addTo(map);
 
   precipitationLayer.on("tileerror", (error) =>
     console.error("Tile error:", error)
@@ -124,7 +127,7 @@ function addBaseLayers(map) {
     susceptibilityLayer,
     municipalityLayer,
     precipitationLayer,
-    hillshadeLayer
+    hillshadeLayer,
   };
 }
 
@@ -180,9 +183,9 @@ function setupScrollZoom(map) {
 }
 
 // Station Initialization
-async function initializeStations(map) {
+async function initializeStations(map, dataType) {
   await processFiles();
-  return initializeMarkers(map, "soilSaturation");
+  return initializeMarkers(map, dataType);
 }
 
 function toggleImage(event) {
@@ -201,7 +204,7 @@ function setupEventListeners(map, layers, stations) {
     .getElementById("rainfall-button")
     .addEventListener("click", async () => {
       await processFiles();
-      dataType = "rainfall"
+      dataType = "rainfall";
       changeData(stations, dataType);
       updateMapLabel(getLabelText(dataType));
     });
@@ -210,12 +213,11 @@ function setupEventListeners(map, layers, stations) {
     .getElementById("soilSaturation-button")
     .addEventListener("click", async () => {
       await processFiles();
-      dataType = "soilSaturation"
+      dataType = "soilSaturation";
       changeData(stations, dataType);
       updateMapLabel(getLabelText(dataType));
-
     });
-    
+
   document
     .getElementById("susceptibilityLayer")
     .addEventListener("change", (event) => {
@@ -312,17 +314,14 @@ function initializeMarkers(map, dataType) {
       return;
     }
 
-    const wcKey =
-      station.name === "toronegro"
-        ? Object.keys(stationData).find((key) =>
-            key.toString().startsWith('"wc5')
-          )
-        : Object.keys(stationData).find((key) =>
-            key.toString().startsWith('"wc4')
-          );
+    const wcKey = Object.keys(stationData).find((key) =>
+      key.toString().startsWith('"wc4')
+    );
     const saturationPercentage = wcKey
       ? ((stationData[wcKey] / station.vwc_max) * 100).toFixed(0)
       : "N/A";
+
+    console.log(saturationPercentage + station.name);
 
     const rainTotalMM =
       parseFloat(stationData["12hr_rain_mm_total"]).toFixed(0) || "N/A";
@@ -446,17 +445,14 @@ function changeData(stations, dataType) {
     var marker = station.marker;
     var value;
 
-    const wcKey =
-      station.name === "toronegro"
-        ? Object.keys(stationData).find((key) =>
-            key.toString().startsWith('"wc5')
-          )
-        : Object.keys(stationData).find((key) =>
-            key.toString().startsWith('"wc4')
-          );
+    const wcKey = Object.keys(stationData).find((key) =>
+      key.toString().startsWith('"wc4')
+    );
     const saturationPercentage = wcKey
       ? ((stationData[wcKey] / station.vwc_max) * 100).toFixed(0)
       : "N/A";
+
+    console.log(saturationPercentage + station.name);
 
     const rainTotalMM =
       parseFloat(stationData["12hr_rain_mm_total"]).toFixed(0) || "N/A";
