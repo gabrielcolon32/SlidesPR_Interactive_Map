@@ -9,6 +9,12 @@ header {
   padding: 1rem;
 }
 
+/* Prevent label jittering on iOS devices */
+label {
+  -webkit-tap-highlight-color: transparent; /* Remove tap highlight */
+  touch-action: manipulation; /* Prevent default behavior */
+}
+
 nav ul {
   list-style: none;
   display: flex;
@@ -341,10 +347,11 @@ form input[type="submit"]:hover {
   position: absolute;
   top: 10px;
   right: 10px; /* Move to right */
-  max-height: 200px; /* Adjust the height as needed */
+  max-height: 120px; /* Adjust the height as needed */
+  max-width: 120px;
   overflow-y: auto;
   background: rgba(255, 255, 255, 0.9); /* Semi-transparent white background */
-  padding: 10px;
+  padding: 10px 1px 1px 1px;
   border-radius: 5px;
   box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
   z-index: 1000; /* Ensure it is above other elements */
@@ -352,17 +359,18 @@ form input[type="submit"]:hover {
 
 #legend-image {
   max-width: 100%;
-  height: auto;
+  height: 100%;
 }
 
 #susceptibility-legend-container {
   position: absolute;
-  top: 10px;
+  top: 25%;
   right: 10px; /* Move to right */
-  max-height: 200px; /* Adjust the height as needed */
-  overflow-y: auto;
+  max-height: 120px; /* Adjust the height as needed */
+  /* overflow-y: auto; */
+  height: 160px;
   background: rgba(255, 255, 255, 0.9); /* Semi-transparent white background */
-  padding: 10px;
+  padding: 3px;
   border-radius: 5px;
   box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
   z-index: 1000; /* Ensure it is above other elements */
@@ -370,7 +378,14 @@ form input[type="submit"]:hover {
 
 #susceptibility-legend-image {
   max-width: 100%;
-  height: auto;
+  height: 100%;
+}
+
+#legend-container span {
+  display: block;
+  text-align: center;
+  font-size: 8px;
+  font-weight: bold;
 }
 
 /* Logo Container Styles */
@@ -513,4 +528,39 @@ form input[type="submit"]:hover {
     font-size: 14px; /* Reduce font size for attributions on small devices */
   }
 
+/* Legend Container Styles */
+#legend-container {
+  position: absolute;
+  top: 62%;
+  left: 2%; /* Move to left */
+  max-height: 80px; /* Adjust the height as needed */
+  max-width: 100px;
+  z-index: 1000; /* Ensure it is above other elements */
+}
+
+#legend-image {
+  max-width: 100%;
+  height: auto;
+}
+
+#susceptibility-legend-container {
+  position: absolute;
+  top: 78%;
+  left: 2%; /* Move to left */
+  max-height:80px; /* Adjust the height as needed */
+  max-width: 80px;
+  z-index: 1000; /* Ensure it is above other elements */
+}
+
+#susceptibility-legend-image {
+  max-width: 100%;
+  height: auto;
+}
+
+#legend-container span {
+  display: block;
+  text-align: center;
+  font-size: 8px;
+  font-weight: bold;
+}
 }

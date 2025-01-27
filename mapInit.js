@@ -18,6 +18,7 @@ function createOverlay() {
   const overlay = document.createElement("div");
   overlay.id = "map-overlay";
   overlay.innerText = "Press ctrl + scroll to zoom";
+  overlay.style.textAlign = "center";
   document.getElementById("map").appendChild(overlay);
 }
 
@@ -47,20 +48,89 @@ function initializeMap() {
   const layers = addBaseLayers(map);
   setupScrollZoom(map);
 
+  // Event listener for zoom changes
+  map.on("zoomend", () => {
+    updateIconSizes(map, stations);
+  });
+
   return { map, layers };
+}
+
+function updateIconSizes(map, stations) {
+  const zoomLevel = map.getZoom();
+  const isSmallDevice = window.innerWidth <= 768;
+
+  // Adjust icon size and anchor based on zoom level
+  let iconSize, iconAnchor, fontSize;
+  if (isSmallDevice) {
+    iconSize = [20 + zoomLevel * 1.5, 20 + zoomLevel * 1.5];
+    iconAnchor = [10 + zoomLevel, 10 + zoomLevel];
+    fontSize = 10 + zoomLevel * 0.5 + "px";
+  } else {
+    iconSize = [50 + zoomLevel * 1.5, 50 + zoomLevel * 1.5];
+    iconAnchor = [25 + zoomLevel * 1.1, 25 + zoomLevel * 1.1];
+    fontSize = 24 + zoomLevel * 0.7+ "px";
+  }
+
+  stations.forEach((station) => {
+    const stationData = fetchedStationData[station.name];
+    if (!stationData) {
+      console.warn(`No data found for station: ${station.name}`);
+      return;
+    }
+
+    const wcKey = Object.keys(stationData).find((key) =>
+      key.toString().startsWith('"wc4')
+    );
+    const saturationPercentage = wcKey
+      ? ((stationData[wcKey] / station.vwc_max) * 100).toFixed(0)
+      : "N/A";
+
+    const rainTotalMM =
+      parseFloat(stationData["12hr_rain_mm_total"]).toFixed(0) || "N/A";
+    const rainTotalInches =
+      rainTotalMM !== "N/A" ? (rainTotalMM / 25.4).toFixed(2) : "N/A";
+
+    const value =
+      station.dataType === "rainfall" ? rainTotalInches : saturationPercentage + "%";
+
+    let backgroundColor;
+    if (saturationPercentage >= 90) {
+      backgroundColor = "rgb(0,28,104,0.9)"; // Blue
+    } else if (saturationPercentage >= 80) {
+      backgroundColor = "rgba(0,179,255,0.9)"; // Light Blue
+    } else {
+      backgroundColor = "rgb(175,152,0,0.9)"; // Brown
+    }
+
+    const newIconHTML = `<div style="background-color: ${backgroundColor}; color: white; padding: 5px; border-radius: 5px; display: flex; flex-direction: column; text-align: center; justify-content: center; align-items: center; height: 100%;">
+      <span style="font-size: ${fontSize}; color: white;">
+        ${value}
+      </span>
+    </div>`;
+    station.marker.setIcon(
+      L.divIcon({
+        className: "custom-div-icon",
+        html: newIconHTML,
+        iconSize: iconSize,
+        iconAnchor: iconAnchor,
+      })
+    );
+  });
 }
 
 function updateMapLabel(text) {
   const label = document.getElementById("map-label");
   label.innerText = text;
   label.style.display = text ? "block" : "none";
+  label.style.textAlign = "center";
 }
 
 function getLabelText(dataType) {
   if (dataType === "rainfall") {
     return "PAST 12-HOUR PRECIPITATION (Inches)";
   } else if (dataType === "soilSaturation") {
-    return "SOIL SATURATION";
+    return "SOIL SATURATION PERCENTAGE";
   } else if (dataType === "todayLandslideForecast") {
     return "TODAY'S LANDSLIDE FORECAST";
   } else if (dataType === "tomorrowLandslideForecast") {
@@ -109,13 +179,11 @@ function addBaseLayers(map) {
     console.error("Feature layer error:", error)
   );
 
-  const precipitationLayer = L.esri
-    .imageMapLayer({
-      url: 'https://mapservices.weather.noaa.gov/raster/rest/services/obs/mrms_qpe/ImageServer/exportImage?renderingRule={"rasterFunction":"rft_12hr"}',
-      opacity: 0.5,
-      attribution: "Precipitation data © NOAA",
-    })
-    .addTo(map);
+  const precipitationLayer = L.esri.imageMapLayer({
+    url: 'https://mapservices.weather.noaa.gov/raster/rest/services/obs/mrms_qpe/ImageServer/exportImage?renderingRule={"rasterFunction":"rft_12hr"}',
+    opacity: 0.5,
+    attribution: "Precipitation data © NOAA",
+  });
 
   precipitationLayer.on("tileerror", (error) =>
     console.error("Tile error:", error)
@@ -295,7 +363,6 @@ function setupEventListeners(map, layers, stations) {
   const toggleButton = document.getElementById("toggle-attributions");
   attributionControl.style.display = "none";
   toggleButton.addEventListener("click", function () {
-
     if (checkboxToggleTimer) {
       clearTimeout(checkboxToggleTimer); // Clear the previous timer
     }
@@ -306,10 +373,8 @@ function setupEventListeners(map, layers, stations) {
         attributionControl.style.display = "none";
       }
     }, 200); // Delay of 200ms before toggling visibility
-    
   });
 
-  
   // Event listener for legend checkbox
   document
     .getElementById("legendToggle")
@@ -318,14 +383,13 @@ function setupEventListeners(map, layers, stations) {
       toggleCheckboxWithDelay("legend-container", visibility);
     });
 
-      // Event listener for legend checkbox
+  // Event listener for legend checkbox
   document
-  .getElementById("susceptibilityLegendToggle")
-  .addEventListener("change", (event) => {
-    const visibility = event.target.checked ? "block" : "none";
-    toggleCheckboxWithDelay("susceptibility-legend-container", visibility);
-  });
-  
+    .getElementById("susceptibilityLegendToggle")
+    .addEventListener("change", (event) => {
+      const visibility = event.target.checked ? "block" : "none";
+      toggleCheckboxWithDelay("susceptibility-legend-container", visibility);
+    });
 
   document
     .getElementById("sidebar-toggle")
@@ -437,7 +501,6 @@ function initializeMarkers(map, dataType) {
               : saturationPercentage + "%"
           }
         </span>
-        ${dataType === "rainfall" ? "inches" : ""}
         </div>`,
       iconSize: iconSize,
       iconAnchor: iconAnchor,
@@ -489,9 +552,6 @@ function changeData(stations, dataType) {
     const saturationPercentage = wcKey
       ? ((stationData[wcKey] / station.vwc_max) * 100).toFixed(0)
       : "N/A";
-
-    console.log(saturationPercentage + station.name);
-
     const rainTotalMM =
       parseFloat(stationData["12hr_rain_mm_total"]).toFixed(0) || "N/A";
     const rainTotalInches =
@@ -570,7 +630,6 @@ function changeData(stations, dataType) {
         <span style="font-size: ${fontSize}; color: white;">
           ${value}
         </span>
-        ${dataType === "rainfall" ? "<span>inches</span>" : ""}
       </div>`;
 
     marker.setIcon(
