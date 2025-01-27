@@ -63,9 +63,9 @@ function updateIconSizes(map, stations) {
   // Adjust icon size and anchor based on zoom level
   let iconSize, iconAnchor, fontSize;
   if (isSmallDevice) {
-    iconSize = [20 + zoomLevel * 1.5, 20 + zoomLevel * 1.5];
-    iconAnchor = [10 + zoomLevel, 10 + zoomLevel];
-    fontSize = 10 + zoomLevel * 0.5 + "px";
+    iconSize = [20 + zoomLevel * 0.5, 20 + zoomLevel * 0.5];
+    iconAnchor = [10 + zoomLevel * 0.25, 10 + zoomLevel * 0.25];
+    fontSize = 10 + zoomLevel * 0.2 + "px";
   } else {
     iconSize = [50 + zoomLevel * 1.5, 50 + zoomLevel * 1.5];
     iconAnchor = [25 + zoomLevel * 1.1, 25 + zoomLevel * 1.1];
