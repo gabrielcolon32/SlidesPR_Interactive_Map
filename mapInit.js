@@ -313,32 +313,29 @@ function setupEventListeners(map, layers, stations) {
       updateMapLabel(getLabelText(dataType));
     });
 
+  const toggleButtonState = (button, layer) => {
+    const isChecked = button.getAttribute("data-checked") === "true";
+    button.setAttribute("data-checked", !isChecked);
+    button.classList.toggle("checked", !isChecked);
+    if (!isChecked) {
+      layer.addTo(map);
+    } else {
+      map.removeLayer(layer);
+    }
+  };
+
   document
     .getElementById("susceptibilityLayer")
     .addEventListener("click", (event) => {
-      const { susceptibilityLayer } = layers;
       const button = event.target;
-      const isChecked = button.getAttribute("data-checked") === "true";
-      button.setAttribute("data-checked", !isChecked);
-      if (!isChecked) {
-        susceptibilityLayer.addTo(map);
-      } else {
-        map.removeLayer(susceptibilityLayer);
-      }
+      toggleButtonState(button, layers.susceptibilityLayer);
     });
 
   document
     .getElementById("precipitationLayer")
     .addEventListener("click", (event) => {
-      const { precipitationLayer } = layers;
       const button = event.target;
-      const isChecked = button.getAttribute("data-checked") === "true";
-      button.setAttribute("data-checked", !isChecked);
-      if (!isChecked) {
-        precipitationLayer.addTo(map);
-      } else {
-        map.removeLayer(precipitationLayer);
-      }
+      toggleButtonState(button, layers.precipitationLayer);
     });
 
   // Prevent double-click on sidebar from zooming the map
@@ -372,6 +369,7 @@ function setupEventListeners(map, layers, stations) {
   toggleButton.addEventListener("click", function () {
     const isChecked = toggleButton.getAttribute("data-checked") === "true";
     toggleButton.setAttribute("data-checked", !isChecked);
+    toggleButton.classList.toggle("checked", !isChecked);
     if (checkboxToggleTimer) {
       clearTimeout(checkboxToggleTimer); // Clear the previous timer
     }
@@ -391,6 +389,7 @@ function setupEventListeners(map, layers, stations) {
       const button = event.target;
       const isChecked = button.getAttribute("data-checked") === "true";
       button.setAttribute("data-checked", !isChecked);
+      button.classList.toggle("checked", !isChecked);
       const visibility = !isChecked ? "block" : "none";
       toggleCheckboxWithDelay("legend-container", visibility);
     });
@@ -402,6 +401,7 @@ function setupEventListeners(map, layers, stations) {
       const button = event.target;
       const isChecked = button.getAttribute("data-checked") === "true";
       button.setAttribute("data-checked", !isChecked);
+      button.classList.toggle("checked", !isChecked);
       const visibility = !isChecked ? "block" : "none";
       toggleCheckboxWithDelay("susceptibility-legend-container", visibility);
     });

@@ -152,14 +152,9 @@ form input[type="submit"]:hover {
   margin-right: 10px;
 }
 
-.checkbox-button[data-checked="true"]::before {
-  content: "\2713"; /* Checkmark character */
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  font-size: 16px;
-  color: #000;
+.checkbox-button.checked {
+  background-color: #020202;
+  color: white;
 }
 
 .checkbox-label {
