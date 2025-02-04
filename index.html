@@ -39,11 +39,26 @@
           <div class="sidebar-content">
             <h1>Puerto Rico Landslide Hazard Mitigation Office</h1>
             <h2>Basemap Layers</h2>
-            <label><input type="checkbox" class="checkbox" id="susceptibilityLayer">Landslide Susceptibility</label>
-            <label><input type="checkbox" class="checkbox" id="susceptibilityLegendToggle">Susceptibility Legend</label>
-            <label><input type="checkbox" class="checkbox" id="precipitationLayer">Past 12 Hour Radar Precipitation Estimates (Inches)</label>
-            <label><input type="checkbox" class="checkbox" id="legendToggle">Precipitation Estimates Legend</label>
-            <label><input type="checkbox" class="checkbox" id="toggle-attributions">Attributions</label>
+            <div class="checkbox-container">
+              <button class="checkbox-button" id="susceptibilityLayer" data-checked="false"></button>
+              <span>Landslide Susceptibility</span>
+            </div>
+            <div class="checkbox-container">
+              <button class="checkbox-button" id="susceptibilityLegendToggle" data-checked="false"></button>
+              <span>Susceptibility Legend</span>
+            </div>
+            <div class="checkbox-container">
+              <button class="checkbox-button" id="precipitationLayer" data-checked="false"></button>
+              <span>Past 12 Hour Radar Precipitation Estimates (Inches)</span>
+            </div>
+            <div class="checkbox-container">
+              <button class="checkbox-button" id="legendToggle" data-checked="false"></button>
+              <span>Precipitation Estimates Legend</span>
+            </div>
+            <div class="checkbox-container">
+              <button class="checkbox-button" id="toggle-attributions" data-checked="false"></button>
+              <span>Attributions</span>
+            </div>
             <h2>Monitoring Station Data</h2>
             <div class="button-bar">
               <button id="soilSaturation-button">Soil Saturation</button>

@@ -315,9 +315,12 @@ function setupEventListeners(map, layers, stations) {
 
   document
     .getElementById("susceptibilityLayer")
-    .addEventListener("change", (event) => {
+    .addEventListener("click", (event) => {
       const { susceptibilityLayer } = layers;
-      if (event.target.checked) {
+      const button = event.target;
+      const isChecked = button.getAttribute("data-checked") === "true";
+      button.setAttribute("data-checked", !isChecked);
+      if (!isChecked) {
         susceptibilityLayer.addTo(map);
       } else {
         map.removeLayer(susceptibilityLayer);
@@ -326,9 +329,12 @@ function setupEventListeners(map, layers, stations) {
 
   document
     .getElementById("precipitationLayer")
-    .addEventListener("change", (event) => {
+    .addEventListener("click", (event) => {
       const { precipitationLayer } = layers;
-      if (event.target.checked) {
+      const button = event.target;
+      const isChecked = button.getAttribute("data-checked") === "true";
+      button.setAttribute("data-checked", !isChecked);
+      if (!isChecked) {
         precipitationLayer.addTo(map);
       } else {
         map.removeLayer(precipitationLayer);
@@ -362,7 +368,10 @@ function setupEventListeners(map, layers, stations) {
   );
   const toggleButton = document.getElementById("toggle-attributions");
   attributionControl.style.display = "none";
+
   toggleButton.addEventListener("click", function () {
+    const isChecked = toggleButton.getAttribute("data-checked") === "true";
+    toggleButton.setAttribute("data-checked", !isChecked);
     if (checkboxToggleTimer) {
       clearTimeout(checkboxToggleTimer); // Clear the previous timer
     }
@@ -378,16 +387,22 @@ function setupEventListeners(map, layers, stations) {
   // Event listener for legend checkbox
   document
     .getElementById("legendToggle")
-    .addEventListener("change", (event) => {
-      const visibility = event.target.checked ? "block" : "none";
+    .addEventListener("click", (event) => {
+      const button = event.target;
+      const isChecked = button.getAttribute("data-checked") === "true";
+      button.setAttribute("data-checked", !isChecked);
+      const visibility = !isChecked ? "block" : "none";
       toggleCheckboxWithDelay("legend-container", visibility);
     });
 
-  // Event listener for legend checkbox
+  // Event listener for susceptibility legend checkbox
   document
     .getElementById("susceptibilityLegendToggle")
-    .addEventListener("change", (event) => {
-      const visibility = event.target.checked ? "block" : "none";
+    .addEventListener("click", (event) => {
+      const button = event.target;
+      const isChecked = button.getAttribute("data-checked") === "true";
+      button.setAttribute("data-checked", !isChecked);
+      const visibility = !isChecked ? "block" : "none";
       toggleCheckboxWithDelay("susceptibility-legend-container", visibility);
     });
 

@@ -9,12 +9,6 @@ header {
   padding: 1rem;
 }
 
-/* Prevent label jittering on iOS devices */
-label {
-  -webkit-tap-highlight-color: transparent; /* Remove tap highlight */
-  touch-action: manipulation; /* Prevent default behavior */
-}
-
 nav ul {
   list-style: none;
   display: flex;
@@ -140,12 +134,38 @@ form input[type="submit"]:hover {
   font-size: 24px; /* Increase font size */
 }
 
-.sidebar label {
-  display: block;
+.checkbox-container {
+  display: flex;
+  align-items: center;
   margin: 10px 0;
-  color: white; /* White font color for the labels */
-  font-family: "Bebas Neue", "Helvetica Neue", Helvetica, Arial, sans-serif; /* Apply font family */
-  font-size: 18px; /* Increase font size */
+}
+
+.checkbox-button {
+  display: inline-block;
+  width: 20px;
+  height: 20px;
+  background-color: #fff;
+  border: 1px solid #ccc;
+  border-radius: 3px;
+  cursor: pointer;
+  position: relative;
+  margin-right: 10px;
+}
+
+.checkbox-button[data-checked="true"]::before {
+  content: "\2713"; /* Checkmark character */
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 16px;
+  color: #000;
+}
+
+.checkbox-label {
+  font-family: "Bebas Neue", "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-size: 18px;
+  color: white;
 }
 
 .attributions {
