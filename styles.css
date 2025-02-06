@@ -153,8 +153,17 @@ form input[type="submit"]:hover {
 }
 
 .checkbox-button.checked {
-  background-color: #020202;
+  background-color: #000000;
   color: white;
+}
+
+.checkbox-button.checked::after {
+  content: "\2713";
+  position: absolute;
+  left: 15%;
+  bottom: -15%;
+  color: white;
+  font-size: 18px;
 }
 
 .checkbox-label {
@@ -460,8 +469,11 @@ form input[type="submit"]:hover {
 /* Media Queries for Mobile Devices */
 @media (max-width: 768px) {
   .map-label {
-    font-size: 16px; /* Reduce font size for small devices */
-    padding: 5px 10px; /* Adjust padding for small devices */
+    font-size: 10px; /* Reduce font size for small devices */
+    padding: 2px 5px; /* Adjust padding for small devices */
+    display: flex; /* Use Flexbox */
+    align-items: center; /* Center vertically */
+    justify-content: center; /* Center horizontally */
   }
 
   .leaflet-popup-content-wrapper {
@@ -516,6 +528,13 @@ form input[type="submit"]:hover {
     font-size: 12px; /* Reduce font size */
   }
 
+  /* Logo Container Styles */
+  #logo-container {
+    position: absolute;
+    top: 78%;
+    left: 0; /* Move to left */
+  }
+
   #logo-image {
     max-width: 80px; /* Adjust the size as needed */
     height: auto;
@@ -525,7 +544,8 @@ form input[type="submit"]:hover {
     font-size: 14px; /* Reduce font size for sidebar on small devices */
   }
 
-  .sidebar h1, .sidebar h2 {
+  .sidebar h1,
+  .sidebar h2 {
     font-size: 18px; /* Reduce font size for headings on small devices */
   }
 
@@ -535,7 +555,7 @@ form input[type="submit"]:hover {
 
   .hamburger-button {
     position: absolute;
-    left: 5px; 
+    left: 5px;
     border: none;
   }
 
@@ -543,39 +563,39 @@ form input[type="submit"]:hover {
     font-size: 14px; /* Reduce font size for attributions on small devices */
   }
 
-/* Legend Container Styles */
-#legend-container {
-  position: absolute;
-  top: 62%;
-  left: 2%; /* Move to left */
-  max-height: 80px; /* Adjust the height as needed */
-  max-width: 100px;
-  z-index: 1000; /* Ensure it is above other elements */
-}
+  /* Legend Container Styles */
+  #legend-container {
+    position: absolute;
+    top: 0%;
+    right: 0%; /* Move to left */
+    max-height: 80px; /* Adjust the height as needed */
+    max-width: 100px;
+    z-index: 1000; /* Ensure it is above other elements */
+  }
 
-#legend-image {
-  max-width: 100%;
-  height: auto;
-}
+  #legend-image {
+    max-width: 100%;
+    height: auto;
+  }
 
-#susceptibility-legend-container {
-  position: absolute;
-  top: 78%;
-  left: 2%; /* Move to left */
-  max-height:80px; /* Adjust the height as needed */
-  max-width: 80px;
-  z-index: 1000; /* Ensure it is above other elements */
-}
+  #susceptibility-legend-container {
+    position: absolute;
+    top: 84%;
+    right: 0%;
+    max-height: 90px; /* Adjust the height as needed */
+    max-width: 90px;
+    z-index: 1000; /* Ensure it is above other elements */
+  }
 
-#susceptibility-legend-image {
-  max-width: 100%;
-  height: auto;
-}
+  #susceptibility-legend-image {
+    max-width: 100%;
+    height: auto;
+  }
 
-#legend-container span {
-  display: block;
-  text-align: center;
-  font-size: 8px;
-  font-weight: bold;
-}
+  #legend-container span {
+    display: block;
+    text-align: center;
+    font-size: 8px;
+    font-weight: bold;
+  }
 }

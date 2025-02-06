@@ -69,7 +69,7 @@ function updateIconSizes(map, stations) {
   } else {
     iconSize = [50 + zoomLevel * 1.5, 50 + zoomLevel * 1.5];
     iconAnchor = [25 + zoomLevel * 1.1, 25 + zoomLevel * 1.1];
-    fontSize = 24 + zoomLevel * 0.7+ "px";
+    fontSize = 24 + zoomLevel * 0.7 + "px";
   }
 
   stations.forEach((station) => {
@@ -92,7 +92,9 @@ function updateIconSizes(map, stations) {
       rainTotalMM !== "N/A" ? (rainTotalMM / 25.4).toFixed(2) : "N/A";
 
     const value =
-      station.dataType === "rainfall" ? rainTotalInches : saturationPercentage + "%";
+      station.dataType === "rainfall"
+        ? rainTotalInches
+        : saturationPercentage + "%";
 
     let backgroundColor;
     if (saturationPercentage >= 90) {
@@ -201,24 +203,25 @@ function addBaseLayers(map) {
 function setupScrollZoom(map) {
   let overlayTimeout;
   let isMouseOverLegend = false;
+  let isMouseOverSusceptibilityLegend = false;
 
-  const legendImage = document.getElementById("legend-image");
-  const susceptibilityLegendImage = document.getElementById("legend-image");
+  const legendContainer = document.getElementById("legend-container");
+  const susceptibilityLegendContainer = document.getElementById("susceptibility-legend-container");
 
-  legendImage.addEventListener("mouseenter", () => {
+  legendContainer.addEventListener("mouseenter", () => {
     isMouseOverLegend = true;
   });
 
-  legendImage.addEventListener("mouseleave", () => {
+  legendContainer.addEventListener("mouseleave", () => {
     isMouseOverLegend = false;
   });
 
-  susceptibilityLegendImage.addEventListener("mouseenter", () => {
-    isMouseOverLegend = true;
+  susceptibilityLegendContainer.addEventListener("mouseenter", () => {
+    isMouseOverSusceptibilityLegend = true;
   });
 
-  susceptibilityLegendImage.addEventListener("mouseleave", () => {
-    isMouseOverLegend = false;
+  susceptibilityLegendContainer.addEventListener("mouseleave", () => {
+    isMouseOverSusceptibilityLegend = false;
   });
 
   document.addEventListener("keydown", (event) => {
@@ -238,7 +241,7 @@ function setupScrollZoom(map) {
   map.getContainer().addEventListener("wheel", (event) => {
     if (
       !event.ctrlKey &&
-      (!isMouseOverLegend || !isMouseOverSusceptibilityLegend)
+      (!isMouseOverLegend && !isMouseOverSusceptibilityLegend)
     ) {
       document.getElementById("map-overlay").style.display = "flex";
       clearTimeout(overlayTimeout);
@@ -278,6 +281,16 @@ function toggleSidebarWithDelay() {
   }, 200);
 }
 
+// Debounce function to prevent multiple rapid clicks
+function debounce(func, wait) {
+  let timeout;
+  return function (...args) {
+    const context = this;
+    clearTimeout(timeout);
+    timeout = setTimeout(() => func.apply(context, args), wait);
+  };
+}
+
 // Event Listeners Setup
 function setupEventListeners(map, layers, stations) {
   let dataType;
@@ -295,23 +308,25 @@ function setupEventListeners(map, layers, stations) {
     }, 200); // Delay of 200ms before toggling visibility
   };
 
-  document
-    .getElementById("rainfall-button")
-    .addEventListener("click", async () => {
+  document.getElementById("rainfall-button").addEventListener(
+    "click",
+    debounce(async () => {
       await processFiles();
       dataType = "rainfall";
       changeData(stations, dataType);
       updateMapLabel(getLabelText(dataType));
-    });
+    }, 300)
+  );
 
-  document
-    .getElementById("soilSaturation-button")
-    .addEventListener("click", async () => {
+  document.getElementById("soilSaturation-button").addEventListener(
+    "click",
+    debounce(async () => {
       await processFiles();
       dataType = "soilSaturation";
       changeData(stations, dataType);
       updateMapLabel(getLabelText(dataType));
-    });
+    }, 300)
+  );
 
   const toggleButtonState = (button, layer) => {
     const isChecked = button.getAttribute("data-checked") === "true";
@@ -324,19 +339,21 @@ function setupEventListeners(map, layers, stations) {
     }
   };
 
-  document
-    .getElementById("susceptibilityLayer")
-    .addEventListener("click", (event) => {
+  document.getElementById("susceptibilityLayer").addEventListener(
+    "click",
+    debounce((event) => {
       const button = event.target;
       toggleButtonState(button, layers.susceptibilityLayer);
-    });
+    }, 300)
+  );
 
-  document
-    .getElementById("precipitationLayer")
-    .addEventListener("click", (event) => {
+  document.getElementById("precipitationLayer").addEventListener(
+    "click",
+    debounce((event) => {
       const button = event.target;
       toggleButtonState(button, layers.precipitationLayer);
-    });
+    }, 300)
+  );
 
   // Prevent double-click on sidebar from zooming the map
   document
@@ -348,6 +365,19 @@ function setupEventListeners(map, layers, stations) {
   // Prevent double-click on sidebar button from zooming the map
   document
     .getElementById("hamburger-button")
+    .addEventListener("dblclick", function (event) {
+      event.stopPropagation();
+    });
+
+  // Prevent double-click on legend from zooming the map
+  document
+    .getElementById("legend-container")
+    .addEventListener("dblclick", function (event) {
+      event.stopPropagation();
+    });
+
+  document
+    .getElementById("susceptibility-legend-container")
     .addEventListener("dblclick", function (event) {
       event.stopPropagation();
     });
@@ -366,45 +396,50 @@ function setupEventListeners(map, layers, stations) {
   const toggleButton = document.getElementById("toggle-attributions");
   attributionControl.style.display = "none";
 
-  toggleButton.addEventListener("click", function () {
-    const isChecked = toggleButton.getAttribute("data-checked") === "true";
-    toggleButton.setAttribute("data-checked", !isChecked);
-    toggleButton.classList.toggle("checked", !isChecked);
-    if (checkboxToggleTimer) {
-      clearTimeout(checkboxToggleTimer); // Clear the previous timer
-    }
-    checkboxToggleTimer = setTimeout(() => {
-      if (attributionControl.style.display === "none") {
-        attributionControl.style.display = "block";
-      } else {
-        attributionControl.style.display = "none";
+  toggleButton.addEventListener(
+    "click",
+    debounce(function () {
+      const isChecked = toggleButton.getAttribute("data-checked") === "true";
+      toggleButton.setAttribute("data-checked", !isChecked);
+      toggleButton.classList.toggle("checked", !isChecked);
+      if (checkboxToggleTimer) {
+        clearTimeout(checkboxToggleTimer); // Clear the previous timer
       }
-    }, 200); // Delay of 200ms before toggling visibility
-  });
+      checkboxToggleTimer = setTimeout(() => {
+        if (attributionControl.style.display === "none") {
+          attributionControl.style.display = "block";
+        } else {
+          attributionControl.style.display = "none";
+        }
+      }, 200); // Delay of 200ms before toggling visibility
+    }, 300)
+  );
 
   // Event listener for legend checkbox
-  document
-    .getElementById("legendToggle")
-    .addEventListener("click", (event) => {
+  document.getElementById("legendToggle").addEventListener(
+    "click",
+    debounce((event) => {
       const button = event.target;
       const isChecked = button.getAttribute("data-checked") === "true";
       button.setAttribute("data-checked", !isChecked);
       button.classList.toggle("checked", !isChecked);
       const visibility = !isChecked ? "block" : "none";
       toggleCheckboxWithDelay("legend-container", visibility);
-    });
+    }, 300)
+  );
 
   // Event listener for susceptibility legend checkbox
-  document
-    .getElementById("susceptibilityLegendToggle")
-    .addEventListener("click", (event) => {
+  document.getElementById("susceptibilityLegendToggle").addEventListener(
+    "click",
+    debounce((event) => {
       const button = event.target;
       const isChecked = button.getAttribute("data-checked") === "true";
       button.setAttribute("data-checked", !isChecked);
       button.classList.toggle("checked", !isChecked);
       const visibility = !isChecked ? "block" : "none";
       toggleCheckboxWithDelay("susceptibility-legend-container", visibility);
-    });
+    }, 300)
+  );
 
   document
     .getElementById("sidebar-toggle")
@@ -530,7 +565,7 @@ function initializeMarkers(map, dataType) {
         const popupHeight = popupElement.offsetHeight;
         const popupWidth = popupElement.offsetWidth;
         const offset = map.latLngToContainerPoint(marker.getLatLng());
-        const newOffset = L.point(offset.x, offset.y - popupHeight / 2);
+        const newOffset = L.point(offset.x, offset.y - popupHeight / 1.5);
         const newLatLng = map.containerPointToLatLng(newOffset);
         map.setView(newLatLng, map.getZoom(), { animate: true, duration: 1.5 }); // Slower animation
       }
@@ -665,7 +700,7 @@ function changeData(stations, dataType) {
         const popupHeight = popupElement.offsetHeight;
         const popupWidth = popupElement.offsetWidth;
         const offset = map.latLngToContainerPoint(marker.getLatLng());
-        const newOffset = L.point(offset.x, offset.y - popupHeight / 2);
+        const newOffset = L.point(offset.x, offset.y - popupHeight / 1.5);
         const newLatLng = map.containerPointToLatLng(newOffset);
         map.setView(newLatLng, map.getZoom(), { animate: true, duration: 1.5 }); // Slower animation
       }
