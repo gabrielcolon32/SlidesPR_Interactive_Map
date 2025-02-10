@@ -291,11 +291,15 @@ form input[type="submit"]:hover {
   top: 50%;
   transform: translateY(-50%);
   font-size: 24px;
-  color: white;
-  background-color: rgba(0, 0, 0, 0.5);
   padding: 5px;
   cursor: pointer;
   z-index: 2;
+}
+
+.arrow img {
+  width: 24px; /* Adjust the size of the SVG */
+  height: 24px; /* Adjust the size of the SVG */
+  background-color: rgba(255, 255, 255, 1); /* Keep the background color */
 }
 
 .left-arrow {
@@ -516,6 +520,12 @@ form input[type="submit"]:hover {
 
   .arrow {
     font-size: 12px; /* Reduce font size */
+  }
+
+  .arrow img {
+    width: 12px; /* Adjust the size of the SVG for mobile devices */
+    height: 12px; /* Adjust the size of the SVG for mobile devices */
+    background-color: rgba(255, 255, 255, 1); /* Keep the background color */
   }
 
   .button-bar {

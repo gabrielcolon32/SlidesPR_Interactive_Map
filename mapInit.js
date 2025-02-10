@@ -56,71 +56,6 @@ function initializeMap() {
   return { map, layers };
 }
 
-function updateIconSizes(map, stations) {
-  const zoomLevel = map.getZoom();
-  const isSmallDevice = window.innerWidth <= 768;
-
-  // Adjust icon size and anchor based on zoom level
-  let iconSize, iconAnchor, fontSize;
-  if (isSmallDevice) {
-    iconSize = [20 + zoomLevel * 0.5, 20 + zoomLevel * 0.5];
-    iconAnchor = [10 + zoomLevel * 0.25, 10 + zoomLevel * 0.25];
-    fontSize = 10 + zoomLevel * 0.2 + "px";
-  } else {
-    iconSize = [50 + zoomLevel * 1.5, 50 + zoomLevel * 1.5];
-    iconAnchor = [25 + zoomLevel * 1.1, 25 + zoomLevel * 1.1];
-    fontSize = 24 + zoomLevel * 0.7 + "px";
-  }
-
-  stations.forEach((station) => {
-    const stationData = fetchedStationData[station.name];
-    if (!stationData) {
-      console.warn(`No data found for station: ${station.name}`);
-      return;
-    }
-
-    const wcKey = Object.keys(stationData).find((key) =>
-      key.toString().startsWith('"wc4')
-    );
-    const saturationPercentage = wcKey
-      ? ((stationData[wcKey] / station.vwc_max) * 100).toFixed(0)
-      : "N/A";
-
-    const rainTotalMM =
-      parseFloat(stationData["12hr_rain_mm_total"]).toFixed(0) || "N/A";
-    const rainTotalInches =
-      rainTotalMM !== "N/A" ? (rainTotalMM / 25.4).toFixed(2) : "N/A";
-
-    const value =
-      station.dataType === "rainfall"
-        ? rainTotalInches
-        : saturationPercentage + "%";
-
-    let backgroundColor;
-    if (saturationPercentage >= 90) {
-      backgroundColor = "rgb(0,28,104,0.9)"; // Blue
-    } else if (saturationPercentage >= 80) {
-      backgroundColor = "rgba(0,179,255,0.9)"; // Light Blue
-    } else {
-      backgroundColor = "rgb(175,152,0,0.9)"; // Brown
-    }
-
-    const newIconHTML = `<div style="background-color: ${backgroundColor}; color: white; padding: 5px; border-radius: 5px; display: flex; flex-direction: column; text-align: center; justify-content: center; align-items: center; height: 100%;">
-      <span style="font-size: ${fontSize}; color: white;">
-        ${value}
-      </span>
-    </div>`;
-    station.marker.setIcon(
-      L.divIcon({
-        className: "custom-div-icon",
-        html: newIconHTML,
-        iconSize: iconSize,
-        iconAnchor: iconAnchor,
-      })
-    );
-  });
-}
-
 function updateMapLabel(text) {
   const label = document.getElementById("map-label");
   label.innerText = text;
@@ -206,7 +141,9 @@ function setupScrollZoom(map) {
   let isMouseOverSusceptibilityLegend = false;
 
   const legendContainer = document.getElementById("legend-container");
-  const susceptibilityLegendContainer = document.getElementById("susceptibility-legend-container");
+  const susceptibilityLegendContainer = document.getElementById(
+    "susceptibility-legend-container"
+  );
 
   legendContainer.addEventListener("mouseenter", () => {
     isMouseOverLegend = true;
@@ -241,7 +178,8 @@ function setupScrollZoom(map) {
   map.getContainer().addEventListener("wheel", (event) => {
     if (
       !event.ctrlKey &&
-      (!isMouseOverLegend && !isMouseOverSusceptibilityLegend)
+      !isMouseOverLegend &&
+      !isMouseOverSusceptibilityLegend
     ) {
       document.getElementById("map-overlay").style.display = "flex";
       clearTimeout(overlayTimeout);
@@ -500,7 +438,9 @@ function initializeMarkers(map, dataType) {
     const popupContent = `
     <div class="custom-popup-content">
       <div class="image-container">
-        <div class="arrow left-arrow" onclick="toggleImage(event)">&#9664;</div>
+        <div class="arrow left-arrow" onclick="toggleImage(event)">
+          <img src="./files/svg/left-arrow.svg" alt="Left Arrow">
+        </div>
         <a href="/files/network/plots/${
           station.plot_name
         }" target="_blank" class="image-link">
@@ -515,7 +455,9 @@ function initializeMarkers(map, dataType) {
       station.display_name
     } Graph" class="popup-image hidden">
         </a>
-        <div class="arrow right-arrow" onclick="toggleImage(event)">&#9654;</div>
+        <div class="arrow right-arrow" onclick="toggleImage(event)">
+          <img src="./files/svg/right-arrow.svg" alt="Right Arrow">
+        </div>
       </div>
       <div class="info">
         <h2>${station.name.toUpperCase()}</h2>
@@ -632,10 +574,12 @@ function changeData(stations, dataType) {
       value = "N/A";
     }
 
-    const popupContent = `
+  const popupContent = `
     <div class="custom-popup-content">
       <div class="image-container">
-        <div class="arrow left-arrow" onclick="toggleImage(event)">&#9664;</div>
+        <div class="arrow left-arrow" onclick="toggleImage(event)">
+          <img src="./files/svg/left-arrow.svg" alt="Left Arrow">
+        </div>
         <a href="/files/network/plots/${
           station.plot_name
         }" target="_blank" class="image-link">
@@ -650,14 +594,16 @@ function changeData(stations, dataType) {
       station.display_name
     } Graph" class="popup-image hidden">
         </a>
-        <div class="arrow right-arrow" onclick="toggleImage(event)">&#9654;</div>
+        <div class="arrow right-arrow" onclick="toggleImage(event)">
+          <img src="./files/svg/right-arrow.svg" alt="Right Arrow">
+        </div>
       </div>
       <div class="info">
         <h2>${station.name.toUpperCase()}</h2>
         <ul>
           <li><strong>Last Updated:</strong> ${formattedTimestamp} AST</li>
           <li><strong>Soil Saturation:</strong> ${saturationPercentage}%</li>
-          <li><strong>Past 12 HRS Precipitation:</strong> ${rainTotalInches} inches</li>
+          <li><strong>12 HRS Precipitation:</strong> ${rainTotalInches} inches</li>
           <li><strong>Forecast:</strong> ${station.forecast}</li>
         </ul>
         <a href="https://derrumbe.net/${
@@ -666,7 +612,6 @@ function changeData(stations, dataType) {
       </div>
     </div>
     `;
-
     let backgroundColor;
     if (saturationPercentage >= 90) {
       backgroundColor = "rgb(0,28,104,0.9)"; // Blue
@@ -705,5 +650,70 @@ function changeData(stations, dataType) {
         map.setView(newLatLng, map.getZoom(), { animate: true, duration: 1.5 }); // Slower animation
       }
     });
+  });
+}
+
+function updateIconSizes(map, stations) {
+  const zoomLevel = map.getZoom();
+  const isSmallDevice = window.innerWidth <= 768;
+
+  // Adjust icon size and anchor based on zoom level
+  let iconSize, iconAnchor, fontSize;
+  if (isSmallDevice) {
+    iconSize = [20 + zoomLevel * 0.5, 20 + zoomLevel * 0.5];
+    iconAnchor = [10 + zoomLevel * 0.25, 10 + zoomLevel * 0.25];
+    fontSize = 10 + zoomLevel * 0.2 + "px";
+  } else {
+    iconSize = [50 + zoomLevel * 1.5, 50 + zoomLevel * 1.5];
+    iconAnchor = [25 + zoomLevel * 1.1, 25 + zoomLevel * 1.1];
+    fontSize = 24 + zoomLevel * 0.7 + "px";
+  }
+
+  stations.forEach((station) => {
+    const stationData = fetchedStationData[station.name];
+    if (!stationData) {
+      console.warn(`No data found for station: ${station.name}`);
+      return;
+    }
+
+    const wcKey = Object.keys(stationData).find((key) =>
+      key.toString().startsWith('"wc4')
+    );
+    const saturationPercentage = wcKey
+      ? ((stationData[wcKey] / station.vwc_max) * 100).toFixed(0)
+      : "N/A";
+
+    const rainTotalMM =
+      parseFloat(stationData["12hr_rain_mm_total"]).toFixed(0) || "N/A";
+    const rainTotalInches =
+      rainTotalMM !== "N/A" ? (rainTotalMM / 25.4).toFixed(2) : "N/A";
+    console.log(station.dataType);
+    const value =
+      station.dataType === "rainfall"
+        ? rainTotalInches
+        : saturationPercentage + "%";
+
+    let backgroundColor;
+    if (saturationPercentage >= 90) {
+      backgroundColor = "rgb(0,28,104,0.9)"; // Blue
+    } else if (saturationPercentage >= 80) {
+      backgroundColor = "rgba(0,179,255,0.9)"; // Light Blue
+    } else {
+      backgroundColor = "rgb(175,152,0,0.9)"; // Brown
+    }
+
+    const newIconHTML = `<div style="background-color: ${backgroundColor}; color: white; padding: 5px; border-radius: 5px; display: flex; flex-direction: column; text-align: center; justify-content: center; align-items: center; height: 100%;">
+      <span style="font-size: ${fontSize}; color: white;">
+        ${value}
+      </span>
+    </div>`;
+    station.marker.setIcon(
+      L.divIcon({
+        className: "custom-div-icon",
+        html: newIconHTML,
+        iconSize: iconSize,
+        iconAnchor: iconAnchor,
+      })
+    );
   });
 }
