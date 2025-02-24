@@ -1,14 +1,15 @@
 import { fetchedStationData, processFiles } from "./fetchStationData.js";
 import { stations } from "./stationInfo.js";
 
+let currentDataType = "soilSaturation"; // Default data type
+
 document.addEventListener("DOMContentLoaded", async function () {
   createOverlay();
   const { map, layers } = initializeMap();
 
   // Set the initial data type and update the label
-  const initialDataType = "soilSaturation"; // Change this to your desired initial data type
-  updateMapLabel(getLabelText(initialDataType));
-  const stations = await initializeStations(map);
+  updateMapLabel(getLabelText(currentDataType));
+  const stations = await initializeStations(map, currentDataType);
   setupEventListeners(map, layers, stations);
   // uncheckPrecipitationLayer();
 });
@@ -47,11 +48,6 @@ function initializeMap() {
 
   const layers = addBaseLayers(map);
   setupScrollZoom(map);
-
-  // Event listener for zoom changes
-  map.on("zoomend", () => {
-    updateIconSizes(map, stations);
-  });
 
   return { map, layers };
 }
@@ -229,9 +225,20 @@ function debounce(func, wait) {
   };
 }
 
+
+// Function to get the current data type
+function getDataType() {
+  return currentDataType;
+}
+
+// Function to set the current data type
+function setDataType(newDataType) {
+  currentDataType = newDataType;
+}
+
+
 // Event Listeners Setup
 function setupEventListeners(map, layers, stations) {
-  let dataType;
   let checkboxToggleTimer = 200;
 
   // Function to toggle checkbox with delay (used for legend and attributions)
@@ -250,9 +257,10 @@ function setupEventListeners(map, layers, stations) {
     "click",
     debounce(async () => {
       await processFiles();
-      dataType = "rainfall";
-      changeData(stations, dataType);
-      updateMapLabel(getLabelText(dataType));
+      setDataType("rainfall");
+      changeData(stations, getDataType());
+      updateMapLabel(getLabelText(getDataType()));
+      updateIconSizes(map, stations, getDataType());
     }, 300)
   );
 
@@ -260,9 +268,10 @@ function setupEventListeners(map, layers, stations) {
     "click",
     debounce(async () => {
       await processFiles();
-      dataType = "soilSaturation";
-      changeData(stations, dataType);
-      updateMapLabel(getLabelText(dataType));
+      setDataType("soilSaturation");
+      changeData(stations, getDataType());
+      updateMapLabel(getLabelText(getDataType()));
+      updateIconSizes(map, stations, getDataType());
     }, 300)
   );
 
@@ -379,6 +388,11 @@ function setupEventListeners(map, layers, stations) {
     }, 300)
   );
 
+    // Event listener for zoom changes
+    map.on("zoomend", () => {
+      updateIconSizes(map, stations, getDataType());
+    });
+
   document
     .getElementById("sidebar-toggle")
     .addEventListener("click", toggleSidebarWithDelay);
@@ -392,7 +406,7 @@ function uncheckPrecipitationLayer() {
 }
 
 // Marker Initialization
-function initializeMarkers(map, dataType) {
+function initializeMarkers(map, currentDatatype) {
   const isSmallDevice = window.innerWidth <= 768;
   const iconSize = isSmallDevice ? [20, 20] : [50, 50];
   const iconAnchor = isSmallDevice ? [10, 10] : [25, 25];
@@ -488,7 +502,7 @@ function initializeMarkers(map, dataType) {
       html: `<div style="background-color: ${backgroundColor}; color: white; padding: 5px; border-radius: 5px; display: flex; flex-direction: column; text-align: center; justify-content: center; align-items: center; height: 100%;">
         <span style="font-size: ${fontSize}; color: white;">
           ${
-            dataType === "rainfall"
+            currentDatatype === "rainfall"
               ? rainTotalInches
               : saturationPercentage + "%"
           }
@@ -520,7 +534,7 @@ function initializeMarkers(map, dataType) {
 }
 
 // Data Change Handling
-function changeData(stations, dataType) {
+function changeData(stations, currentDataType) {
   const isSmallDevice = window.innerWidth <= 768;
   const iconSize = isSmallDevice ? [20, 20] : [50, 50];
   const iconAnchor = isSmallDevice ? [10, 10] : [25, 25];
@@ -566,9 +580,9 @@ function changeData(stations, dataType) {
       }
     }
 
-    if (dataType === "rainfall") {
+    if (currentDataType === "rainfall") {
       value = rainTotalInches;
-    } else if (dataType === "soilSaturation") {
+    } else if (currentDataType === "soilSaturation") {
       value = saturationPercentage + "%";
     } else {
       value = "N/A";
@@ -653,7 +667,7 @@ function changeData(stations, dataType) {
   });
 }
 
-function updateIconSizes(map, stations) {
+function updateIconSizes(map, stations, currentDataType) {
   const zoomLevel = map.getZoom();
   const isSmallDevice = window.innerWidth <= 768;
 
@@ -687,9 +701,8 @@ function updateIconSizes(map, stations) {
       parseFloat(stationData["12hr_rain_mm_total"]).toFixed(0) || "N/A";
     const rainTotalInches =
       rainTotalMM !== "N/A" ? (rainTotalMM / 25.4).toFixed(2) : "N/A";
-    console.log(station.dataType);
     const value =
-      station.dataType === "rainfall"
+      currentDataType === "rainfall"
         ? rainTotalInches
         : saturationPercentage + "%";
 
