@@ -116,7 +116,8 @@ function addBaseLayers(map) {
     url: 'https://mapservices.weather.noaa.gov/raster/rest/services/obs/mrms_qpe/ImageServer/exportImage?renderingRule={"rasterFunction":"rft_12hr"}',
     opacity: 0.5,
     attribution: "Precipitation data © NOAA",
-  });
+  })
+  .addTo(map);
 
   precipitationLayer.on("tileerror", (error) =>
     console.error("Tile error:", error)
@@ -225,7 +226,6 @@ function debounce(func, wait) {
   };
 }
 
-
 // Function to get the current data type
 function getDataType() {
   return currentDataType;
@@ -235,7 +235,6 @@ function getDataType() {
 function setDataType(newDataType) {
   currentDataType = newDataType;
 }
-
 
 // Event Listeners Setup
 function setupEventListeners(map, layers, stations) {
@@ -258,9 +257,8 @@ function setupEventListeners(map, layers, stations) {
     debounce(async () => {
       await processFiles();
       setDataType("rainfall");
-      changeData(stations, getDataType());
+      changeData(stations, getDataType(), map);
       updateMapLabel(getLabelText(getDataType()));
-      updateIconSizes(map, stations, getDataType());
     }, 300)
   );
 
@@ -269,9 +267,8 @@ function setupEventListeners(map, layers, stations) {
     debounce(async () => {
       await processFiles();
       setDataType("soilSaturation");
-      changeData(stations, getDataType());
+      changeData(stations, getDataType(), map);
       updateMapLabel(getLabelText(getDataType()));
-      updateIconSizes(map, stations, getDataType());
     }, 300)
   );
 
@@ -336,6 +333,19 @@ function setupEventListeners(map, layers, stations) {
     }
   });
 
+  // Close sidebar when clicking outside of it
+  document.addEventListener("click", (event) => {
+    const sidebar = document.getElementById("sidebar");
+    const hamburgerButton = document.getElementById("hamburger-button");
+    if (
+      !sidebar.contains(event.target) &&
+      !hamburgerButton.contains(event.target) &&
+      !sidebar.classList.contains("closed")
+    ) {
+      sidebar.classList.add("closed");
+    }
+  });
+
   // Toggle attributions visibility
   const attributionControl = document.querySelector(
     ".leaflet-control-attribution"
@@ -388,10 +398,10 @@ function setupEventListeners(map, layers, stations) {
     }, 300)
   );
 
-    // Event listener for zoom changes
-    map.on("zoomend", () => {
-      updateIconSizes(map, stations, getDataType());
-    });
+  // Event listener for zoom changes
+  map.on("zoomend", () => {
+    changeData(stations, getDataType(), map);
+  });
 
   document
     .getElementById("sidebar-toggle")
@@ -401,16 +411,57 @@ function setupEventListeners(map, layers, stations) {
     .addEventListener("click", toggleSidebarWithDelay);
 }
 
-function uncheckPrecipitationLayer() {
-  document.getElementById("precipitationLayer").checked = false;
+// Function to get the color based on precipitation total
+function getPrecipitationColor(rainTotalInches) {
+  if (rainTotalInches <= 0.05) return "rgb(2, 238, 238, 0.9)"; // Cyan
+  if (rainTotalInches <= 0.1) return "rgb(0, 204, 255, 0.9)"; // Light Blue
+  if (rainTotalInches <= 0.15) return "rgb(0, 153, 255, 0.9)"; // Blue
+  if (rainTotalInches <= 0.2) return "rgb(0, 102, 255, 0.9)"; // Dark Blue
+  if (rainTotalInches <= 0.4) return "rgb(0, 255, 0, 0.9)"; // Light Green
+  if (rainTotalInches <= 0.6) return "rgb(0, 204, 0, 0.9)"; // Green
+  if (rainTotalInches <= 0.8) return "rgb(0, 153, 0, 0.9)"; // Dark Green
+  if (rainTotalInches <= 1.0) return "rgb(153, 255, 0, 0.9)"; // Yellow-Green
+  if (rainTotalInches <= 1.25) return "rgb(231, 231, 0, 0.9)"; // Yellow
+  if (rainTotalInches <= 1.5) return "rgb(241, 193, 1, 0.9)"; // Light Orange
+  if (rainTotalInches <= 1.75) return "rgb(204, 153, 0, 0.9)"; // Brown
+  if (rainTotalInches <= 2.0) return "rgb(153, 102, 0, 0.9)"; // Dark Brown
+  if (rainTotalInches <= 2.5) return "rgb(233, 147, 147, 0.9)"; // Light Pink
+  if (rainTotalInches <= 3.0) return "rgb(255, 102, 102, 0.9)"; // Pink
+  if (rainTotalInches <= 3.5) return "rgb(255, 0, 0, 0.9)"; // Red
+  if (rainTotalInches <= 4.0) return "rgb(204, 0, 0, 0.9)"; // Dark Red
+  if (rainTotalInches <= 4.5) return "rgb(255, 0, 255, 0.9)"; // Magenta
+  if (rainTotalInches <= 5.0) return "rgb(153, 0, 255, 0.9)"; // Purple
+  if (rainTotalInches <= 5.5) return "rgb(102, 0, 204, 0.9)"; // Dark Purple
+  if (rainTotalInches <= 6.0) return "rgb(102, 0, 153, 0.9)"; // Violet
+  if (rainTotalInches <= 6.5) return "rgb(153, 102, 255, 0.9)"; // Light Violet
+  if (rainTotalInches <= 7.0) return "rgb(192, 192, 240, 0.9)"; // Light Blue-Grey
+  if (rainTotalInches <= 8.0) return "rgb(153, 153, 204, 0.9)"; // Dark Blue-Grey
+  return "rgb(255, 255, 204)"; // Pale Yellow for above 8.00 inches
+}
+
+
+// Utility function to calculate icon size, anchor, and font size
+function calculateIconProperties(map) {
+  const zoomLevel = map.getZoom();
+  const isSmallDevice = window.innerWidth <= 768;
+
+  let iconSize, iconAnchor, fontSize;
+  if (isSmallDevice) {
+    iconSize = [20 + zoomLevel * 0.5, 20 + zoomLevel * 0.5];
+    iconAnchor = [10 + zoomLevel * 0.25, 10 + zoomLevel * 0.25];
+    fontSize = 10 + zoomLevel * 0.2 + "px";
+  } else {
+    iconSize = [50 + zoomLevel * 1.5, 50 + zoomLevel * 1.5];
+    iconAnchor = [25 + zoomLevel * 1.1, 25 + zoomLevel * 1.1];
+    fontSize = 24 + zoomLevel * 0.7 + "px";
+  }
+
+  return { iconSize, iconAnchor, fontSize };
 }
 
 // Marker Initialization
 function initializeMarkers(map, currentDatatype) {
-  const isSmallDevice = window.innerWidth <= 768;
-  const iconSize = isSmallDevice ? [20, 20] : [50, 50];
-  const iconAnchor = isSmallDevice ? [10, 10] : [25, 25];
-  const fontSize = isSmallDevice ? "12px" : "24px";
+  const { iconSize, iconAnchor, fontSize } = calculateIconProperties(map);
 
   stations.forEach(function (station) {
     const stationData = JSON.parse(
@@ -434,6 +485,8 @@ function initializeMarkers(map, currentDatatype) {
 
     const timestamp = stationData["TIMESTAMP"] || "N/A";
     let formattedTimestamp = "N/A";
+    let isOutdated = false;
+
     if (timestamp !== "N/A") {
       const cleanedTimestamp = timestamp.replace(/['"]/g, "");
       const parsedDate = Date.parse(cleanedTimestamp);
@@ -446,6 +499,13 @@ function initializeMarkers(map, currentDatatype) {
           hour: "2-digit",
           minute: "2-digit",
         });
+
+        // Check if the timestamp is older than 24 hours
+        const now = new Date();
+        const hoursDifference = (now - date) / (1000 * 60 * 60);
+        if (hoursDifference > 24) {
+          isOutdated = true;
+        }
       }
     }
 
@@ -489,23 +549,31 @@ function initializeMarkers(map, currentDatatype) {
     `;
 
     let backgroundColor;
-    if (saturationPercentage >= 90) {
-      backgroundColor = "rgb(0,28,104,0.9)"; // Blue
-    } else if (saturationPercentage >= 80) {
-      backgroundColor = "rgba(0,179,255,0.9)"; // Light Blue
-    } else {
-      backgroundColor = "rgb(175,152,0,0.9)"; // Brown
+    let value =
+      currentDataType === "rainfall"
+        ? rainTotalInches
+        : saturationPercentage + "%";
+        
+    if (isOutdated) {
+      backgroundColor = "rgb(169, 169, 169)"; // Gray for outdated data
+      value = "N/A";
+    } else if (currentDataType === "rainfall") {
+      backgroundColor = getPrecipitationColor(rainTotalInches);
+    } else if (currentDataType === "soilSaturation") {
+      if (saturationPercentage >= 90) {
+        backgroundColor = "rgb(0,28,104,0.9)"; // Blue
+      } else if (saturationPercentage >= 80) {
+        backgroundColor = "rgba(0,179,255,0.9)"; // Light Blue
+      } else {
+        backgroundColor = "rgb(175,152,0,0.9)"; // Brown
+      }
     }
 
     var customIcon = L.divIcon({
       className: "custom-div-icon",
       html: `<div style="background-color: ${backgroundColor}; color: white; padding: 5px; border-radius: 5px; display: flex; flex-direction: column; text-align: center; justify-content: center; align-items: center; height: 100%;">
         <span style="font-size: ${fontSize}; color: white;">
-          ${
-            currentDatatype === "rainfall"
-              ? rainTotalInches
-              : saturationPercentage + "%"
-          }
+          ${value}
         </span>
         </div>`,
       iconSize: iconSize,
@@ -534,11 +602,8 @@ function initializeMarkers(map, currentDatatype) {
 }
 
 // Data Change Handling
-function changeData(stations, currentDataType) {
-  const isSmallDevice = window.innerWidth <= 768;
-  const iconSize = isSmallDevice ? [20, 20] : [50, 50];
-  const iconAnchor = isSmallDevice ? [10, 10] : [25, 25];
-  const fontSize = isSmallDevice ? "10px" : "24px";
+function changeData(stations, currentDataType, map) {
+  const { iconSize, iconAnchor, fontSize } = calculateIconProperties(map);
 
   stations.forEach(function (station) {
     const stationData = JSON.parse(
@@ -548,9 +613,6 @@ function changeData(stations, currentDataType) {
       console.warn(`No data found for station: ${station.name}`);
       return;
     }
-
-    var marker = station.marker;
-    var value;
 
     const wcKey = Object.keys(stationData).find((key) =>
       key.toString().startsWith('"wc4')
@@ -565,6 +627,8 @@ function changeData(stations, currentDataType) {
 
     const timestamp = stationData["TIMESTAMP"] || "N/A";
     let formattedTimestamp = "N/A";
+    let isOutdated = false;
+
     if (timestamp !== "N/A") {
       const cleanedTimestamp = timestamp.replace(/['"]/g, "");
       const parsedDate = Date.parse(cleanedTimestamp);
@@ -577,18 +641,38 @@ function changeData(stations, currentDataType) {
           hour: "2-digit",
           minute: "2-digit",
         });
+
+        // Check if the timestamp is older than 24 hours
+        const now = new Date();
+        const hoursDifference = (now - date) / (1000 * 60 * 60);
+        if (hoursDifference > 24) {
+          isOutdated = true;
+        }
       }
     }
 
-    if (currentDataType === "rainfall") {
-      value = rainTotalInches;
-    } else if (currentDataType === "soilSaturation") {
-      value = saturationPercentage + "%";
-    } else {
+    let backgroundColor;
+    let value =
+    currentDataType === "rainfall"
+      ? rainTotalInches
+      : saturationPercentage + "%";
+
+    if (isOutdated) {
+      backgroundColor = "rgb(169, 169, 169)"; // Gray for outdated data
       value = "N/A";
+    } else if (currentDataType === "rainfall") {
+      backgroundColor = getPrecipitationColor(rainTotalInches);
+    } else if (currentDataType === "soilSaturation") {
+      if (saturationPercentage >= 90) {
+        backgroundColor = "rgb(0,28,104,0.9)"; // Blue
+      } else if (saturationPercentage >= 80) {
+        backgroundColor = "rgba(0,179,255,0.9)"; // Light Blue
+      } else {
+        backgroundColor = "rgb(175,152,0,0.9)"; // Brown
+      }
     }
 
-  const popupContent = `
+    const popupContent = `
     <div class="custom-popup-content">
       <div class="image-container">
         <div class="arrow left-arrow" onclick="toggleImage(event)">
@@ -626,100 +710,13 @@ function changeData(stations, currentDataType) {
       </div>
     </div>
     `;
-    let backgroundColor;
-    if (saturationPercentage >= 90) {
-      backgroundColor = "rgb(0,28,104,0.9)"; // Blue
-    } else if (saturationPercentage >= 80) {
-      backgroundColor = "rgb(0,179,255,0.9)"; // Light Blue
-    } else {
-      backgroundColor = "rgb(175,152,0,0.9)"; // Brown
-    }
 
-    var newIconHTML = `<div style="background-color: ${backgroundColor}; color: white; padding: 5px; border-radius: 5px; display: flex; flex-direction: column; text-align: center; justify-content: center; align-items: center; height: 100%;">
+    const newIconHTML = `<div style="background-color: ${backgroundColor}; color: white; padding: 5px; border-radius: 5px; display: flex; flex-direction: column; text-align: center; justify-content: center; align-items: center; height: 100%;">
         <span style="font-size: ${fontSize}; color: white;">
           ${value}
         </span>
       </div>`;
 
-    marker.setIcon(
-      L.divIcon({
-        className: "custom-div-icon",
-        html: newIconHTML,
-        iconSize: iconSize,
-        iconAnchor: iconAnchor,
-      })
-    );
-
-    marker.setPopupContent(popupContent);
-    var popup = marker.getPopup();
-
-    marker.on("popupopen", function () {
-      const popupElement = popup.getElement();
-      if (popupElement) {
-        const popupHeight = popupElement.offsetHeight;
-        const popupWidth = popupElement.offsetWidth;
-        const offset = map.latLngToContainerPoint(marker.getLatLng());
-        const newOffset = L.point(offset.x, offset.y - popupHeight / 1.5);
-        const newLatLng = map.containerPointToLatLng(newOffset);
-        map.setView(newLatLng, map.getZoom(), { animate: true, duration: 1.5 }); // Slower animation
-      }
-    });
-  });
-}
-
-function updateIconSizes(map, stations, currentDataType) {
-  const zoomLevel = map.getZoom();
-  const isSmallDevice = window.innerWidth <= 768;
-
-  // Adjust icon size and anchor based on zoom level
-  let iconSize, iconAnchor, fontSize;
-  if (isSmallDevice) {
-    iconSize = [20 + zoomLevel * 0.5, 20 + zoomLevel * 0.5];
-    iconAnchor = [10 + zoomLevel * 0.25, 10 + zoomLevel * 0.25];
-    fontSize = 10 + zoomLevel * 0.2 + "px";
-  } else {
-    iconSize = [50 + zoomLevel * 1.5, 50 + zoomLevel * 1.5];
-    iconAnchor = [25 + zoomLevel * 1.1, 25 + zoomLevel * 1.1];
-    fontSize = 24 + zoomLevel * 0.7 + "px";
-  }
-
-  stations.forEach((station) => {
-    const stationData = fetchedStationData[station.name];
-    if (!stationData) {
-      console.warn(`No data found for station: ${station.name}`);
-      return;
-    }
-
-    const wcKey = Object.keys(stationData).find((key) =>
-      key.toString().startsWith('"wc4')
-    );
-    const saturationPercentage = wcKey
-      ? ((stationData[wcKey] / station.vwc_max) * 100).toFixed(0)
-      : "N/A";
-
-    const rainTotalMM =
-      parseFloat(stationData["12hr_rain_mm_total"]).toFixed(0) || "N/A";
-    const rainTotalInches =
-      rainTotalMM !== "N/A" ? (rainTotalMM / 25.4).toFixed(2) : "N/A";
-    const value =
-      currentDataType === "rainfall"
-        ? rainTotalInches
-        : saturationPercentage + "%";
-
-    let backgroundColor;
-    if (saturationPercentage >= 90) {
-      backgroundColor = "rgb(0,28,104,0.9)"; // Blue
-    } else if (saturationPercentage >= 80) {
-      backgroundColor = "rgba(0,179,255,0.9)"; // Light Blue
-    } else {
-      backgroundColor = "rgb(175,152,0,0.9)"; // Brown
-    }
-
-    const newIconHTML = `<div style="background-color: ${backgroundColor}; color: white; padding: 5px; border-radius: 5px; display: flex; flex-direction: column; text-align: center; justify-content: center; align-items: center; height: 100%;">
-      <span style="font-size: ${fontSize}; color: white;">
-        ${value}
-      </span>
-    </div>`;
     station.marker.setIcon(
       L.divIcon({
         className: "custom-div-icon",
@@ -728,5 +725,19 @@ function updateIconSizes(map, stations, currentDataType) {
         iconAnchor: iconAnchor,
       })
     );
+
+    station.marker.setPopupContent(popupContent);
+    const popup = station.marker.getPopup();
+
+    station.marker.on("popupopen", function () {
+      const popupElement = popup.getElement();
+      if (popupElement) {
+        const popupHeight = popupElement.offsetHeight;
+        const offset = map.latLngToContainerPoint(station.marker.getLatLng());
+        const newOffset = L.point(offset.x, offset.y - popupHeight / 1.5);
+        const newLatLng = map.containerPointToLatLng(newOffset);
+        map.setView(newLatLng, map.getZoom(), { animate: true, duration: 1.5 });
+      }
+    });
   });
 }
