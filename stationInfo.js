@@ -22,6 +22,24 @@ const stations = [
     plot_name: "Adjuntas.jpeg",
     forecast: "Incoming Feature"
   },
+
+   {
+    name: "aguada",
+    "url-name": "aguada",
+    display_name: "Aguada",
+    coords: [18.318, -67.164],
+    vwc_max: 0.5,
+    geologicUnit: "",
+    soilUnit: "",
+    elevation: "",
+    slope: "",
+    landslideSusceptibility: "",
+    sensorDepths: "25cm, 50cm, 75cm, 100cm",
+    dateInstalled: "May-2025",
+    collaborator: "Private Land Owner",
+    plot_name: "Aguada.jpeg",
+    forecast: "Incoming Feature"
+  },
   {
     name: "anasco",
     "url-name": "anasco",

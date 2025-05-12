@@ -2,6 +2,7 @@ const dataURL = "/files/network/data/latest/"; // URL to fetch data from hosting
 
 const fetchedStationData = {
   adjuntas: {},
+  aguada: {},
   anasco: {},
   barranquitas: {},
   cayey: {},
@@ -23,6 +24,7 @@ const fetchedStationData = {
 
 const fileNames60min = [
   "adjuntas_t60min.dat",
+  "aguada_t60minute.dat",
   "anasco_t60min.dat",
   "barranquitas_t60min.dat",
   "cayey_t60min.dat",
@@ -44,6 +46,7 @@ const fileNames60min = [
 
 const fileNames5min = [
   "adjuntas_t5minute.dat",
+  "aguada_t5minute.dat",
   "anasco_t5minute.dat",
   "barranquitas_t5minute.dat",
   "cayey_t5minute.dat",
@@ -117,7 +120,7 @@ function parseCSV(csvText, fileName) {
   fetchedStationData[stationName].TIMESTAMP = values[0]?.trim();
 
   // Calculate 12hr rain mm total
-  const rainValues = rows.slice(-12).map(row => {
+  const rainValues = rows.slice(-12).map((row) => {
     const columns = row.split(",");
     const rainIndex = headers.indexOf('"Rain_mm_Tot"');
     return parseFloat(columns[rainIndex]) || 0;
@@ -129,13 +132,16 @@ function parseCSV(csvText, fileName) {
   // Calculate soil saturation (assuming it's a column in the CSV)
   const soilSaturationIndex = headers.indexOf('"Soil_Saturation"');
   if (soilSaturationIndex !== -1) {
-    const soilSaturationValues = rows.map(row => {
+    const soilSaturationValues = rows.map((row) => {
       const columns = row.split(",");
       return parseFloat(columns[soilSaturationIndex]) || 0;
     });
 
-    const avgSoilSaturation = soilSaturationValues.reduce((acc, val) => acc + val, 0) / soilSaturationValues.length;
-    fetchedStationData[stationName]["avg_soil_saturation"] = avgSoilSaturation.toFixed(2);
+    const avgSoilSaturation =
+      soilSaturationValues.reduce((acc, val) => acc + val, 0) /
+      soilSaturationValues.length;
+    fetchedStationData[stationName]["avg_soil_saturation"] =
+      avgSoilSaturation.toFixed(2);
   }
 }
 
