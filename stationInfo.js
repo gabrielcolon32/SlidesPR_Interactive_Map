@@ -28,7 +28,7 @@ const stations = [
     "url-name": "aguada",
     display_name: "Aguada",
     coords: [18.318, -67.164],
-    vwc_max: 0.5,
+    vwc_max: 0.503,
     geologicUnit: "",
     soilUnit: "",
     elevation: "",
