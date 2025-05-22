@@ -24,7 +24,7 @@ const fetchedStationData = {
 
 const fileNames60min = [
   "adjuntas_t60min.dat",
-  "aguada_t60minute.dat",
+  "aguada_t60min.dat",
   "anasco_t60min.dat",
   "barranquitas_t60min.dat",
   "cayey_t60min.dat",
@@ -126,6 +126,7 @@ function parseCSV(csvText, fileName) {
     return parseFloat(columns[rainIndex]) || 0;
   });
 
+  console.log(fileName, rainValues);
   const totalRain = rainValues.reduce((acc, val) => acc + val, 0);
   fetchedStationData[stationName]["12hr_rain_mm_total"] = totalRain.toFixed(2);
 
