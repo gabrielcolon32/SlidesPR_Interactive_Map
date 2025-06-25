@@ -112,12 +112,13 @@ function addBaseLayers(map) {
     console.error("Feature layer error:", error)
   );
 
-  const precipitationLayer = L.esri.imageMapLayer({
-    url: 'https://mapservices.weather.noaa.gov/raster/rest/services/obs/mrms_qpe/ImageServer/exportImage?renderingRule={"rasterFunction":"rft_12hr"}',
-    opacity: 0.5,
-    attribution: "Precipitation data © NOAA",
-  })
-  .addTo(map);
+  const precipitationLayer = L.esri
+    .imageMapLayer({
+      url: 'https://mapservices.weather.noaa.gov/raster/rest/services/obs/mrms_qpe/ImageServer/exportImage?renderingRule={"rasterFunction":"rft_12hr"}',
+      opacity: 0.5,
+      attribution: "Precipitation data © NOAA",
+    })
+    .addTo(map);
 
   precipitationLayer.on("tileerror", (error) =>
     console.error("Tile error:", error)
@@ -238,19 +239,7 @@ function setDataType(newDataType) {
 
 // Event Listeners Setup
 function setupEventListeners(map, layers, stations) {
-  let checkboxToggleTimer = 200;
-
-  // Function to toggle checkbox with delay (used for legend and attributions)
-  const toggleCheckboxWithDelay = (elementId, visibility) => {
-    if (checkboxToggleTimer) {
-      clearTimeout(checkboxToggleTimer); // Clear the previous timer
-    }
-
-    checkboxToggleTimer = setTimeout(() => {
-      const element = document.getElementById(elementId);
-      element.style.display = visibility;
-    }, 200); // Delay of 200ms before toggling visibility
-  };
+  let stationsVisible = true; // Track visibility state
 
   document.getElementById("rainfall-button").addEventListener(
     "click",
@@ -272,30 +261,135 @@ function setupEventListeners(map, layers, stations) {
     }, 300)
   );
 
-  const toggleButtonState = (button, layer) => {
-    const isChecked = button.getAttribute("data-checked") === "true";
-    button.setAttribute("data-checked", !isChecked);
-    button.classList.toggle("checked", !isChecked);
-    if (!isChecked) {
-      layer.addTo(map);
-    } else {
-      map.removeLayer(layer);
-    }
-  };
+  /**
+   * Syncs the visual state of a checkbox button.
+   * @param {string|HTMLElement} buttonOrId - The button element or its ID.
+   * @param {boolean} checked - Whether the checkbox should appear checked.
+   */
+  function syncCheckbox(buttonOrId, checked) {
+    const button =
+      typeof buttonOrId === "string"
+        ? document.getElementById(buttonOrId)
+        : buttonOrId;
+    button.setAttribute("data-checked", checked);
+    button.classList.toggle("checked", checked);
+  }
 
+  /**
+   * Handles toggling of checkboxes for layers, legends, and attribution.
+   * @param {HTMLElement} button - The checkbox button element.
+   * @param {Object|string} target - The layer object or element ID to toggle.
+   * @param {'layer'|'element'} type - What kind of thing to toggle.
+   * @param {Object} [options] - Optional extra options (e.g., map reference).
+   */
+  function toggleCheckboxAction(button, target, type, options = {}) {
+    const isChecked = button.getAttribute("data-checked") === "true";
+    const newChecked = !isChecked;
+    syncCheckbox(button, newChecked);
+
+    if (type === "layer") {
+      if (newChecked) {
+        target.addTo(options.map);
+      } else {
+        options.map.removeLayer(target);
+      }
+    } else if (type === "element") {
+      // Toggle display of an element (legend, attribution, etc.)
+      const el =
+        typeof target === "string" ? document.getElementById(target) : target;
+      el.style.display = newChecked ? "block" : "none";
+    }
+  }
+
+  // Sync on load
+  syncCheckbox("susceptibilityLayer", map.hasLayer(layers.susceptibilityLayer));
+  syncCheckbox("precipitationLayer", map.hasLayer(layers.precipitationLayer));
+  syncCheckbox(
+    "toggle-attributions",
+    document
+      .getElementById("toggle-attributions")
+      .getAttribute("data-checked") === "true"
+  );
+  syncCheckbox(
+    "susceptibilityLegendToggle",
+    document
+      .getElementById("susceptibility-legend-container")
+      .getAttribute("data-checked") === "true"
+  );
+  syncCheckbox(
+    "legendToggle",
+    document.getElementById("legend-container").getAttribute("data-checked") ===
+      "true"
+  );
+  syncCheckbox("stationsToggle", stationsVisible);
+
+  // Layer toggles
   document.getElementById("susceptibilityLayer").addEventListener(
     "click",
     debounce((event) => {
-      const button = event.target;
-      toggleButtonState(button, layers.susceptibilityLayer);
+      toggleCheckboxAction(event.target, layers.susceptibilityLayer, "layer", {
+        map,
+      });
     }, 300)
   );
 
   document.getElementById("precipitationLayer").addEventListener(
     "click",
     debounce((event) => {
-      const button = event.target;
-      toggleButtonState(button, layers.precipitationLayer);
+      toggleCheckboxAction(event.target, layers.precipitationLayer, "layer", {
+        map,
+      });
+    }, 300)
+  );
+
+  // Attribution toggle
+  const attributionControl = document.querySelector(
+    ".leaflet-control-attribution"
+  );
+  const toggleButton = document.getElementById("toggle-attributions");
+  attributionControl.style.display = "none";
+  toggleButton.addEventListener(
+    "click",
+    debounce((event) => {
+      toggleCheckboxAction(event.target, attributionControl, "element");
+    }, 300)
+  );
+
+  // Legend toggles
+  document.getElementById("legendToggle").addEventListener(
+    "click",
+    debounce((event) => {
+      toggleCheckboxAction(event.target, "legend-container", "element");
+    }, 300)
+  );
+
+  document.getElementById("susceptibilityLegendToggle").addEventListener(
+    "click",
+    debounce((event) => {
+      toggleCheckboxAction(
+        event.target,
+        "susceptibility-legend-container",
+        "element"
+      );
+    }, 300)
+  );
+
+  document.getElementById("stationsToggle").addEventListener(
+    "click",
+    debounce((event) => {
+      stationsVisible = !stationsVisible;
+      // Toggle all station markers
+      stations.forEach((station) => {
+        if (station.marker) {
+          if (stationsVisible) {
+            station.marker.addTo(map);
+          } else {
+            map.removeLayer(station.marker);
+          }
+        }
+      });
+      // Sync the checkbox state
+      syncCheckbox(event.target, stationsVisible);
     }, 300)
   );
 
@@ -346,58 +440,6 @@ function setupEventListeners(map, layers, stations) {
     }
   });
 
-  // Toggle attributions visibility
-  const attributionControl = document.querySelector(
-    ".leaflet-control-attribution"
-  );
-  const toggleButton = document.getElementById("toggle-attributions");
-  attributionControl.style.display = "none";
-
-  toggleButton.addEventListener(
-    "click",
-    debounce(function () {
-      const isChecked = toggleButton.getAttribute("data-checked") === "true";
-      toggleButton.setAttribute("data-checked", !isChecked);
-      toggleButton.classList.toggle("checked", !isChecked);
-      if (checkboxToggleTimer) {
-        clearTimeout(checkboxToggleTimer); // Clear the previous timer
-      }
-      checkboxToggleTimer = setTimeout(() => {
-        if (attributionControl.style.display === "none") {
-          attributionControl.style.display = "block";
-        } else {
-          attributionControl.style.display = "none";
-        }
-      }, 200); // Delay of 200ms before toggling visibility
-    }, 300)
-  );
-
-  // Event listener for legend checkbox
-  document.getElementById("legendToggle").addEventListener(
-    "click",
-    debounce((event) => {
-      const button = event.target;
-      const isChecked = button.getAttribute("data-checked") === "true";
-      button.setAttribute("data-checked", !isChecked);
-      button.classList.toggle("checked", !isChecked);
-      const visibility = !isChecked ? "block" : "none";
-      toggleCheckboxWithDelay("legend-container", visibility);
-    }, 300)
-  );
-
-  // Event listener for susceptibility legend checkbox
-  document.getElementById("susceptibilityLegendToggle").addEventListener(
-    "click",
-    debounce((event) => {
-      const button = event.target;
-      const isChecked = button.getAttribute("data-checked") === "true";
-      button.setAttribute("data-checked", !isChecked);
-      button.classList.toggle("checked", !isChecked);
-      const visibility = !isChecked ? "block" : "none";
-      toggleCheckboxWithDelay("susceptibility-legend-container", visibility);
-    }, 300)
-  );
-
   // Event listener for zoom changes
   map.on("zoomend", () => {
     changeData(stations, getDataType(), map);
@@ -439,7 +481,6 @@ function getPrecipitationColor(rainTotalInches) {
   return "rgb(255, 255, 204)"; // Pale Yellow for above 8.00 inches
 }
 
-
 // Utility function to calculate icon size, anchor, and font size
 function calculateIconProperties(map) {
   const zoomLevel = map.getZoom();
@@ -460,7 +501,7 @@ function calculateIconProperties(map) {
 }
 
 // Marker Initialization
-function initializeMarkers(map, currentDatatype) {
+function initializeMarkers(map) {
   const { iconSize, iconAnchor, fontSize } = calculateIconProperties(map);
 
   stations.forEach(function (station) {
@@ -553,7 +594,7 @@ function initializeMarkers(map, currentDatatype) {
       currentDataType === "rainfall"
         ? rainTotalInches
         : saturationPercentage + "%";
-        
+
     if (isOutdated) {
       backgroundColor = "rgb(169, 169, 169)"; // Gray for outdated data
       value = "N/A";
@@ -653,9 +694,9 @@ function changeData(stations, currentDataType, map) {
 
     let backgroundColor;
     let value =
-    currentDataType === "rainfall"
-      ? rainTotalInches
-      : saturationPercentage + "%";
+      currentDataType === "rainfall"
+        ? rainTotalInches
+        : saturationPercentage + "%";
 
     if (isOutdated) {
       backgroundColor = "rgb(169, 169, 169)"; // Gray for outdated data
