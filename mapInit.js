@@ -188,12 +188,6 @@ function setupScrollZoom(map) {
   });
 }
 
-// Station Initialization
-async function initializeStations(map, dataType) {
-  await processFiles();
-  return initializeMarkers(map, dataType);
-}
-
 function toggleImage(event) {
   event.stopPropagation();
   const container = event.target.closest(".image-container");
@@ -500,57 +494,52 @@ function calculateIconProperties(map) {
   return { iconSize, iconAnchor, fontSize };
 }
 
-// Marker Initialization
-function initializeMarkers(map) {
-  const { iconSize, iconAnchor, fontSize } = calculateIconProperties(map);
+function updateStationMarker(station, map, iconProps, dataType) {
+  const stationData = JSON.parse(
+    JSON.stringify(fetchedStationData[station.name])
+  );
+  if (!stationData) {
+    return;
+  }
 
-  stations.forEach(function (station) {
-    const stationData = JSON.parse(
-      JSON.stringify(fetchedStationData[station.name])
-    );
-    if (!stationData) {
-      return;
-    }
+  const wcKey = Object.keys(stationData).find((key) =>
+    key.toString().startsWith('"wc4')
+  );
+  const saturationPercentage = wcKey
+    ? ((stationData[wcKey] / station.vwc_max) * 100).toFixed(0)
+    : "N/A";
+  const rainTotalMM =
+    parseFloat(stationData["12hr_rain_mm_total"]).toFixed(0) || "N/A";
+  const rainTotalInches =
+    rainTotalMM !== "N/A" ? (rainTotalMM / 25.4).toFixed(2) : "N/A";
 
-    const wcKey = Object.keys(stationData).find((key) =>
-      key.toString().startsWith('"wc4')
-    );
-    const saturationPercentage = wcKey
-      ? ((stationData[wcKey] / station.vwc_max) * 100).toFixed(0)
-      : "N/A";
+  const timestamp = stationData["TIMESTAMP"] || "N/A";
+  let formattedTimestamp = "N/A";
+  let isOutdated = false;
 
-    const rainTotalMM =
-      parseFloat(stationData["12hr_rain_mm_total"]).toFixed(0) || "N/A";
-    const rainTotalInches =
-      rainTotalMM !== "N/A" ? (rainTotalMM / 25.4).toFixed(2) : "N/A";
+  if (timestamp !== "N/A") {
+    const cleanedTimestamp = timestamp.replace(/['"]/g, "");
+    const parsedDate = Date.parse(cleanedTimestamp);
+    if (!isNaN(parsedDate)) {
+      const date = new Date(parsedDate);
+      formattedTimestamp = date.toLocaleString([], {
+        year: "numeric",
+        month: "2-digit",
+        day: "2-digit",
+        hour: "2-digit",
+        minute: "2-digit",
+      });
 
-    const timestamp = stationData["TIMESTAMP"] || "N/A";
-    let formattedTimestamp = "N/A";
-    let isOutdated = false;
-
-    if (timestamp !== "N/A") {
-      const cleanedTimestamp = timestamp.replace(/['"]/g, "");
-      const parsedDate = Date.parse(cleanedTimestamp);
-      if (!isNaN(parsedDate)) {
-        const date = new Date(parsedDate);
-        formattedTimestamp = date.toLocaleString([], {
-          year: "numeric",
-          month: "2-digit",
-          day: "2-digit",
-          hour: "2-digit",
-          minute: "2-digit",
-        });
-
-        // Check if the timestamp is older than 24 hours
-        const now = new Date();
-        const hoursDifference = (now - date) / (1000 * 60 * 60);
-        if (hoursDifference > 24) {
-          isOutdated = true;
-        }
+      // Check if the timestamp is older than 24 hours
+      const now = new Date();
+      const hoursDifference = (now - date) / (1000 * 60 * 60);
+      if (hoursDifference > 24) {
+        isOutdated = true;
       }
     }
+  }
 
-    const popupContent = `
+  const popupContent = `
     <div class="custom-popup-content">
       <div class="image-container">
         <div class="arrow left-arrow" onclick="toggleImage(event)">
@@ -560,15 +549,15 @@ function initializeMarkers(map) {
           station.plot_name
         }" target="_blank" class="image-link">
           <img src="/files/images/${station.name}.jpg" alt="${
-      station.display_name
-    }" class="popup-image">
+    station.display_name
+  }" class="popup-image">
         </a>
         <a href="/files/images/${
           station.name
         }.jpg" target="_blank" class="image-link hidden">
           <img src="/files/network/plots/${station.plot_name}" alt="${
-      station.display_name
-    } Graph" class="popup-image hidden">
+    station.display_name
+  } Graph" class="popup-image hidden">
         </a>
         <div class="arrow right-arrow" onclick="toggleImage(event)">
           <img src="./files/svg/right-arrow.svg" alt="Right Arrow">
@@ -589,189 +578,45 @@ function initializeMarkers(map) {
     </div>
     `;
 
-    let backgroundColor;
-    let value =
-      currentDataType === "rainfall"
-        ? rainTotalInches
-        : saturationPercentage + "%";
+  let backgroundColor;
+  let value =
+    dataType === "rainfall" ? rainTotalInches : saturationPercentage + "%";
 
-    if (isOutdated) {
-      backgroundColor = "rgb(169, 169, 169)"; // Gray for outdated data
-      value = "N/A";
-    } else if (currentDataType === "rainfall") {
-      backgroundColor = getPrecipitationColor(rainTotalInches);
-    } else if (currentDataType === "soilSaturation") {
-      if (saturationPercentage >= 90) {
-        backgroundColor = "rgb(0,28,104,0.9)"; // Blue
-      } else if (saturationPercentage >= 80) {
-        backgroundColor = "rgba(0,179,255,0.9)"; // Light Blue
-      } else {
-        backgroundColor = "rgb(175,152,0,0.9)"; // Brown
-      }
+  if (isOutdated) {
+    backgroundColor = "rgb(169, 169, 169)";
+    value = "N/A";
+  } else if (dataType === "rainfall") {
+    backgroundColor = getPrecipitationColor(rainTotalInches);
+  } else if (dataType === "soilSaturation") {
+    if (saturationPercentage >= 90) {
+      backgroundColor = "rgb(0,28,104,0.9)";
+    } else if (saturationPercentage >= 80) {
+      backgroundColor = "rgba(0,179,255,0.9)";
+    } else {
+      backgroundColor = "rgb(175,152,0,0.9)";
     }
+  }
 
-    var customIcon = L.divIcon({
-      className: "custom-div-icon",
-      html: `<div style="background-color: ${backgroundColor}; color: white; padding: 5px; border-radius: 5px; display: flex; flex-direction: column; text-align: center; justify-content: center; align-items: center; height: 100%;">
-        <span style="font-size: ${fontSize}; color: white;">
-          ${value}
-        </span>
-        </div>`,
-      iconSize: iconSize,
-      iconAnchor: iconAnchor,
-    });
+  const iconHTML = `<div style="background-color: ${backgroundColor}; color: white; padding: 5px; border-radius: 5px; display: flex; flex-direction: column; text-align: center; justify-content: center; align-items: center; height: 100%;">
+    <span style="font-size: ${iconProps.fontSize}; color: white;">
+      ${value}
+    </span>
+    </div>`;
 
-    var marker = L.marker(station.coords, { icon: customIcon }).addTo(map);
-    marker.bindPopup(popupContent);
-
-    marker.on("popupopen", function () {
-      const popupElement = marker.getPopup().getElement();
-      if (popupElement) {
-        const popupHeight = popupElement.offsetHeight;
-        const popupWidth = popupElement.offsetWidth;
-        const offset = map.latLngToContainerPoint(marker.getLatLng());
-        const newOffset = L.point(offset.x, offset.y - popupHeight / 1.5);
-        const newLatLng = map.containerPointToLatLng(newOffset);
-        map.setView(newLatLng, map.getZoom(), { animate: true, duration: 1.5 }); // Slower animation
-      }
-    });
-
-    station.marker = marker;
-  });
-
-  return stations;
-}
-
-// Data Change Handling
-function changeData(stations, currentDataType, map) {
-  const { iconSize, iconAnchor, fontSize } = calculateIconProperties(map);
-
-  stations.forEach(function (station) {
-    const stationData = JSON.parse(
-      JSON.stringify(fetchedStationData[station.name])
-    );
-    if (!stationData) {
-      console.warn(`No data found for station: ${station.name}`);
-      return;
-    }
-
-    const wcKey = Object.keys(stationData).find((key) =>
-      key.toString().startsWith('"wc4')
-    );
-    const saturationPercentage = wcKey
-      ? ((stationData[wcKey] / station.vwc_max) * 100).toFixed(0)
-      : "N/A";
-    const rainTotalMM =
-      parseFloat(stationData["12hr_rain_mm_total"]).toFixed(0) || "N/A";
-    const rainTotalInches =
-      rainTotalMM !== "N/A" ? (rainTotalMM / 25.4).toFixed(2) : "N/A";
-
-    const timestamp = stationData["TIMESTAMP"] || "N/A";
-    let formattedTimestamp = "N/A";
-    let isOutdated = false;
-
-    if (timestamp !== "N/A") {
-      const cleanedTimestamp = timestamp.replace(/['"]/g, "");
-      const parsedDate = Date.parse(cleanedTimestamp);
-      if (!isNaN(parsedDate)) {
-        const date = new Date(parsedDate);
-        formattedTimestamp = date.toLocaleString([], {
-          year: "numeric",
-          month: "2-digit",
-          day: "2-digit",
-          hour: "2-digit",
-          minute: "2-digit",
-        });
-
-        // Check if the timestamp is older than 24 hours
-        const now = new Date();
-        const hoursDifference = (now - date) / (1000 * 60 * 60);
-        if (hoursDifference > 24) {
-          isOutdated = true;
-        }
-      }
-    }
-
-    let backgroundColor;
-    let value =
-      currentDataType === "rainfall"
-        ? rainTotalInches
-        : saturationPercentage + "%";
-
-    if (isOutdated) {
-      backgroundColor = "rgb(169, 169, 169)"; // Gray for outdated data
-      value = "N/A";
-    } else if (currentDataType === "rainfall") {
-      backgroundColor = getPrecipitationColor(rainTotalInches);
-    } else if (currentDataType === "soilSaturation") {
-      if (saturationPercentage >= 90) {
-        backgroundColor = "rgb(0,28,104,0.9)"; // Blue
-      } else if (saturationPercentage >= 80) {
-        backgroundColor = "rgba(0,179,255,0.9)"; // Light Blue
-      } else {
-        backgroundColor = "rgb(175,152,0,0.9)"; // Brown
-      }
-    }
-
-    const popupContent = `
-    <div class="custom-popup-content">
-      <div class="image-container">
-        <div class="arrow left-arrow" onclick="toggleImage(event)">
-          <img src="./files/svg/left-arrow.svg" alt="Left Arrow">
-        </div>
-        <a href="/files/network/plots/${
-          station.plot_name
-        }" target="_blank" class="image-link">
-          <img src="/files/images/${station.name}.jpg" alt="${
-      station.display_name
-    }" class="popup-image">
-        </a>
-        <a href="/files/images/${
-          station.name
-        }.jpg" target="_blank" class="image-link hidden">
-          <img src="/files/network/plots/${station.plot_name}" alt="${
-      station.display_name
-    } Graph" class="popup-image hidden">
-        </a>
-        <div class="arrow right-arrow" onclick="toggleImage(event)">
-          <img src="./files/svg/right-arrow.svg" alt="Right Arrow">
-        </div>
-      </div>
-      <div class="info">
-        <h2>${station.name.toUpperCase()}</h2>
-        <ul>
-          <li><strong>Last Updated:</strong> ${formattedTimestamp} AST</li>
-          <li><strong>Soil Saturation:</strong> ${saturationPercentage}%</li>
-          <li><strong>12 HRS Precipitation:</strong> ${rainTotalInches} inches</li>
-          <li><strong>Forecast:</strong> ${station.forecast}</li>
-        </ul>
-        <a href="https://derrumbe.net/${
-          station["url-name"]
-        }" target="_blank" class="leaflet-popup-link">Click here for more details!</a>
-      </div>
-    </div>
-    `;
-
-    const newIconHTML = `<div style="background-color: ${backgroundColor}; color: white; padding: 5px; border-radius: 5px; display: flex; flex-direction: column; text-align: center; justify-content: center; align-items: center; height: 100%;">
-        <span style="font-size: ${fontSize}; color: white;">
-          ${value}
-        </span>
-      </div>`;
-
-    station.marker.setIcon(
-      L.divIcon({
+  if (!station.marker) {
+    // Create marker if it doesn't exist
+    station.marker = L.marker(station.coords, {
+      icon: L.divIcon({
         className: "custom-div-icon",
-        html: newIconHTML,
-        iconSize: iconSize,
-        iconAnchor: iconAnchor,
-      })
-    );
-
-    station.marker.setPopupContent(popupContent);
-    const popup = station.marker.getPopup();
+        html: iconHTML,
+        iconSize: iconProps.iconSize,
+        iconAnchor: iconProps.iconAnchor,
+      }),
+    }).addTo(map);
+    station.marker.bindPopup(popupContent);
 
     station.marker.on("popupopen", function () {
-      const popupElement = popup.getElement();
+      const popupElement = station.marker.getPopup().getElement();
       if (popupElement) {
         const popupHeight = popupElement.offsetHeight;
         const offset = map.latLngToContainerPoint(station.marker.getLatLng());
@@ -780,5 +625,35 @@ function changeData(stations, currentDataType, map) {
         map.setView(newLatLng, map.getZoom(), { animate: true, duration: 1.5 });
       }
     });
+  } else {
+    // Update marker if it exists
+    station.marker.setIcon(
+      L.divIcon({
+        className: "custom-div-icon",
+        html: iconHTML,
+        iconSize: iconProps.iconSize,
+        iconAnchor: iconProps.iconAnchor,
+      })
+    );
+    station.marker.setPopupContent(popupContent);
+  }
+}
+
+// Function for both initialization and update
+function renderMarkers(stations, map, dataType) {
+  const iconProps = calculateIconProperties(map);
+  stations.forEach((station) => {
+    updateStationMarker(station, map, iconProps, dataType);
   });
+  return stations;
+}
+
+// Replace initializeMarkers and changeData with renderMarkers
+async function initializeStations(map, dataType) {
+  await processFiles();
+  return renderMarkers(stations, map, dataType);
+}
+
+function changeData(stations, currentDataType, map) {
+  renderMarkers(stations, map, currentDataType);
 }
