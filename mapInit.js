@@ -455,30 +455,30 @@ function setupEventListeners(map, layers, stations) {
 
 // Function to get the color based on precipitation total
 function getPrecipitationColor(rainTotalInches) {
-  if (rainTotalInches <= 0.05) return "rgb(2, 238, 238, 0.9)"; // Cyan
-  if (rainTotalInches <= 0.1) return "rgb(0, 204, 255, 0.9)"; // Light Blue
-  if (rainTotalInches <= 0.15) return "rgb(0, 153, 255, 0.9)"; // Blue
-  if (rainTotalInches <= 0.2) return "rgb(0, 102, 255, 0.9)"; // Dark Blue
+  if (rainTotalInches <= 0.05) return "rgb(0, 236, 236, 0.9)"; // Cyan
+  if (rainTotalInches <= 0.1) return "rgb(0, 200, 240, 0.9)"; // Light Blue
+  if (rainTotalInches <= 0.15) return "rgb(0, 160, 255, 0.9)"; // Blue
+  if (rainTotalInches <= 0.2) return "rgb(0, 60, 255, 0.9)"; // Dark Blue
   if (rainTotalInches <= 0.4) return "rgb(0, 255, 0, 0.9)"; // Light Green
-  if (rainTotalInches <= 0.6) return "rgb(0, 204, 0, 0.9)"; // Green
+  if (rainTotalInches <= 0.6) return "rgb(0, 220, 0, 0.9)"; // Green
   if (rainTotalInches <= 0.8) return "rgb(0, 153, 0, 0.9)"; // Dark Green
-  if (rainTotalInches <= 1.0) return "rgb(153, 255, 0, 0.9)"; // Yellow-Green
-  if (rainTotalInches <= 1.25) return "rgb(231, 231, 0, 0.9)"; // Yellow
-  if (rainTotalInches <= 1.5) return "rgb(241, 193, 1, 0.9)"; // Light Orange
-  if (rainTotalInches <= 1.75) return "rgb(204, 153, 0, 0.9)"; // Brown
-  if (rainTotalInches <= 2.0) return "rgb(153, 102, 0, 0.9)"; // Dark Brown
-  if (rainTotalInches <= 2.5) return "rgb(233, 147, 147, 0.9)"; // Light Pink
-  if (rainTotalInches <= 3.0) return "rgb(255, 102, 102, 0.9)"; // Pink
-  if (rainTotalInches <= 3.5) return "rgb(255, 0, 0, 0.9)"; // Red
-  if (rainTotalInches <= 4.0) return "rgb(204, 0, 0, 0.9)"; // Dark Red
-  if (rainTotalInches <= 4.5) return "rgb(255, 0, 255, 0.9)"; // Magenta
-  if (rainTotalInches <= 5.0) return "rgb(153, 0, 255, 0.9)"; // Purple
-  if (rainTotalInches <= 5.5) return "rgb(102, 0, 204, 0.9)"; // Dark Purple
-  if (rainTotalInches <= 6.0) return "rgb(102, 0, 153, 0.9)"; // Violet
-  if (rainTotalInches <= 6.5) return "rgb(153, 102, 255, 0.9)"; // Light Violet
-  if (rainTotalInches <= 7.0) return "rgb(192, 192, 240, 0.9)"; // Light Blue-Grey
-  if (rainTotalInches <= 8.0) return "rgb(153, 153, 204, 0.9)"; // Dark Blue-Grey
-  return "rgb(255, 255, 204)"; // Pale Yellow for above 8.00 inches
+  if (rainTotalInches <= 1.0) return "rgb(0, 141, 0, 0.9)"; // Forest-Green
+  if (rainTotalInches <= 1.25) return "rgb(255, 255, 0, 0.9)"; // Yellow
+  if (rainTotalInches <= 1.5) return "rgb(240, 210, 0, 0.9)"; // Dark Yellow
+  if (rainTotalInches <= 1.75) return "rgb(231, 180, 0, 0.9)"; // Gold
+  if (rainTotalInches <= 2.0) return "rgb(200, 120, 0, 0.9)"; // Dark Brown
+  if (rainTotalInches <= 2.5) return "rgb(255, 160, 160, 0.9)"; // Light Pink
+  if (rainTotalInches <= 3.0) return "rgb(255, 60, 60, 0.9)"; // Dark Pink
+  if (rainTotalInches <= 3.5) return "rgb(230, 0, 0, 0.9)"; // Red
+  if (rainTotalInches <= 4.0) return "rgb(180, 0, 0, 0.9)"; // Dark Red
+  if (rainTotalInches <= 4.5) return "rgb(250, 0, 255, 0.9)"; // Magenta
+  if (rainTotalInches <= 5.0) return "rgb(217, 0, 217, 0.9)"; // Purple
+  if (rainTotalInches <= 5.5) return "rgb(164, 0, 164, 0.9)"; // Dark Purple
+  if (rainTotalInches <= 6.0) return "rgb(120, 0, 120, 0.9)"; // Violet
+  if (rainTotalInches <= 6.5) return "rgb(255, 0, 255, 0.9)"; // White
+  if (rainTotalInches <= 7.0) return "rgb(192, 192, 255, 0.9)"; // Dark Blue-Grey
+  if (rainTotalInches <= 8.0) return "rgb(192, 255, 255, 0.9)"; // Sky Blue
+  return "rgb(255, 255, 192)"; // Pale Yellow for above 8.00 inches
 }
 
 // Utility function to calculate icon size, anchor, and font size
