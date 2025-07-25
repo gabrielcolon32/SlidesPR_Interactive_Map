@@ -512,7 +512,7 @@ main {
   /* Logo Container Styles */
   #logo-container {
     position: absolute;
-    top: 78%;
+    top: 85%;
     left: 0; /* Move to left */
   }
 
@@ -561,10 +561,10 @@ main {
 
   #susceptibility-legend-container {
     position: absolute;
-    bottom: 2px;
-    left: 77%;
-    max-height: 105px; /* Adjust the height as needed */
-    max-width: 105px;
+    bottom: 0%;
+    left: 80%;
+    height: 100px; /* Adjust the height as needed */
+    width: 100px;
     z-index: 1004; /* Ensure it is above other elements */
   }
 
