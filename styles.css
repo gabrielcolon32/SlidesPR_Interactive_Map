@@ -562,7 +562,7 @@ main {
   #susceptibility-legend-container {
     position: absolute;
     bottom: 2px;
-    left: 75%;
+    left: 73%;
     height: 105px; /* Adjust the height as needed */
     width: 105px;
     z-index: 1004; /* Ensure it is above other elements */
