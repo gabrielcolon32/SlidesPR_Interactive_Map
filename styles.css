@@ -1,18 +1,18 @@
 /* General Styles */
-
-html {
-  height: auto; /* Full height for the body */
-}
-body {
+html, body {
   background-color: #121212; /* Matte black background */
-  height: web-kit-fill-available; /* Full height for the body */
+  height: 100%; /* Full height for the body */
+  width: 100%; /* Full width for the body */
 }
+
 main {
-  height: web-kit-fill-available; /* Full height for the body */
+  height: 100%; /* Full height for the body */
+  width: 100%; /* Full width for the body */
 }
+
 #map {
   width: 100%;
-  height: web-kit-fill-available; /* Full height for the body */
+  height: 100%; /* Full height for the body */
   position: relative; /* Ensure the map is positioned relative to its container */
   display: block;
 }
