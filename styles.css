@@ -1,5 +1,6 @@
 /* General Styles */
-html, body {
+html,
+body {
   background-color: #121212; /* Matte black background */
   height: 100%; /* Full height for the body */
   width: 100%; /* Full width for the body */
@@ -431,6 +432,25 @@ main {
 
 /* Media Queries for Mobile Devices */
 @media (max-width: 768px) {
+  html,
+  body {
+    background-color: #121212; /* Matte black background */
+    height: 100%; /* Full height for the body */
+    width: 100%; /* Full width for the body */
+  }
+
+  main {
+    height: 100%; /* Full height for the body */
+    width: 100%; /* Full width for the body */
+  }
+
+  #map {
+    width: 100%;
+    height: 100%; /* Full height for the body */
+    position: relative; /* Ensure the map is positioned relative to its container */
+    display: block;
+  }
+  
   .map-label {
     font-size: 10px; /* Reduce font size for small devices */
     padding: 2px 5px; /* Adjust padding for small devices */
