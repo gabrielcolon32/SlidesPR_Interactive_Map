@@ -138,7 +138,7 @@ function setupScrollZoom(map) {
   let isMouseOverLegend = false;
   let isMouseOverSusceptibilityLegend = false;
 
-  const legendContainer = document.getElementById("legend-container");
+  const legendContainer = document.getElementById("precipitation-legend-container");
   const susceptibilityLegendContainer = document.getElementById(
     "susceptibility-legend-container"
   );
@@ -311,8 +311,8 @@ function setupEventListeners(map, layers, stations) {
       .getAttribute("data-checked") === "true"
   );
   syncCheckbox(
-    "legendToggle",
-    document.getElementById("legend-container").getAttribute("data-checked") ===
+    "precipitationLegendToggle",
+    document.getElementById("precipitation-legend-container").getAttribute("data-checked") ===
       "true"
   );
   syncCheckbox("stationsToggle", stationsVisible);
@@ -350,10 +350,10 @@ function setupEventListeners(map, layers, stations) {
   );
 
   // Legend toggles
-  document.getElementById("legendToggle").addEventListener(
+  document.getElementById("precipitationLegendToggle").addEventListener(
     "click",
     debounce((event) => {
-      toggleCheckboxAction(event.target, "legend-container", "element");
+      toggleCheckboxAction(event.target, "precipitation-legend-container", "element");
     }, 300)
   );
 
@@ -403,7 +403,7 @@ function setupEventListeners(map, layers, stations) {
 
   // Prevent double-click on legend from zooming the map
   document
-    .getElementById("legend-container")
+    .getElementById("precipitation-legend-container")
     .addEventListener("dblclick", function (event) {
       event.stopPropagation();
     });

@@ -37,7 +37,7 @@
         <div id="sidebar" class="sidebar closed">
           <button id="sidebar-toggle" class="sidebar-toggle"></button>
           <div class="sidebar-content">
-            <a href="https://derrumbe.net/" target="_blank" style="text-decoration: none;"><h1>Puerto Rico Landslide Hazard Mitigation Office</h1></a>
+            <a href="https://derrumbe.net/" target="_blank" style="text-decoration: none;"><h1>Puerto Rico Landslide Hazard Mitigation Office - Home Page</h1></a>
             <h2>Basemap Layers</h2>
             <div class="checkbox-container">
               <button class="checkbox-button" id="stationsToggle" data-checked="true"></button>
@@ -56,7 +56,7 @@
               <span>Past 12 Hour Radar Precipitation Estimates (Inches)</span>
             </div>
             <div class="checkbox-container">
-              <button class="checkbox-button" id="legendToggle" data-checked="false"></button>
+              <button class="checkbox-button" id="precipitationLegendToggle" data-checked="false"></button>
               <span>Precipitation Estimates Legend</span>
             </div>
             <div class="checkbox-container">
@@ -71,12 +71,12 @@
           </div>
         </div>
         <!-- Static Legend Images -->
-        <div id="legend-container" style="display: none">
+        <div id="precipitation-legend-container" style="display: none">
           <span id="precipitation-legend-title">Precipitation Estimates Legend</span>
           <img
             src="/files/images/precipitation_estimate_legend.png"
             alt="Precipitation Legend"
-            id="legend-image"
+            id="precipitation-legend-image"
           />
         </div>
         <div id="susceptibility-legend-container" style="display: none">

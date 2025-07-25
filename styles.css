@@ -42,7 +42,7 @@ main {
   left: 0;
   height: 100%;
   width: 250px;
-  background-color: rgba(50, 50, 50, 0.95); /* Dark gray with 0.85 opacity */
+  background-color: rgba(50, 50, 50); /* Dark gray */
   color: white; /* White font color */
   box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
   overflow: hidden; /* Hide overflow */
@@ -82,6 +82,7 @@ main {
 
 .sidebar h1 {
   margin-top: 0;
+  text-decoration: underline;
   color: rgb(255, 255, 255); /* Coral font color for the heading */
   font-family: "Bebas Neue", "Helvetica Neue", Helvetica, Arial, sans-serif; /* Apply font family */
   font-size: 24px; /* Increase font size */
@@ -331,12 +332,12 @@ main {
 }
 
 /* Legend Container Styles */
-#legend-container {
+#precipitation-legend-container {
   position: absolute;
   top: 10px;
   right: 10px; /* Move to right */
   max-height: 120px; /* Adjust the height as needed */
-  max-width: 120px;
+  max-width: 100%;
   overflow-y: auto;
   background: rgba(255, 255, 255, 0.9); /* Semi-transparent white background */
   padding: 10px 1px 1px 1px;
@@ -345,16 +346,16 @@ main {
   z-index: 1000; /* Ensure it is above other elements */
 }
 
-#legend-image {
+#precipitaion-legend-image {
   max-width: 100%;
   height: 100%;
 }
 
 #susceptibility-legend-container {
   position: absolute;
-  top: 25%;
-  right: 10px; /* Move to right */
-  max-height: 120px; /* Adjust the height as needed */
+  bottom:8%;
+  left: 5px; /* Move to left */
+  max-height: 160px; /* Adjust the height as needed */
   /* overflow-y: auto; */
   height: 160px;
   background: rgba(255, 255, 255, 0.9); /* Semi-transparent white background */
@@ -369,10 +370,10 @@ main {
   height: 100%;
 }
 
-#legend-container span {
+#precipitation-legend-container span {
   display: block;
   text-align: center;
-  font-size: 8px;
+  font-size: 12px;
   font-weight: bold;
 }
 
@@ -544,7 +545,7 @@ main {
   }
 
   /* Legend Container Styles */
-  #legend-container {
+  #precipitation-legend-container {
     position: absolute;
     top: 0%;
     right: 0%; /* Move to left */
@@ -553,18 +554,18 @@ main {
     z-index: 1000; /* Ensure it is above other elements */
   }
 
-  #legend-image {
+  #precipitation-legend-image {
     max-width: 100%;
     height: auto;
   }
 
   #susceptibility-legend-container {
     position: absolute;
-    top: 84%;
-    right: 0%;
-    max-height: 90px; /* Adjust the height as needed */
-    max-width: 90px;
-    z-index: 1000; /* Ensure it is above other elements */
+    bottom: 2px;
+    left: 77%;
+    max-height: 105px; /* Adjust the height as needed */
+    max-width: 105px;
+    z-index: 1004; /* Ensure it is above other elements */
   }
 
   #susceptibility-legend-image {
@@ -572,7 +573,7 @@ main {
     height: auto;
   }
 
-  #legend-container span {
+  #precipitation-legend-container span {
     display: block;
     text-align: center;
     font-size: 8px;
