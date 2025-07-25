@@ -1,62 +1,21 @@
 /* General Styles */
+
+html {
+  height: auto; /* Full height for the body */
+}
 body {
   background-color: #121212; /* Matte black background */
+  height: web-kit-fill-available; /* Full height for the body */
 }
-
-header {
-  background-color: #333;
-  color: white;
-  padding: 1rem;
-}
-
-nav ul {
-  list-style: none;
-  display: flex;
-  justify-content: space-around;
-}
-
-nav ul li {
-  margin: 0 1rem;
-}
-
-nav ul li a {
-  color: white;
-  text-decoration: none;
-}
-
-nav ul li a:hover {
-  text-decoration: underline;
-}
-
 main {
-  padding: 2rem;
+  height: web-kit-fill-available; /* Full height for the body */
 }
-
-form label {
-  display: block;
-  margin: 0.5rem 0 0.2rem;
-}
-
-form input,
-form textarea {
+#map {
   width: 100%;
-  padding: 0.5rem;
-  margin-bottom: 1rem;
+  height: web-kit-fill-available; /* Full height for the body */
+  position: relative; /* Ensure the map is positioned relative to its container */
+  display: block;
 }
-
-form input[type="submit"] {
-  width: auto;
-  background-color: #333;
-  color: white;
-  border: none;
-  padding: 0.5rem 1rem;
-  cursor: pointer;
-}
-
-form input[type="submit"]:hover {
-  background-color: #555;
-}
-
 /* Map Overlay */
 #map-overlay {
   position: absolute;
