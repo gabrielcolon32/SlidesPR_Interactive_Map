@@ -548,6 +548,7 @@ main {
     position: absolute;
     top: 0%;
     right: 0%; /* Move to left */
+    overflow-y: auto; /* Allow vertical scrolling */
     max-height: 80px; /* Adjust the height as needed */
     max-width: 100px;
     z-index: 1000; /* Ensure it is above other elements */
@@ -562,7 +563,6 @@ main {
     position: absolute;
     bottom: 2px;
     left: 73%;
-    overflow-y: auto; /* Allow vertical scrolling */
     height: 105px; /* Adjust the height as needed */
     width: 105px;
     z-index: 1004; /* Ensure it is above other elements */
