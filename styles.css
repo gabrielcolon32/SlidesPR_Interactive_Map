@@ -230,8 +230,10 @@ main {
 
 .leaflet-popup-content-wrapper.zoomed,
 .leaflet-popup-content.zoomed {
-  transform: scale(1.2); /* Adjust zoom factor as needed */
+  transform: scale(1.3); /* Adjust zoom factor as needed */
   z-index: 9999;
+  overflow: visible !important; /* Allow content to overflow when zoomed */
+  box-shadow: 0 0 30px 10px rgba(0, 0, 0, 0.5);
 }
 
 .leaflet-popup-content {
