@@ -517,6 +517,7 @@ function updateStationMarker(station, map, iconProps, dataType) {
   let formattedTimestamp = "N/A";
   let isOutdated = false;
 
+  // Format the timestamp if it exists
   if (timestamp !== "N/A") {
     const cleanedTimestamp = timestamp.replace(/['"]/g, "");
     const parsedDate = Date.parse(cleanedTimestamp);
@@ -582,7 +583,7 @@ function updateStationMarker(station, map, iconProps, dataType) {
   let value =
     dataType === "rainfall" ? rainTotalInches : saturationPercentage + "%";
 
-  if (isOutdated) {
+  if (isOutdated || station.hasError) {
     backgroundColor = "rgb(169, 169, 169)";
     value = "N/A";
   } else if (dataType === "rainfall") {

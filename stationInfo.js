@@ -20,10 +20,11 @@ const stations = [
     dateInstalled: "Mar-2022",
     collaborator: "Departamento de Recursos Naturales y Ambientales",
     plot_name: "Adjuntas.jpeg",
-    forecast: "Incoming Feature"
+    forecast: "Incoming Feature",
+    hasError: false,
   },
 
-   {
+  {
     name: "aguada",
     "url-name": "aguada",
     display_name: "Aguada",
@@ -38,7 +39,8 @@ const stations = [
     dateInstalled: "May-2025",
     collaborator: "Private Land Owner",
     plot_name: "Aguada.jpeg",
-    forecast: "Incoming Feature"
+    forecast: "Incoming Feature",
+    hasError: false,
   },
   {
     name: "anasco",
@@ -55,13 +57,14 @@ const stations = [
     dateInstalled: "Sep-2023",
     collaborator: "Private Landowner",
     plot_name: "Anasco.jpeg",
-    forecast: "Incoming Feature"
+    forecast: "Incoming Feature",
+    hasError: false,
   },
   {
     name: "barranquitas",
     "url-name": "barranquitas",
     display_name: "Barranquitas",
-    coords: [18.166, -66.300],
+    coords: [18.166, -66.3],
     vwc_max: 0.263,
     geologicUnit: "Robles Formation",
     soilUnit: "Caguabo Clay Loam",
@@ -72,7 +75,8 @@ const stations = [
     dateInstalled: "Feb-2022",
     collaborator: "Para la Naturaleza",
     plot_name: "Barranquitas.jpeg",
-    forecast: "Incoming Feature"
+    forecast: "Incoming Feature",
+    hasError: false,
   },
   {
     name: "cayey",
@@ -89,7 +93,8 @@ const stations = [
     dateInstalled: "Dec-2021",
     collaborator: "USGS Geomagnetic Observatory",
     plot_name: "Cayey.jpeg",
-    forecast: "Incoming Feature"
+    forecast: "Incoming Feature",
+    hasError: false,
   },
   {
     name: "ciales",
@@ -106,7 +111,8 @@ const stations = [
     dateInstalled: "Feb-2022",
     collaborator: "Private Landowner",
     plot_name: "Ciales.jpeg",
-    forecast: "Incoming Feature"
+    forecast: "Incoming Feature",
+    hasError: false,
   },
   {
     name: "lares",
@@ -123,7 +129,8 @@ const stations = [
     dateInstalled: "Mar-2022",
     collaborator: "Private Landowner",
     plot_name: "Lares.jpeg",
-    forecast: "Incoming Feature"
+    forecast: "Incoming Feature",
+    hasError: false,
   },
   {
     name: "maricao",
@@ -140,13 +147,14 @@ const stations = [
     dateInstalled: "Dec-2022",
     collaborator: "Private Landowner",
     plot_name: "Maricao.jpeg",
-    forecast: "Incoming Feature"
+    forecast: "Incoming Feature",
+    hasError: false,
   },
   {
     name: "maunabo",
     "url-name": "maunabo",
     display_name: "Maunabo",
-    coords: [18.035, -65.910],
+    coords: [18.035, -65.91],
     vwc_max: 0.372,
     geologicUnit: "San Lorenzo Granodiorite",
     soilUnit: "Pandura Very Stony Land Complex",
@@ -157,13 +165,14 @@ const stations = [
     dateInstalled: "Feb-2022",
     collaborator: "Para la Naturaleza",
     plot_name: "Maunabo.jpeg",
-    forecast: "Incoming Feature"
+    forecast: "Incoming Feature",
+    hasError: false,
   },
   {
     name: "mayaguez",
     "url-name": "mayaguez",
     display_name: "Mayagüez",
-    coords: [18.220, -67.144],
+    coords: [18.22, -67.144],
     vwc_max: 0.512,
     geologicUnit: "Maricao Formation",
     soilUnit: "Mucara Clay",
@@ -174,7 +183,8 @@ const stations = [
     dateInstalled: "Mar-2022",
     collaborator: "UPR Mayagüez",
     plot_name: "Mayaguez.jpeg",
-    forecast: "Incoming Feature"
+    forecast: "Incoming Feature",
+    hasError: true,
   },
   {
     name: "naguabo",
@@ -191,7 +201,8 @@ const stations = [
     dateInstalled: "July-2022",
     collaborator: "Private Landowner",
     plot_name: "Naguabo.jpeg",
-    forecast: "Incoming Feature"
+    forecast: "Incoming Feature",
+    hasError: false,
   },
   {
     name: "naranjito",
@@ -208,7 +219,8 @@ const stations = [
     dateInstalled: "August-2022",
     collaborator: "Municipio de Naranjito",
     plot_name: "Naranjito.jpeg",
-    forecast: "Incoming Feature"
+    forecast: "Incoming Feature",
+    hasError: false,
   },
   {
     name: "orocovis",
@@ -225,13 +237,14 @@ const stations = [
     dateInstalled: "Apr-2024",
     collaborator: "Private Collaborator",
     plot_name: "Orocovis.jpeg",
-    forecast: "Incoming Feature"
+    forecast: "Incoming Feature",
+    hasError: false,
   },
   {
     name: "ponce",
     "url-name": "ponce",
     display_name: "Ponce",
-    coords: [18.083, -66.660],
+    coords: [18.083, -66.66],
     vwc_max: 0.434,
     geologicUnit: "Lago Garzas Formation",
     soilUnit: "Caguabo Gravelly Clay Loam",
@@ -242,7 +255,8 @@ const stations = [
     dateInstalled: "March-2023",
     collaborator: "Para la Naturaleza",
     plot_name: "Ponce.jpeg",
-    forecast: "Incoming Feature"
+    forecast: "Incoming Feature",
+    hasError: false,
   },
   {
     name: "sanlorenzo",
@@ -259,7 +273,8 @@ const stations = [
     dateInstalled: "Feb-2022",
     collaborator: "Para la Naturaleza",
     plot_name: "San_Lorenzo.jpeg",
-    forecast: "Incoming Feature"
+    forecast: "Incoming Feature",
+    hasError: false,
   },
   {
     name: "toronegro",
@@ -276,13 +291,14 @@ const stations = [
     dateInstalled: "2018",
     collaborator: "Departamento de Recursos Naturales e Ambientales",
     plot_name: "Toro_Negro.jpeg",
-    forecast: "Incoming Feature"
+    forecast: "Incoming Feature",
+    hasError: false,
   },
   {
     name: "utuado",
     "url-name": "utuado",
     display_name: "Utuado",
-    coords: [18.280, -66.661],
+    coords: [18.28, -66.661],
     vwc_max: 0.45,
     geologicUnit: "Utuado Granodiorite",
     soilUnit: "Pellejas Clay Loam",
@@ -293,13 +309,14 @@ const stations = [
     dateInstalled: "2018",
     collaborator: "Private Landowner",
     plot_name: "Utuado.jpeg",
-    forecast: "Incoming Feature"
+    forecast: "Incoming Feature",
+    hasError: false,
   },
   {
     name: "yabucoa",
     "url-name": "yabucoa",
     display_name: "Yabucoa",
-    coords: [18.110, -65.856],
+    coords: [18.11, -65.856],
     vwc_max: 0.372,
     geologicUnit: "San Lorenzo Granodiorite",
     soilUnit: "Pandura Loam",
@@ -310,7 +327,8 @@ const stations = [
     dateInstalled: "Dec-2023",
     collaborator: "Private Landowner",
     plot_name: "Yabucoa.jpeg",
-    forecast: "Incoming Feature"
+    forecast: "Incoming Feature",
+    hasError: false,
   },
   {
     name: "yauco",
@@ -327,8 +345,9 @@ const stations = [
     dateInstalled: "Jan-2023",
     collaborator: "Private Landowner",
     plot_name: "Yauco.jpeg",
-    forecast: "Incoming Feature"
-  }
+    forecast: "Incoming Feature",
+    hasError: false,
+  },
 ];
 
 export { stations };
