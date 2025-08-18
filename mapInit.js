@@ -457,11 +457,33 @@ function setupEventListeners(map, layers, stations) {
     });
   }
 
-  // Call this after popups are created or updated
-  window.enableImageSwipe = enableImageSwipe;
+  function enablePopupZoom() {
+    document
+      .querySelectorAll(".leaflet-popup-content-wrapper")
+      .forEach((wrapper) => {
+        let lastTap = 0;
+        // Double-click for desktop
+        wrapper.addEventListener("dblclick", function () {
+          wrapper.classList.toggle("zoomed");
+          const content = wrapper.querySelector(".leaflet-popup-content");
+          if (content) content.classList.toggle("zoomed");
+        });
+        // Double-tap for mobile
+        wrapper.addEventListener("touchend", function (e) {
+          const currentTime = new Date().getTime();
+          if (currentTime - lastTap < 300) {
+            wrapper.classList.toggle("zoomed");
+            const content = wrapper.querySelector(".leaflet-popup-content");
+            if (content) content.classList.toggle("zoomed");
+            e.preventDefault();
+          }
+          lastTap = currentTime;
+        });
+      });
+  }
 
-  // After creating/updating a popup, call:
-  enableImageSwipe();
+  window.enablePopupZoom = enablePopupZoom;
+  window.enableImageSwipe = enableImageSwipe;
 
   // Close sidebar when clicking outside of it
   document.addEventListener("click", (event) => {
@@ -656,7 +678,6 @@ function updateStationMarker(station, map, iconProps, dataType) {
       }),
     }).addTo(map);
     station.marker.bindPopup(popupContent);
-
     station.marker.on("popupopen", function () {
       const popupElement = station.marker.getPopup().getElement();
       if (popupElement) {
@@ -667,6 +688,7 @@ function updateStationMarker(station, map, iconProps, dataType) {
         map.setView(newLatLng, map.getZoom(), { animate: true, duration: 1.5 });
       }
       window.enableImageSwipe();
+      enablePopupZoom();
     });
   } else {
     // Update marker if it exists
@@ -681,6 +703,7 @@ function updateStationMarker(station, map, iconProps, dataType) {
     station.marker.setPopupContent(popupContent);
     station.marker.on("popupopen", function () {
       window.enableImageSwipe();
+      enablePopupZoom();
     });
   }
 }

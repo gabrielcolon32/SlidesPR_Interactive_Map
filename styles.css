@@ -221,6 +221,19 @@ main {
   font-family: "Bebas Neue", "Helvetica Neue", Helvetica, Arial, sans-serif; /* Apply font family */
 }
 
+/* Enable zoom for the whole popup */
+.leaflet-popup-content-wrapper,
+.leaflet-popup-content {
+  transition: transform 0.3s ease;
+  touch-action: none; /* Allow pinch zoom and pan */
+}
+
+.leaflet-popup-content-wrapper.zoomed,
+.leaflet-popup-content.zoomed {
+  transform: scale(1.7); /* Adjust zoom factor as needed */
+  z-index: 9999;
+}
+
 .leaflet-popup-content {
   width: 100% !important; /* Extend to maximum width */
   height: 400px !important;
@@ -352,7 +365,7 @@ main {
 
 #susceptibility-legend-container {
   position: absolute;
-  bottom:8%;
+  bottom: 8%;
   left: 5px; /* Move to left */
   max-height: 160px; /* Adjust the height as needed */
   /* overflow-y: auto; */
@@ -432,7 +445,10 @@ main {
 
 /* Media Queries for Mobile Devices */
 @media (max-width: 768px) {
-  html, body, main, #map {
+  html,
+  body,
+  main,
+  #map {
     height: 100%;
     min-height: 100%;
     width: 100%;
