@@ -338,7 +338,6 @@ main {
   right: 10px; /* Move to right */
   max-height: 120px; /* Adjust the height as needed */
   max-width: 100%;
-  overflow-y: auto;
   background: rgba(255, 255, 255, 0.9); /* Semi-transparent white background */
   padding: 10px 1px 1px 1px;
   border-radius: 5px;
@@ -452,7 +451,7 @@ main {
   }
 
   .leaflet-popup-content-wrapper {
-    width: 300px; /* Adjust width for mobile devices */
+    width: 200px; /* Adjust width for mobile devices */
     height: auto; /* Adjust height for mobile devices */
     padding: 5px; /* Reduce padding */
   }
@@ -549,6 +548,7 @@ main {
     position: absolute;
     top: 0%;
     right: 0%; /* Move to left */
+    overflow-y: auto; /* Allow vertical scrolling */
     max-height: 80px; /* Adjust the height as needed */
     max-width: 100px;
     z-index: 1000; /* Ensure it is above other elements */

@@ -31,7 +31,7 @@ function initializeMap() {
     center: [18.220833, -66.420149],
     zoom: initialZoom,
     maxBounds: [
-      [19.0, -68.0],
+      [21.0, -68.0],
       [17.0, -65.0],
     ],
     minZoom: 7,
