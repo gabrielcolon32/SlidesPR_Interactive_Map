@@ -451,8 +451,8 @@ main {
   }
 
   .leaflet-popup-content-wrapper {
-    width: 300px; /* Adjust width for mobile devices */
-    height: 300px; /* Adjust height for mobile devices */
+    max-width: 300px; /* Adjust width for mobile devices */
+    max-height: 250px; /* Adjust height for mobile devices */
     padding: 0px;
   }
 
@@ -477,7 +477,7 @@ main {
   }
 
   .custom-popup-content .info ul li {
-    font-size: 12px; /* Reduce font size */
+    font-size: 14px; /* Reduce font size */
     margin-bottom: 3px; /* Reduce margin */
   }
 
