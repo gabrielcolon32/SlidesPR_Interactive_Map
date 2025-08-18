@@ -451,36 +451,38 @@ main {
   }
 
   .leaflet-popup-content-wrapper {
-    width: 200px; /* Adjust width for mobile devices */
-    height: auto; /* Adjust height for mobile devices */
-    padding: 5px; /* Reduce padding */
+    max-width: 300px; /* Adjust width for mobile devices */
+    max-height: 250px; /* Adjust height for mobile devices */
+    padding: 0px;
   }
 
   .leaflet-popup-content {
     width: 100% !important; /* Make the popup full width */
     height: auto !important; /* Adjust height for mobile devices */
-  }
-
-  .custom-popup-content {
-    flex-direction: column; /* Stack content vertically */
-    height: auto; /* Adjust height for mobile devices */
-    padding: 5px; /* Reduce padding */
+    margin: 0px !important;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
   }
 
   .custom-popup-content .info {
-    margin-left: 0; /* Remove the left margin */
+    margin-left: 4px; /* Remove the left margin */
     width: 100%; /* Make the info section full width */
     text-align: center; /* Center align text */
   }
 
   .custom-popup-content .info h2 {
-    font-size: 12px; /* Reduce font size */
+    font-size: 16px; /* Reduce font size */
     margin: 5px 0; /* Reduce margin */
   }
 
   .custom-popup-content .info ul li {
-    font-size: 10px; /* Reduce font size */
+    font-size: 12px; /* Reduce font size */
     margin-bottom: 3px; /* Reduce margin */
+  }
+
+  .custom-popup-content .info a {
+    font-size: 12px; /* Reduce font size */
   }
 
   .image-container {

@@ -32,7 +32,7 @@ function initializeMap() {
     zoom: initialZoom,
     maxBounds: [
       [21.0, -68.0],
-      [17.0, -65.0],
+      [16.0, -65.0],
     ],
     minZoom: 7,
     maxZoom: 18,
@@ -138,7 +138,9 @@ function setupScrollZoom(map) {
   let isMouseOverLegend = false;
   let isMouseOverSusceptibilityLegend = false;
 
-  const legendContainer = document.getElementById("precipitation-legend-container");
+  const legendContainer = document.getElementById(
+    "precipitation-legend-container"
+  );
   const susceptibilityLegendContainer = document.getElementById(
     "susceptibility-legend-container"
   );
@@ -312,8 +314,9 @@ function setupEventListeners(map, layers, stations) {
   );
   syncCheckbox(
     "precipitationLegendToggle",
-    document.getElementById("precipitation-legend-container").getAttribute("data-checked") ===
-      "true"
+    document
+      .getElementById("precipitation-legend-container")
+      .getAttribute("data-checked") === "true"
   );
   syncCheckbox("stationsToggle", stationsVisible);
 
@@ -353,7 +356,11 @@ function setupEventListeners(map, layers, stations) {
   document.getElementById("precipitationLegendToggle").addEventListener(
     "click",
     debounce((event) => {
-      toggleCheckboxAction(event.target, "precipitation-legend-container", "element");
+      toggleCheckboxAction(
+        event.target,
+        "precipitation-legend-container",
+        "element"
+      );
     }, 300)
   );
 
@@ -420,6 +427,41 @@ function setupEventListeners(map, layers, stations) {
       toggleImage(event);
     }
   });
+
+  function enableImageSwipe() {
+    document.querySelectorAll(".image-container").forEach((container) => {
+      let startX = null;
+
+      container.addEventListener("touchstart", function (e) {
+        if (e.touches.length === 1) {
+          startX = e.touches[0].clientX;
+        }
+      });
+
+      container.addEventListener("touchend", function (e) {
+        if (startX === null) return;
+        const endX = e.changedTouches[0].clientX;
+        const diffX = endX - startX;
+        if (Math.abs(diffX) > 50) {
+          // Minimum swipe distance
+          // Swipe left: show next image, Swipe right: show previous image
+          toggleImage({
+            target: container.querySelector(
+              diffX < 0 ? ".right-arrow" : ".left-arrow"
+            ),
+            stopPropagation: () => {},
+          });
+        }
+        startX = null;
+      });
+    });
+  }
+
+  // Call this after popups are created or updated
+  window.enableImageSwipe = enableImageSwipe;
+
+  // After creating/updating a popup, call:
+  enableImageSwipe();
 
   // Close sidebar when clicking outside of it
   document.addEventListener("click", (event) => {
@@ -549,7 +591,7 @@ function updateStationMarker(station, map, iconProps, dataType) {
         <a href="/files/network/plots/${
           station.plot_name
         }" target="_blank" class="image-link">
-          <img src="/files/images/${station.name}.jpg" alt="${
+          <img id="image" src="/files/images/${station.name}.jpg" alt="${
     station.display_name
   }" class="popup-image">
         </a>
@@ -570,7 +612,6 @@ function updateStationMarker(station, map, iconProps, dataType) {
           <li><strong>Last Updated:</strong> ${formattedTimestamp} AST</li>
           <li><strong>Soil Saturation:</strong> ${saturationPercentage}%</li>
           <li><strong>12 HRS Precipitation:</strong> ${rainTotalInches} inches</li>
-          <li><strong>Forecast:</strong> ${station.forecast}</li>
         </ul>
         <a href="https://derrumbe.net/${
           station["url-name"]
