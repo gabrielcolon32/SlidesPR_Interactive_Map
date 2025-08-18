@@ -442,7 +442,7 @@ function setupEventListeners(map, layers, stations) {
         if (startX === null) return;
         const endX = e.changedTouches[0].clientX;
         const diffX = endX - startX;
-        if (Math.abs(diffX) > 40) {
+        if (Math.abs(diffX) > 20) {
           // Minimum swipe distance
           // Swipe left: show next image, Swipe right: show previous image
           toggleImage({
@@ -471,7 +471,7 @@ function setupEventListeners(map, layers, stations) {
         // Double-tap for mobile
         wrapper.addEventListener("touchend", function (e) {
           const currentTime = new Date().getTime();
-          if (currentTime - lastTap < 300) {
+          if (currentTime - lastTap < 200) {
             wrapper.classList.toggle("zoomed");
             const content = wrapper.querySelector(".leaflet-popup-content");
             if (content) content.classList.toggle("zoomed");
@@ -688,7 +688,7 @@ function updateStationMarker(station, map, iconProps, dataType) {
         map.setView(newLatLng, map.getZoom(), { animate: true, duration: 1.5 });
       }
       window.enableImageSwipe();
-      enablePopupZoom();
+      window.enablePopupZoom();
     });
   } else {
     // Update marker if it exists
@@ -703,7 +703,7 @@ function updateStationMarker(station, map, iconProps, dataType) {
     station.marker.setPopupContent(popupContent);
     station.marker.on("popupopen", function () {
       window.enableImageSwipe();
-      enablePopupZoom();
+      window.enablePopupZoom();
     });
   }
 }

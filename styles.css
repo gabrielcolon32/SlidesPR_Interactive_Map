@@ -230,7 +230,7 @@ main {
 
 .leaflet-popup-content-wrapper.zoomed,
 .leaflet-popup-content.zoomed {
-  transform: scale(1.7); /* Adjust zoom factor as needed */
+  transform: scale(1.2); /* Adjust zoom factor as needed */
   z-index: 9999;
 }
 
