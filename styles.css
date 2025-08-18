@@ -451,8 +451,8 @@ main {
   }
 
   .leaflet-popup-content-wrapper {
-    max-width: 300px; /* Adjust width for mobile devices */
-    max-height: 300px; /* Adjust height for mobile devices */
+    width: 300px; /* Adjust width for mobile devices */
+    height: 300px; /* Adjust height for mobile devices */
     padding: 0px;
   }
 
