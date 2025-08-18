@@ -442,7 +442,7 @@ function setupEventListeners(map, layers, stations) {
         if (startX === null) return;
         const endX = e.changedTouches[0].clientX;
         const diffX = endX - startX;
-        if (Math.abs(diffX) > 50) {
+        if (Math.abs(diffX) > 40) {
           // Minimum swipe distance
           // Swipe left: show next image, Swipe right: show previous image
           toggleImage({
@@ -666,6 +666,7 @@ function updateStationMarker(station, map, iconProps, dataType) {
         const newLatLng = map.containerPointToLatLng(newOffset);
         map.setView(newLatLng, map.getZoom(), { animate: true, duration: 1.5 });
       }
+      window.enableImageSwipe();
     });
   } else {
     // Update marker if it exists
@@ -678,6 +679,9 @@ function updateStationMarker(station, map, iconProps, dataType) {
       })
     );
     station.marker.setPopupContent(popupContent);
+    station.marker.on("popupopen", function () {
+      window.enableImageSwipe();
+    });
   }
 }
 
