@@ -430,21 +430,19 @@ function setupEventListeners(map, layers, stations) {
 
   function enableImageSwipe() {
     document.querySelectorAll(".image-container").forEach((container) => {
+      // Remove previous listeners
+      container.replaceWith(container.cloneNode(true));
+    });
+    document.querySelectorAll(".image-container").forEach((container) => {
       let startX = null;
-
       container.addEventListener("touchstart", function (e) {
-        if (e.touches.length === 1) {
-          startX = e.touches[0].clientX;
-        }
+        if (e.touches.length === 1) startX = e.touches[0].clientX;
       });
-
       container.addEventListener("touchend", function (e) {
         if (startX === null) return;
         const endX = e.changedTouches[0].clientX;
         const diffX = endX - startX;
-        if (Math.abs(diffX) > 20) {
-          // Minimum swipe distance
-          // Swipe left: show next image, Swipe right: show previous image
+        if (Math.abs(diffX) > 50) {
           toggleImage({
             target: container.querySelector(
               diffX < 0 ? ".right-arrow" : ".left-arrow"
@@ -461,20 +459,23 @@ function setupEventListeners(map, layers, stations) {
     document
       .querySelectorAll(".leaflet-popup-content-wrapper")
       .forEach((wrapper) => {
+        // Remove previous listeners
+        wrapper.replaceWith(wrapper.cloneNode(true));
+      });
+    document
+      .querySelectorAll(".leaflet-popup-content-wrapper")
+      .forEach((wrapper) => {
         let lastTap = 0;
-        // Double-click for desktop
-        wrapper.addEventListener("dblclick", function () {
+        function toggleZoom() {
           wrapper.classList.toggle("zoomed");
           const content = wrapper.querySelector(".leaflet-popup-content");
           if (content) content.classList.toggle("zoomed");
-        });
-        // Double-tap for mobile
+        }
+        wrapper.addEventListener("dblclick", toggleZoom);
         wrapper.addEventListener("touchend", function (e) {
-          const currentTime = new Date().getTime();
-          if (currentTime - lastTap < 200) {
-            wrapper.classList.toggle("zoomed");
-            const content = wrapper.querySelector(".leaflet-popup-content");
-            if (content) content.classList.toggle("zoomed");
+          const currentTime = Date.now();
+          if (currentTime - lastTap < 300) {
+            toggleZoom();
             e.preventDefault();
           }
           lastTap = currentTime;
@@ -700,7 +701,7 @@ function updateStationMarker(station, map, iconProps, dataType) {
         iconAnchor: iconProps.iconAnchor,
       })
     );
-    station.marker.setPopupContent(popupContent);
+    station.marker.off("popupopen");
     station.marker.on("popupopen", function () {
       window.enableImageSwipe();
       window.enablePopupZoom();
