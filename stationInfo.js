@@ -184,7 +184,7 @@ const stations = [
     collaborator: "UPR Mayagüez",
     plot_name: "Mayaguez.jpeg",
     forecast: "Incoming Feature",
-    hasError: true,
+    hasError: false,
   },
   {
     name: "naguabo",
