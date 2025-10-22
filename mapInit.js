@@ -11,6 +11,7 @@ document.addEventListener("DOMContentLoaded", async function () {
   updateMapLabel(getLabelText(currentDataType));
   const stations = await initializeStations(map, currentDataType);
   setupEventListeners(map, layers, stations);
+  createDisclaimerPopup();
   // uncheckPrecipitationLayer();
 });
 
@@ -52,6 +53,7 @@ function initializeMap() {
   return { map, layers };
 }
 
+// Update Map Label
 function updateMapLabel(text) {
   const label = document.getElementById("map-label");
   label.innerText = text;
@@ -59,6 +61,7 @@ function updateMapLabel(text) {
   label.style.textAlign = "center";
 }
 
+// Get label text based on data type
 function getLabelText(dataType) {
   if (dataType === "rainfall") {
     return "PAST 12-HOUR PRECIPITATION (Inches)";
@@ -70,6 +73,30 @@ function getLabelText(dataType) {
     return "TOMORROW'S LANDSLIDE FORECAST";
   }
   return "";
+}
+
+// Create Initial Disclaimer Popup
+function createDisclaimerPopup() {
+  const modal = document.getElementById("disclaimer-modal");
+  const acceptButton = document.getElementById("disclaimer-button");
+
+  // Check if the user has already agreed
+  const hasAgreed = localStorage.getItem("disclaimerAgreed");
+
+  if (hasAgreed) {
+    // If the user has already agreed, ensure the modal stays hidden
+    modal.classList.remove("active");
+    return;
+  }
+
+  // Show the modal if the user hasn't agreed
+  modal.classList.add("active");
+
+  // Close the modal and cache the agreement when the user clicks "I Agree"
+  acceptButton.addEventListener("click", function () {
+    modal.classList.remove("active");
+    localStorage.setItem("disclaimerAgreed", "true"); // Cache the agreement
+  });
 }
 
 function addBaseLayers(map) {
@@ -571,7 +598,7 @@ function updateStationMarker(station, map, iconProps, dataType) {
     key.toString().startsWith('"wc4')
   );
   const saturationPercentage = wcKey
-    ? ((stationData[wcKey] / station.vwc_max) * 100).toFixed(0)
+    ? ((stationData[wcKey] / station.vwc_max_avg) * 100).toFixed(0)
     : "N/A";
   const rainTotalMM =
     parseFloat(stationData["12hr_rain_mm_total"]).toFixed(0) || "N/A";

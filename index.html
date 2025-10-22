@@ -1,99 +1,111 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Home - Landslide Monitoring</title>
-    <link rel="stylesheet" href="styles.css" />
-    <!-- Include Leaflet CSS -->
-    <link
-      rel="stylesheet"
-      href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css"
-    />
-    <!-- Include Font Awesome CSS -->
-    <link
-      rel="stylesheet"
-      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css"
-    />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Bebas+Neue&display=swap"
-      rel="stylesheet"
-    />
-    <!-- Include Leaflet JavaScript -->
-    <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
 
-    <!-- Include Esri Leaflet JavaScript -->
-    <script src="https://unpkg.com/esri-leaflet"></script>
-  </head>
-  <body>
-    <main>
-      <div id="map">
-        <div id="map-label" class="map-label"></div>
-        <!-- Hamburger button -->
-        <button id="hamburger-button" class="hamburger-button">
-          <i class='fas fa-layer-group'></i>
-        </button>
-        <!-- Sidebar structure -->
-        <div id="sidebar" class="sidebar closed">
-          <button id="sidebar-toggle" class="sidebar-toggle"></button>
-          <div class="sidebar-content">
-            <a href="https://derrumbe.net/" target="_blank" style="text-decoration: none;"><h1>Puerto Rico Landslide Hazard Mitigation Office - Home Page</h1></a>
-            <h2>Basemap Layers</h2>
-            <div class="checkbox-container">
-              <button class="checkbox-button" id="stationsToggle" data-checked="true"></button>
-              <span>Stations</span>
-            </div>
-            <div class="checkbox-container">
-              <button class="checkbox-button" id="susceptibilityLayer" data-checked="false"></button>
-              <span>Landslide Susceptibility</span>
-            </div>
-            <div class="checkbox-container">
-              <button class="checkbox-button" id="susceptibilityLegendToggle" data-checked="false"></button>
-              <span>Susceptibility Legend</span>
-            </div>
-            <div class="checkbox-container">
-              <button class="checkbox-button" id="precipitationLayer" data-checked="true"></button>
-              <span>Past 12 Hour Radar Precipitation Estimates (Inches)</span>
-            </div>
-            <div class="checkbox-container">
-              <button class="checkbox-button" id="precipitationLegendToggle" data-checked="false"></button>
-              <span>Precipitation Estimates Legend</span>
-            </div>
-            <div class="checkbox-container">
-              <button class="checkbox-button" id="toggle-attributions" data-checked="false"></button>
-              <span>Attributions</span>
-            </div>
-            <h2>Monitoring Station Data</h2>
-            <div class="button-bar">
-              <button id="soilSaturation-button">Soil Saturation</button>
-              <button id="rainfall-button">Precipitation Last 12 Hrs</button>
-            </div>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Home - Landslide Monitoring</title>
+  <link rel="stylesheet" href="styles.css" />
+  <!-- Include Leaflet CSS -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
+  <!-- Include Font Awesome CSS -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&display=swap" rel="stylesheet" />
+  <!-- Include Leaflet JavaScript -->
+  <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+
+  <!-- Include Esri Leaflet JavaScript -->
+  <script src="https://unpkg.com/esri-leaflet"></script>
+</head>
+
+<body>
+  <main>
+
+    <div id="map">
+      <!-- Disclaimer Modal -->
+      <div id="disclaimer-modal" class="modal">
+        <div class="modal-content">
+          <h2>Aviso | Disclaimer</h2>
+          <p>
+            <b>EN:</b> The data presented on this platform is experimental. The Puerto Rico Landslide Hazard Mitigation Office is not responsible 
+            for the decisions taken after utilizing our data. By proceeding, you acknowledge and accept
+            this disclaimer.
+          </p>
+
+          <p>
+            <b>ES:</b> Los datos presentados en esta plataforma son experimentales. La Oficina de Mitigación ante Deslizamientos de Puerto Rico
+            no se hace responsable
+            de las decisiones tomadas utilizando nuestra información. Al continuar, usted reconoce y acepta este aviso. 
+          </p>
+          <button id="disclaimer-button">Acepto | Agree</button>
+        </div>
+      </div>
+
+      <div id="map-label" class="map-label"></div>
+      <!-- Hamburger button -->
+      <button id="hamburger-button" class="hamburger-button">
+        <i class='fas fa-layer-group'></i>
+      </button>
+      <!-- Sidebar structure -->
+      <div id="sidebar" class="sidebar closed">
+        <button id="sidebar-toggle" class="sidebar-toggle"></button>
+        <div class="sidebar-content">
+          <a href="https://derrumbe.net/" target="_blank" style="text-decoration: none;">
+            <h1>Puerto Rico Landslide Hazard Mitigation Office - Home Page</h1>
+          </a>
+          <h2>Basemap Layers</h2>
+          <div class="checkbox-container">
+            <button class="checkbox-button" id="stationsToggle" data-checked="true"></button>
+            <span>Stations</span>
+          </div>
+          <div class="checkbox-container">
+            <button class="checkbox-button" id="susceptibilityLayer" data-checked="false"></button>
+            <span>Landslide Susceptibility</span>
+          </div>
+          <div class="checkbox-container">
+            <button class="checkbox-button" id="susceptibilityLegendToggle" data-checked="false"></button>
+            <span>Susceptibility Legend</span>
+          </div>
+          <div class="checkbox-container">
+            <button class="checkbox-button" id="precipitationLayer" data-checked="true"></button>
+            <span>Past 12 Hour Radar Precipitation Estimates (Inches)</span>
+          </div>
+          <div class="checkbox-container">
+            <button class="checkbox-button" id="precipitationLegendToggle" data-checked="false"></button>
+            <span>Precipitation Estimates Legend</span>
+          </div>
+          <div class="checkbox-container">
+            <button class="checkbox-button" id="toggle-attributions" data-checked="false"></button>
+            <span>Attributions</span>
+          </div>
+          <h2>Monitoring Station Data</h2>
+          <div class="button-bar">
+            <button id="soilSaturation-button">Soil Saturation</button>
+            <button id="rainfall-button">Precipitation Last 12 Hrs</button>
           </div>
         </div>
-        <!-- Static Legend Images -->
-        <div id="precipitation-legend-container" style="display: none">
-          <span id="precipitation-legend-title">Precip. Estimates Legend</span>
-          <img
-            src="/files/images/precipitation_estimate_legend.png"
-            alt="Precipitation Legend"
-            id="precipitation-legend-image"
-          />
-        </div>
-        <div id="susceptibility-legend-container" style="display: none">
-          <img
-            src="/files/images/susceptibility_legend.png"
-            alt="Susceptibility Legend"
-            id="susceptibility-legend-image"
-          />
-        </div>
-        <!-- Logo Container -->
-         <div id="logo-container">
-          <a href="https://derrumbe.net/" target="_blank"><img src="/files/images/logo.png" alt="PR Landslide Hazard Mitigation Office Logo" id="logo-image" /> </div>
-         </div>
       </div>
-    </main>
-    <script type="module" src="stationInfo.js"></script>
-    <script type="module" src="fetchStationData.js"></script>
-    <script type="module" src="mapInit.js"></script>
-  </body>
+      <!-- Static Legend Images -->
+      <div id="precipitation-legend-container" style="display: none">
+        <span id="precipitation-legend-title">Precip. Estimates Legend</span>
+        <img src="/files/images/precipitation_estimate_legend.png" alt="Precipitation Legend"
+          id="precipitation-legend-image" />
+      </div>
+      <div id="susceptibility-legend-container" style="display: none">
+        <img src="/files/images/susceptibility_legend.png" alt="Susceptibility Legend"
+          id="susceptibility-legend-image" />
+      </div>
+      <!-- Logo Container -->
+      <div id="logo-container">
+        <a href="https://derrumbe.net/" target="_blank"><img src="/files/images/logo.png"
+            alt="PR Landslide Hazard Mitigation Office Logo" id="logo-image" />
+      </div>
+    </div>
+    </div>
+  </main>
+  <script type="module" src="stationInfo.js"></script>
+  <script type="module" src="fetchStationData.js"></script>
+  <script type="module" src="mapInit.js"></script>
+</body>
+
 </html>
