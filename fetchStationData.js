@@ -146,7 +146,7 @@ function parseCSV(csvText, fileName) {
     fetchedStationData[stationName]["avg_soil_saturation"] =
       avgSoilSaturation.toFixed(2);
   }
-}
+
 
 async function processFiles() {
   try {
