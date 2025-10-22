@@ -598,7 +598,7 @@ function updateStationMarker(station, map, iconProps, dataType) {
     key.toString().startsWith('"wc4')
   );
   const saturationPercentage = wcKey
-    ? ((stationData[wcKey] / station.vwc_max_avg) * 100).toFixed(0)
+    ? stationData["avg_vwc"]
     : "N/A";
   const rainTotalMM =
     parseFloat(stationData["12hr_rain_mm_total"]).toFixed(0) || "N/A";

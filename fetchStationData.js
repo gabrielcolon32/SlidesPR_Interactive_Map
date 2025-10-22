@@ -1,3 +1,5 @@
+import { stations } from "./stationInfo.js";
+
 const dataURL = "/files/network/data/latest/"; // URL to fetch data from hostinger server
 
 const fetchedStationData = {
@@ -132,21 +134,6 @@ function parseCSV(csvText, fileName) {
   const totalRain = rainValues.reduce((acc, val) => acc + val, 0);
   fetchedStationData[stationName]["12hr_rain_mm_total"] = totalRain.toFixed(2);
 
-  // Calculate soil saturation (assuming it's a column in the CSV)
-  const soilSaturationIndex = headers.indexOf('"Soil_Saturation"');
-  if (soilSaturationIndex !== -1) {
-    const soilSaturationValues = rows.map((row) => {
-      const columns = row.split(",");
-      return parseFloat(columns[soilSaturationIndex]) || 0;
-    });
-
-    const avgSoilSaturation =
-      soilSaturationValues.reduce((acc, val) => acc + val, 0) /
-      soilSaturationValues.length;
-    fetchedStationData[stationName]["avg_soil_saturation"] =
-      avgSoilSaturation.toFixed(2);
-  }
-
   // Calculate VWC for each station
   const wcKeys = headers.filter((header) => header.startsWith('"wc'));
   const wcValues = wcKeys.map((key) => {
@@ -155,11 +142,10 @@ function parseCSV(csvText, fileName) {
   });
 
   const stationMaxValues = stations.find((station) => station.name === stationName)?.vwc_max_values;
-
   if (stationMaxValues && wcValues.length === stationMaxValues.length) {
     const vwcValues = wcValues.map((wc, index) => wc / stationMaxValues[index]);
     const avgVWC = vwcValues.reduce((acc, val) => acc + val, 0) / vwcValues.length;
-    fetchedStationData[stationName]["avg_vwc"] = avgVWC.toFixed(3);
+    fetchedStationData[stationName]["avg_vwc"] = (avgVWC*100).toFixed(0);
   } else {
     console.warn(`Mismatch in WC values or max values for station: ${stationName}`);
   }
