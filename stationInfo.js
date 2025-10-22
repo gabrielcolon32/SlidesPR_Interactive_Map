@@ -337,7 +337,7 @@ const stations = [
     "url-name": "yabucoa",
     display_name: "Yabucoa",
     coords: [18.11, -65.85],
-    vwc_max_values: [0.423, 0.379, 0.397, 0.499],
+    vwc_max_values: [0.423, 0.379, 0.397, 0.405],
     geologicUnit: "San Lorenzo Granodiorite",
     soilUnit: "Pandura Loam",
     elevation: "260m",
