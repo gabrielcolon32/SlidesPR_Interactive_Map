@@ -148,7 +148,7 @@ function parseCSV(csvText, fileName) {
   }
 
   // Calculate VWC for each station
-  const wcKeys = headers.filter((header) => header.startsWith('"wc4'));
+  const wcKeys = headers.filter((header) => header.startsWith('"wc'));
   const wcValues = wcKeys.map((key) => {
     const index = headers.indexOf(key);
     return parseFloat(values[index]) || 0;
@@ -159,7 +159,7 @@ function parseCSV(csvText, fileName) {
   if (stationMaxValues && wcValues.length === stationMaxValues.length) {
     const vwcValues = wcValues.map((wc, index) => wc / stationMaxValues[index]);
     const avgVWC = vwcValues.reduce((acc, val) => acc + val, 0) / vwcValues.length;
-    fetchedStationData[stationName]["avg_vwc"] = avgVWC.toFixed(2);
+    fetchedStationData[stationName]["avg_vwc"] = avgVWC.toFixed(3);
   } else {
     console.warn(`Mismatch in WC values or max values for station: ${stationName}`);
   }
