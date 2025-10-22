@@ -546,7 +546,7 @@ font-family: "Custom", Bebas Neue,Roboto Condensed, sans-serif;  font-display: s
   }
 
   .map-label {
-    font-size: 10px; /* Reduce font size for small devices */
+    font-size: 20px; /* Reduce font size for small devices */
     padding: 2px 5px; /* Adjust padding for small devices */
     display: flex; /* Use Flexbox */
     align-items: center; /* Center vertically */
