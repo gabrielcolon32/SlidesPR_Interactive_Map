@@ -147,6 +147,23 @@ function parseCSV(csvText, fileName) {
       avgSoilSaturation.toFixed(2);
   }
 
+  // Calculate VWC for each station
+  const wcKeys = headers.filter((header) => header.startsWith('"wc4'));
+  const wcValues = wcKeys.map((key) => {
+    const index = headers.indexOf(key);
+    return parseFloat(values[index]) || 0;
+  });
+
+  const stationMaxValues = stations.find((station) => station.name === stationName)?.vwc_max_values;
+
+  if (stationMaxValues && wcValues.length === stationMaxValues.length) {
+    const vwcValues = wcValues.map((wc, index) => wc / stationMaxValues[index]);
+    const avgVWC = vwcValues.reduce((acc, val) => acc + val, 0) / vwcValues.length;
+    fetchedStationData[stationName]["avg_vwc"] = avgVWC.toFixed(2);
+  } else {
+    console.warn(`Mismatch in WC values or max values for station: ${stationName}`);
+  }
+}
 
 async function processFiles() {
   try {
