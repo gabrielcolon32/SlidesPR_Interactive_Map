@@ -11,6 +11,7 @@ document.addEventListener("DOMContentLoaded", async function () {
   updateMapLabel(getLabelText(currentDataType));
   const stations = await initializeStations(map, currentDataType);
   setupEventListeners(map, layers, stations);
+  createDisclaimerPopup();
   // uncheckPrecipitationLayer();
 });
 
@@ -32,7 +33,7 @@ function initializeMap() {
     zoom: initialZoom,
     maxBounds: [
       [21.0, -68.0],
-      [17.0, -65.0],
+      [16.0, -65.0],
     ],
     minZoom: 7,
     maxZoom: 18,
@@ -52,6 +53,7 @@ function initializeMap() {
   return { map, layers };
 }
 
+// Update Map Label
 function updateMapLabel(text) {
   const label = document.getElementById("map-label");
   label.innerText = text;
@@ -59,6 +61,7 @@ function updateMapLabel(text) {
   label.style.textAlign = "center";
 }
 
+// Get label text based on data type
 function getLabelText(dataType) {
   if (dataType === "rainfall") {
     return "PAST 12-HOUR PRECIPITATION (Inches)";
@@ -70,6 +73,30 @@ function getLabelText(dataType) {
     return "TOMORROW'S LANDSLIDE FORECAST";
   }
   return "";
+}
+
+// Create Initial Disclaimer Popup
+function createDisclaimerPopup() {
+  const modal = document.getElementById("disclaimer-modal");
+  const acceptButton = document.getElementById("disclaimer-button");
+
+  // Check if the user has already agreed
+  const hasAgreed = localStorage.getItem("disclaimerAgreed");
+
+  if (hasAgreed) {
+    // If the user has already agreed, ensure the modal stays hidden
+    modal.classList.remove("active");
+    return;
+  }
+
+  // Show the modal if the user hasn't agreed
+  modal.classList.add("active");
+
+  // Close the modal and cache the agreement when the user clicks "I Agree"
+  acceptButton.addEventListener("click", function () {
+    modal.classList.remove("active");
+    localStorage.setItem("disclaimerAgreed", "true"); // Cache the agreement
+  });
 }
 
 function addBaseLayers(map) {
@@ -138,7 +165,9 @@ function setupScrollZoom(map) {
   let isMouseOverLegend = false;
   let isMouseOverSusceptibilityLegend = false;
 
-  const legendContainer = document.getElementById("precipitation-legend-container");
+  const legendContainer = document.getElementById(
+    "precipitation-legend-container"
+  );
   const susceptibilityLegendContainer = document.getElementById(
     "susceptibility-legend-container"
   );
@@ -312,8 +341,9 @@ function setupEventListeners(map, layers, stations) {
   );
   syncCheckbox(
     "precipitationLegendToggle",
-    document.getElementById("precipitation-legend-container").getAttribute("data-checked") ===
-      "true"
+    document
+      .getElementById("precipitation-legend-container")
+      .getAttribute("data-checked") === "true"
   );
   syncCheckbox("stationsToggle", stationsVisible);
 
@@ -353,7 +383,11 @@ function setupEventListeners(map, layers, stations) {
   document.getElementById("precipitationLegendToggle").addEventListener(
     "click",
     debounce((event) => {
-      toggleCheckboxAction(event.target, "precipitation-legend-container", "element");
+      toggleCheckboxAction(
+        event.target,
+        "precipitation-legend-container",
+        "element"
+      );
     }, 300)
   );
 
@@ -420,6 +454,64 @@ function setupEventListeners(map, layers, stations) {
       toggleImage(event);
     }
   });
+
+  function enableImageSwipe() {
+    document.querySelectorAll(".image-container").forEach((container) => {
+      // Remove previous listeners
+      container.replaceWith(container.cloneNode(true));
+    });
+    document.querySelectorAll(".image-container").forEach((container) => {
+      let startX = null;
+      container.addEventListener("touchstart", function (e) {
+        if (e.touches.length === 1) startX = e.touches[0].clientX;
+      });
+      container.addEventListener("touchend", function (e) {
+        if (startX === null) return;
+        const endX = e.changedTouches[0].clientX;
+        const diffX = endX - startX;
+        if (Math.abs(diffX) > 50) {
+          toggleImage({
+            target: container.querySelector(
+              diffX < 0 ? ".right-arrow" : ".left-arrow"
+            ),
+            stopPropagation: () => {},
+          });
+        }
+        startX = null;
+      });
+    });
+  }
+
+  function enablePopupZoom() {
+    document
+      .querySelectorAll(".leaflet-popup-content-wrapper")
+      .forEach((wrapper) => {
+        // Remove previous listeners
+        wrapper.replaceWith(wrapper.cloneNode(true));
+      });
+    document
+      .querySelectorAll(".leaflet-popup-content-wrapper")
+      .forEach((wrapper) => {
+        let lastTap = 0;
+        function toggleZoom() {
+          wrapper.classList.toggle("zoomed");
+          const content = wrapper.querySelector(".leaflet-popup-content");
+          if (content) content.classList.toggle("zoomed");
+        }
+        wrapper.addEventListener("dblclick", toggleZoom);
+        wrapper.addEventListener("touchend", function (e) {
+          const currentTime = Date.now();
+          if (currentTime - lastTap < 300) {
+            toggleZoom();
+            e.preventDefault();
+          }
+          lastTap = currentTime;
+        });
+      });
+  }
+
+  window.enablePopupZoom = enablePopupZoom;
+  window.enableImageSwipe = enableImageSwipe;
 
   // Close sidebar when clicking outside of it
   document.addEventListener("click", (event) => {
@@ -506,7 +598,7 @@ function updateStationMarker(station, map, iconProps, dataType) {
     key.toString().startsWith('"wc4')
   );
   const saturationPercentage = wcKey
-    ? ((stationData[wcKey] / station.vwc_max) * 100).toFixed(0)
+    ? stationData["avg_vwc"]
     : "N/A";
   const rainTotalMM =
     parseFloat(stationData["12hr_rain_mm_total"]).toFixed(0) || "N/A";
@@ -549,7 +641,7 @@ function updateStationMarker(station, map, iconProps, dataType) {
         <a href="/files/network/plots/${
           station.plot_name
         }" target="_blank" class="image-link">
-          <img src="/files/images/${station.name}.jpg" alt="${
+          <img id="image" src="/files/images/${station.name}.jpg" alt="${
     station.display_name
   }" class="popup-image">
         </a>
@@ -570,7 +662,6 @@ function updateStationMarker(station, map, iconProps, dataType) {
           <li><strong>Last Updated:</strong> ${formattedTimestamp} AST</li>
           <li><strong>Soil Saturation:</strong> ${saturationPercentage}%</li>
           <li><strong>12 HRS Precipitation:</strong> ${rainTotalInches} inches</li>
-          <li><strong>Forecast:</strong> ${station.forecast}</li>
         </ul>
         <a href="https://derrumbe.net/${
           station["url-name"]
@@ -615,7 +706,6 @@ function updateStationMarker(station, map, iconProps, dataType) {
       }),
     }).addTo(map);
     station.marker.bindPopup(popupContent);
-
     station.marker.on("popupopen", function () {
       const popupElement = station.marker.getPopup().getElement();
       if (popupElement) {
@@ -625,6 +715,8 @@ function updateStationMarker(station, map, iconProps, dataType) {
         const newLatLng = map.containerPointToLatLng(newOffset);
         map.setView(newLatLng, map.getZoom(), { animate: true, duration: 1.5 });
       }
+      window.enableImageSwipe();
+      window.enablePopupZoom();
     });
   } else {
     // Update marker if it exists
@@ -636,7 +728,11 @@ function updateStationMarker(station, map, iconProps, dataType) {
         iconAnchor: iconProps.iconAnchor,
       })
     );
-    station.marker.setPopupContent(popupContent);
+    station.marker.off("popupopen");
+    station.marker.on("popupopen", function () {
+      window.enableImageSwipe();
+      window.enablePopupZoom();
+    });
   }
 }
 
