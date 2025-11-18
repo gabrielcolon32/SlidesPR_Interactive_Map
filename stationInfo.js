@@ -12,6 +12,7 @@ const stations = [
     "url-name": "adjuntas",
     display_name: "Adjuntas",
     coords: [18.143, -66.76],
+    vwc_max_values: [0.531, 0.499, 0.526, 0.522],
     geologicUnit: "Yauco Formation",
     soilUnit: "Los Guineos Clay",
     elevation: "1020m",
